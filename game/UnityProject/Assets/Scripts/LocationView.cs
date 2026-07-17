@@ -11,15 +11,19 @@ public class LocationView : MonoBehaviour, IPointerClickHandler
     private Text mEffect;
     private Text mMinisterMarker;
     private Color mBaseColor;
+    private string mTitleEnglish;
+    private string mTitleChinese;
+    private string mEffectEnglish;
+    private string mEffectChinese;
 
     public LocationType Type { get; private set; }
     public bool IsOccupied { get; private set; }
     public RectTransform RectTransform { get; private set; }
 
     // 创建一个可放置大臣的地点视图。
-    public static LocationView Create(Transform parent, Font font, ZebraGameController controller, LocationType type, string title, string effect, Vector2 position, Color color)
+    public static LocationView Create(Transform parent, Font font, ZebraGameController controller, LocationType type, string titleEnglish, string titleChinese, string effectEnglish, string effectChinese, Vector2 position, Color color)
     {
-        GameObject locationObject = new GameObject(title, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(LocationView));
+        GameObject locationObject = new GameObject(titleEnglish, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(LocationView));
         locationObject.transform.SetParent(parent, false);
         LocationView view = locationObject.GetComponent<LocationView>();
         view.RectTransform = locationObject.GetComponent<RectTransform>();
@@ -50,9 +54,23 @@ public class LocationView : MonoBehaviour, IPointerClickHandler
         view.mMinisterMarker.text = "";
         view.mController = controller;
         view.Type = type;
-        view.mTitle.text = title;
-        view.mEffect.text = effect;
+        view.mTitleEnglish = titleEnglish;
+        view.mTitleChinese = titleChinese;
+        view.mEffectEnglish = effectEnglish;
+        view.mEffectChinese = effectChinese;
+        view.SetTexts(false);
         return view;
+    }
+
+    // 根据当前语言更新地点名称、效果和大臣标记。
+    public void SetTexts(bool useChinese)
+    {
+        mTitle.text = useChinese ? mTitleChinese : mTitleEnglish;
+        mEffect.text = useChinese ? mEffectChinese : mEffectEnglish;
+        if (IsOccupied)
+        {
+            mMinisterMarker.text = useChinese ? "大臣" : "MINISTER";
+        }
     }
 
     // 高亮当前卡牌允许选择的地点。
@@ -66,7 +84,7 @@ public class LocationView : MonoBehaviour, IPointerClickHandler
     public void SetOccupied(bool occupied)
     {
         IsOccupied = occupied;
-        mMinisterMarker.text = occupied ? "MINISTER" : "";
+        mMinisterMarker.text = occupied ? (mController.UseChinese ? "大臣" : "MINISTER") : "";
         mFace.color = occupied ? new Color(0.34f, 0.33f, 0.31f) : mBaseColor;
     }
 

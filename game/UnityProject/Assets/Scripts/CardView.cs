@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class CardView : MonoBehaviour, IPointerClickHandler
+public class CardView : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
 {
     private ZebraGameController mController;
     private Image mBorder;
@@ -13,9 +13,13 @@ public class CardView : MonoBehaviour, IPointerClickHandler
     private Vector2 mLayoutPosition;
     private float mLayoutAngle;
     private bool mSelected;
+    private bool mHovered;
+    private bool mFollowingPointer;
+    private int mLayoutSiblingIndex;
 
     public CardModel Card { get; private set; }
     public RectTransform RectTransform { get; private set; }
+    public bool IsFollowingPointer => mFollowingPointer;
 
     // 创建一张运行时 UI 卡牌并绑定卡牌数据。
     public static CardView Create(Transform parent, Font font, CardModel card, ZebraGameController controller)
@@ -47,7 +51,7 @@ public class CardView : MonoBehaviour, IPointerClickHandler
         view.mLocation = CreateText("Location", cardObject.transform, font, 12, FontStyle.Bold, TextAnchor.LowerCenter, new Vector2(8f, 10f), new Vector2(114f, 32f));
         view.mController = controller;
         view.Card = card;
-        view.SetTexts(false);
+        view.SetTexts(controller.UseChinese);
         return view;
     }
 
@@ -56,7 +60,18 @@ public class CardView : MonoBehaviour, IPointerClickHandler
     {
         mTitle.text = useChinese ? Card.NameChinese : Card.NameEnglish;
         mDescription.text = useChinese ? Card.DescriptionChinese : Card.DescriptionEnglish;
-        mLocation.text = Card.IsRoyal ? "ROYAL" : Card.Location.ToString().ToUpperInvariant();
+        if (Card.IsRoyal)
+        {
+            mLocation.text = useChinese ? "皇家牌" : "ROYAL";
+        }
+        else if (useChinese)
+        {
+            mLocation.text = Card.Location == LocationType.Economy ? "经济" : Card.Location == LocationType.Military ? "军事" : Card.Location == LocationType.Administration ? "行政" : "任意";
+        }
+        else
+        {
+            mLocation.text = Card.Location.ToString().ToUpperInvariant();
+        }
     }
 
     // 保存卡牌在扇形手牌中的基础位置和角度。
@@ -64,6 +79,7 @@ public class CardView : MonoBehaviour, IPointerClickHandler
     {
         mLayoutPosition = position;
         mLayoutAngle = angle;
+        mLayoutSiblingIndex = transform.GetSiblingIndex();
         RefreshTransform();
     }
 
@@ -78,6 +94,21 @@ public class CardView : MonoBehaviour, IPointerClickHandler
         RefreshTransform();
     }
 
+    // 第一次点击后让卡牌持续跟随鼠标，并保持在最上层。
+    public void BeginFollowingPointer()
+    {
+        mFollowingPointer = true;
+        mHovered = false;
+        transform.SetAsLastSibling();
+    }
+
+    // 停止跟随鼠标，并按当前选择状态恢复位置。
+    public void StopFollowingPointer()
+    {
+        mFollowingPointer = false;
+        RefreshTransform();
+    }
+
     // 动画期间关闭卡牌点击检测。
     public void SetInteractable(bool interactable)
     {
@@ -88,6 +119,8 @@ public class CardView : MonoBehaviour, IPointerClickHandler
     public void PrepareForAnimation()
     {
         mSelected = false;
+        mHovered = false;
+        mFollowingPointer = false;
         RectTransform.localScale = Vector3.one;
         RectTransform.localRotation = Quaternion.identity;
     }
@@ -97,11 +130,59 @@ public class CardView : MonoBehaviour, IPointerClickHandler
         mController.OnHandCardClicked(this);
     }
 
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        if (!mFollowingPointer && mController.CanHoverCard(this))
+        {
+            mHovered = true;
+            transform.SetAsLastSibling();
+            RefreshTransform();
+        }
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        if (!mFollowingPointer)
+        {
+            mHovered = false;
+            if (!mSelected)
+            {
+                transform.SetSiblingIndex(Mathf.Min(mLayoutSiblingIndex, transform.parent.childCount - 1));
+            }
+            RefreshTransform();
+        }
+    }
+
+    private void Update()
+    {
+        if (!mFollowingPointer)
+        {
+            return;
+        }
+
+        RectTransform parentRect = RectTransform.parent as RectTransform;
+        if (parentRect != null && RectTransformUtility.ScreenPointToLocalPointInRectangle(parentRect, Input.mousePosition, null, out Vector2 localPoint))
+        {
+            RectTransform.anchoredPosition = localPoint + new Vector2(0f, 24f);
+            RectTransform.localRotation = Quaternion.identity;
+            RectTransform.localScale = Vector3.one * 1.14f;
+            transform.SetAsLastSibling();
+        }
+    }
+
     private void RefreshTransform()
     {
-        RectTransform.anchoredPosition = mLayoutPosition + (mSelected ? new Vector2(0f, 54f) : Vector2.zero);
-        RectTransform.localRotation = Quaternion.Euler(0f, 0f, mSelected ? 0f : mLayoutAngle);
-        RectTransform.localScale = mSelected ? Vector3.one * 1.08f : Vector3.one;
+        if (mFollowingPointer)
+        {
+            return;
+        }
+
+        bool raised = mSelected || mHovered;
+        float raiseAmount = mSelected ? 54f : mHovered ? 34f : 0f;
+        float scale = mSelected ? 1.1f : mHovered ? 1.07f : 1f;
+        RectTransform.anchoredPosition = mLayoutPosition + new Vector2(0f, raiseAmount);
+        RectTransform.localRotation = Quaternion.Euler(0f, 0f, raised ? 0f : mLayoutAngle);
+        RectTransform.localScale = Vector3.one * scale;
     }
 
     private static Text CreateText(string name, Transform parent, Font font, int fontSize, FontStyle style, TextAnchor alignment, Vector2 position, Vector2 size)
