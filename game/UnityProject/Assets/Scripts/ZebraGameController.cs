@@ -124,7 +124,14 @@ public class ZebraGameController : MonoBehaviour
             return;
         }
 
-        if (location.IsOccupied || !CardCanUseLocation(mPendingCard, location.Type))
+        if (location.IsOccupied)
+        {
+            CancelPendingPlay();
+            SetStatus("That location is occupied. Card returned to hand.", "该地点已被占用，卡牌已返回手牌。");
+            return;
+        }
+
+        if (!CardCanUseLocation(mPendingCard, location.Type))
         {
             SetStatus("This card cannot use that location.", "这张牌不能进入该地点。");
             return;
@@ -697,17 +704,18 @@ public class ZebraGameController : MonoBehaviour
         mOverlaySelectedCard = null;
     }
 
-    // 将手牌按数量排成稳定的重叠弧形，最多容纳十张。
+    // 将手牌排成中心较高、两侧平滑下落的扇形，最多容纳十张。
     private void LayoutHand()
     {
         int count = mHand.Count;
-        float spacing = count <= 1 ? 0f : Mathf.Min(94f, 720f / (count - 1));
+        float spacing = count <= 1 ? 0f : Mathf.Min(100f, 760f / (count - 1));
         float totalWidth = Mathf.Max(0f, count - 1) * spacing;
         for (int i = 0; i < count; i++)
         {
             float centerOffset = i - (count - 1) * 0.5f;
-            Vector2 position = new Vector2(-totalWidth * 0.5f + i * spacing, -236f - Mathf.Abs(centerOffset) * 7f);
-            float angle = centerOffset * 5f;
+            float normalizedOffset = count <= 1 ? 0f : centerOffset / ((count - 1) * 0.5f);
+            Vector2 position = new Vector2(-totalWidth * 0.5f + i * spacing, -210f - normalizedOffset * normalizedOffset * 46f);
+            float angle = -normalizedOffset * 15f;
             CardView view = mHandViews[mHand[i]];
             view.transform.SetSiblingIndex(i);
             view.SetLayout(position, angle);

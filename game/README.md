@@ -26,3 +26,10 @@ The `integrated-game-v1` Git tag identifies the tested baseline before language 
 - Highlight valid locations while choosing where to play the selected card.
 
 The `integrated-game-v2` Git tag identifies the tested language and pointer-interaction upgrade.
+
+## Integrated Game V3
+
+- Arrange hand cards in a smooth downward fan while keeping all ten cards within the game view.
+- Cancel the current play and return the selected card to the hand when the player clicks an occupied location.
+
+The `integrated-game-v3` Git tag identifies the hand-layout and occupied-location fix.
