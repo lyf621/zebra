@@ -92,10 +92,24 @@ public class ZebraGameController : MonoBehaviour
         SetStatus("Press Start Round to draw five cards.", "点击开始回合并抽取五张牌。");
     }
 
-    // 第一版交互：第一次点击选中，再次点击同一张牌进入地点选择。
-    public void OnHandCardClicked(CardView cardView)
+    // 左键选中或打出卡牌，右键取消当前选中的卡牌。
+    public void OnHandCardClicked(CardView cardView, PointerEventData.InputButton button)
     {
         if (mOverlay != null || mSettingsOverlay != null || mPhase != GamePhase.PlayerAction)
+        {
+            return;
+        }
+
+        if (button == PointerEventData.InputButton.Right)
+        {
+            if (mSelectedCardView == cardView && cardView.IsFollowingPointer)
+            {
+                ReturnSelectedCardToHand("Card selection cancelled.", "已取消选择卡牌。");
+            }
+            return;
+        }
+
+        if (button != PointerEventData.InputButton.Left)
         {
             return;
         }
@@ -126,14 +140,13 @@ public class ZebraGameController : MonoBehaviour
 
         if (location.IsOccupied)
         {
-            CancelPendingPlay();
-            SetStatus("That location is occupied. Card returned to hand.", "该地点已被占用，卡牌已返回手牌。");
+            ReturnSelectedCardToHand("That location is occupied. Card returned to hand.", "该地点已被占用，卡牌已返回手牌。");
             return;
         }
 
         if (!CardCanUseLocation(mPendingCard, location.Type))
         {
-            SetStatus("This card cannot use that location.", "这张牌不能进入该地点。");
+            ReturnSelectedCardToHand("That location cannot use this card. Card returned to hand.", "该地点不能使用这张牌，卡牌已返回手牌。");
             return;
         }
 
@@ -335,17 +348,34 @@ public class ZebraGameController : MonoBehaviour
 
     private void BeginPlaySelectedCard()
     {
-        if (mSelectedCardView == null || mMinistersLeft <= 0)
+        if (mSelectedCardView == null)
         {
-            SetStatus(mMinistersLeft <= 0 ? "No ministers remain this round." : "Select a card first.", mMinistersLeft <= 0 ? "本回合已没有可用大臣。" : "请先选择一张卡牌。");
+            SetStatus("Select a card first.", "请先选择一张卡牌。");
+            return;
+        }
+
+        if (mMinistersLeft <= 0)
+        {
+            ReturnSelectedCardToHand("No ministers remain this round. Card returned to hand.", "本回合已没有可用大臣，卡牌已返回手牌。");
             return;
         }
 
         mPendingCard = mSelectedCardView.Card;
         mPhase = GamePhase.ChoosingLocation;
+        int availableLocationCount = 0;
         foreach (LocationView location in mLocations)
         {
-            location.SetHighlighted(!location.IsOccupied && CardCanUseLocation(mPendingCard, location.Type));
+            bool canUseLocation = !location.IsOccupied && CardCanUseLocation(mPendingCard, location.Type);
+            location.SetHighlighted(canUseLocation);
+            if (canUseLocation)
+            {
+                availableLocationCount++;
+            }
+        }
+        if (availableLocationCount == 0)
+        {
+            ReturnSelectedCardToHand("No matching empty location is available. Card returned to hand.", "没有可用的匹配空地点，卡牌已返回手牌。");
+            return;
         }
         SetStatus("Choose a highlighted location for the minister.", "选择一个高亮地点放置大臣。");
         RefreshInterface();
@@ -414,13 +444,19 @@ public class ZebraGameController : MonoBehaviour
             return;
         }
 
+        ReturnSelectedCardToHand("Card play cancelled.", "已取消打牌。");
+    }
+
+    // 取消当前卡牌操作并恢复玩家继续选择手牌的状态。
+    private void ReturnSelectedCardToHand(string englishStatus, string chineseStatus)
+    {
         ClearSelection();
         mPhase = GamePhase.PlayerAction;
         foreach (LocationView location in mLocations)
         {
             location.SetHighlighted(false);
         }
-        SetStatus("Card play cancelled.", "已取消打牌。");
+        SetStatus(englishStatus, chineseStatus);
         RefreshInterface();
     }
 

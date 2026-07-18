@@ -127,7 +127,7 @@ public class CardView : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        mController.OnHandCardClicked(this);
+        mController.OnHandCardClicked(this, eventData.button);
     }
 
     public void OnPointerEnter(PointerEventData eventData)

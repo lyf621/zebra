@@ -33,3 +33,10 @@ The `integrated-game-v2` Git tag identifies the tested language and pointer-inte
 - Cancel the current play and return the selected card to the hand when the player clicks an occupied location.
 
 The `integrated-game-v3` Git tag identifies the hand-layout and occupied-location fix.
+
+## Integrated Game V4
+
+- Right-click a selected card to cancel its selection and return it to the hand layout.
+- Return a card to the hand when no ministers remain, no matching empty location exists, or the player chooses an invalid location.
+
+The `integrated-game-v4` Git tag identifies the card-cancellation and unavailable-location fixes.
