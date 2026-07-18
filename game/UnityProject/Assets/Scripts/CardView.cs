@@ -58,6 +58,14 @@ public class CardView : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
     // 更新卡牌标题、说明和地点类型。
     public void SetTexts(bool useChinese)
     {
+        if (IntegrationPlaceholderMode.Enabled)
+        {
+            mTitle.text = "";
+            mDescription.text = "";
+            mLocation.text = "";
+            return;
+        }
+
         mTitle.text = useChinese ? Card.NameChinese : Card.NameEnglish;
         mDescription.text = useChinese ? Card.DescriptionChinese : Card.DescriptionEnglish;
         if (Card.IsRoyal)

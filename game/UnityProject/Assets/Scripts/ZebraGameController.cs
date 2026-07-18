@@ -181,9 +181,11 @@ public class ZebraGameController : MonoBehaviour
         background.texture = Resources.Load<Texture2D>("Art/PaperBackground");
         background.color = new Color(0.78f, 0.72f, 0.61f, 1f);
         background.raycastTarget = false;
+        background.enabled = !IntegrationPlaceholderMode.Enabled;
 
         Image shade = CreatePanel("Background Shade", canvasObject.transform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero, new Color(0.08f, 0.09f, 0.08f, 0.28f));
         shade.raycastTarget = false;
+        shade.enabled = !IntegrationPlaceholderMode.Enabled;
         CreatePanel("Top Bar", canvasObject.transform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0f, -35f), new Vector2(0f, 70f), new Color(0.09f, 0.11f, 0.1f, 0.94f));
 
         mStatsText = CreateText("Stats", canvasObject.transform, "", 17, FontStyle.Bold, TextAnchor.MiddleLeft, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(24f, -35f), new Vector2(570f, 44f), Color.white);
@@ -205,9 +207,9 @@ public class ZebraGameController : MonoBehaviour
         mSettingsButton.onClick.AddListener(OpenSettings);
 
         RectTransform boardLayer = CreateLayer("Board Layer", canvasObject.transform);
-        mLocations.Add(LocationView.Create(boardLayer, mFont, this, LocationType.Economy, "Village", "村庄", "Gold +1\nPO +1", "金币 +1\n民意 +1", new Vector2(-280f, 105f), new Color(0.18f, 0.43f, 0.31f)));
-        mLocations.Add(LocationView.Create(boardLayer, mFont, this, LocationType.Military, "Barracks", "兵营", "MS +2", "军力 +2", new Vector2(0f, 105f), new Color(0.55f, 0.22f, 0.19f)));
-        mLocations.Add(LocationView.Create(boardLayer, mFont, this, LocationType.Administration, "Council", "议会", "AL +2", "权威 +2", new Vector2(280f, 105f), new Color(0.25f, 0.34f, 0.47f)));
+        mLocations.Add(LocationView.Create(boardLayer, mFont, this, LocationType.Economy, "Village", "村庄", IntegrationPlaceholderMode.Enabled ? "" : "Gold +1\nPO +1", IntegrationPlaceholderMode.Enabled ? "" : "金币 +1\n民意 +1", new Vector2(-280f, 105f), new Color(0.18f, 0.43f, 0.31f)));
+        mLocations.Add(LocationView.Create(boardLayer, mFont, this, LocationType.Military, "Barracks", "兵营", IntegrationPlaceholderMode.Enabled ? "" : "MS +2", IntegrationPlaceholderMode.Enabled ? "" : "军力 +2", new Vector2(0f, 105f), new Color(0.55f, 0.22f, 0.19f)));
+        mLocations.Add(LocationView.Create(boardLayer, mFont, this, LocationType.Administration, "Council", "议会", IntegrationPlaceholderMode.Enabled ? "" : "AL +2", IntegrationPlaceholderMode.Enabled ? "" : "权威 +2", new Vector2(280f, 105f), new Color(0.25f, 0.34f, 0.47f)));
 
         mStatusText = CreateText("Status", canvasObject.transform, "", 16, FontStyle.Bold, TextAnchor.MiddleCenter, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, -82f), new Vector2(700f, 38f), new Color(1f, 0.95f, 0.78f));
         mInHandText = CreateText("In Hand", canvasObject.transform, "IN HAND", 15, FontStyle.Bold, TextAnchor.MiddleCenter, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0f, 18f), new Vector2(240f, 28f), Color.white);
@@ -263,6 +265,16 @@ public class ZebraGameController : MonoBehaviour
 
     private CardModel CreateCard(string nameEnglish, string nameChinese, string descriptionEnglish, string descriptionChinese, LocationType location, RetainEffectType retainEffect, bool isRoyal)
     {
+        if (IntegrationPlaceholderMode.Enabled)
+        {
+            nameEnglish = "";
+            nameChinese = "";
+            descriptionEnglish = "";
+            descriptionChinese = "";
+            location = LocationType.Any;
+            retainEffect = RetainEffectType.None;
+            isRoyal = false;
+        }
         return new CardModel { InstanceId = mNextCardId++, NameEnglish = nameEnglish, NameChinese = nameChinese, DescriptionEnglish = descriptionEnglish, DescriptionChinese = descriptionChinese, Location = location, RetainEffect = retainEffect, IsRoyal = isRoyal };
     }
 
@@ -408,7 +420,7 @@ public class ZebraGameController : MonoBehaviour
         location.SetOccupied(true);
         mMinistersLeft--;
         ApplyLocationEffect(location.Type);
-        SetStatus(location.Type + " location effect resolved.", GetLocationChinese(location.Type) + "地点效果已结算。");
+        SetStatus(IntegrationPlaceholderMode.Enabled ? "Card played with no effect." : location.Type + " location effect resolved.", IntegrationPlaceholderMode.Enabled ? "卡牌已打出，不产生效果。" : GetLocationChinese(location.Type) + "地点效果已结算。");
         RefreshInterface();
         yield return new WaitForSeconds(0.34f);
         yield return MoveRectRoutine(view.RectTransform, GetCanvasPosition(mDiscardPileButton.GetComponent<RectTransform>()), 0.18f, 26f);
@@ -422,6 +434,11 @@ public class ZebraGameController : MonoBehaviour
     // 复用 Round Demo 的资源变化思路结算三个地点。
     private void ApplyLocationEffect(LocationType locationType)
     {
+        if (IntegrationPlaceholderMode.Enabled)
+        {
+            return;
+        }
+
         if (locationType == LocationType.Economy)
         {
             mGold++;
@@ -503,6 +520,12 @@ public class ZebraGameController : MonoBehaviour
 
     private void ApplyRetainEffect(CardModel card)
     {
+        if (IntegrationPlaceholderMode.Enabled)
+        {
+            SetStatus("Retained card revealed with no effect.", "保留卡牌已展示，不产生效果。");
+            return;
+        }
+
         if (card.RetainEffect == RetainEffectType.PublicOpinionUp)
         {
             mPublicOpinion = Mathf.Clamp(mPublicOpinion + 1, 0, 10);
@@ -911,6 +934,11 @@ public class ZebraGameController : MonoBehaviour
 
     private string GetCardTypeText(CardModel card)
     {
+        if (IntegrationPlaceholderMode.Enabled)
+        {
+            return "";
+        }
+
         if (card.IsRoyal)
         {
             return mUseChinese ? "皇家牌" : "ROYAL";
