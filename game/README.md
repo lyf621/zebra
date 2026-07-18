@@ -40,3 +40,11 @@ The `integrated-game-v3` Git tag identifies the hand-layout and occupied-locatio
 - Return a card to the hand when no ministers remain, no matching empty location exists, or the player chooses an invalid location.
 
 The `integrated-game-v4` Git tag identifies the card-cancellation and unavailable-location fixes.
+
+## 队友对接清单
+
+1. 在 `Assets/Scripts/IntegrationPlaceholderMode.cs` 中将 `Enabled` 改为 `false`。
+2. 在 `ZebraGameController.CreateInitialCards()` 中替换临时初始牌库和可购买的皇家牌数据。
+3. 在 `ZebraGameController.BuildInterface()` 的三个 `LocationView.Create(...)` 调用中替换地块名称、位置、视觉和说明。
+4. 在 `ZebraGameController.ApplyLocationEffect()` 中接入地块触发的资源变化。
+5. 在 `ZebraGameController.ApplyRetainEffect()` 中接入手牌保留时的资源变化。
