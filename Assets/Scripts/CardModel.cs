@@ -5,6 +5,7 @@ public enum LocationType
     Economy,
     Military,
     Administration,
+    Diplomacy,
     Any
 }
 
@@ -26,4 +27,9 @@ public class CardModel
     public LocationType Location;
     public RetainEffectType RetainEffect;
     public bool IsRoyal;
+
+    // Temporary reveal-phase economy (copied from CardSO).
+    public int MajestyCost;    // Majesty needed to buy this card
+    public int MajestyGain;    // Majesty granted when revealed (left unplayed)
+    public int FightGain;      // Fight granted when revealed (left unplayed)
 }
