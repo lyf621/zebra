@@ -17,6 +17,6 @@ public static class WebGLBuilder
         }
 
         Directory.CreateDirectory(outputPath);
-        BuildPipeline.BuildPlayer(new BuildPlayerOptions { scenes = new[] { "Assets/Scenes/MainGame.unity" }, locationPathName = outputPath, target = BuildTarget.WebGL, options = BuildOptions.None });
+        BuildPipeline.BuildPlayer(new BuildPlayerOptions { scenes = new[] { "Assets/Scenes/MainMap.unity" }, locationPathName = outputPath, target = BuildTarget.WebGL, options = BuildOptions.None });
     }
 }

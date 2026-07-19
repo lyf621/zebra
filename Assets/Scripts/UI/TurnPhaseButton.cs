@@ -19,6 +19,7 @@ public class TurnPhaseButton : MonoBehaviour
 
     private void Awake()
     {
+        if (Turns == null) Turns = FindAnyObjectByType<TurnController>();
         if (Events == null) Events = FindAnyObjectByType<EventManager>();
         if (Missions == null) Missions = FindAnyObjectByType<MissionManager>();
         if (Cards == null) Cards = FindAnyObjectByType<ZebraGameController>();
@@ -56,7 +57,7 @@ public class TurnPhaseButton : MonoBehaviour
         {
             if (Missions != null) Missions.EndMission();
             Turns.EndTurn();            // resets phase to 0, refills ministers
-            if (Cards != null) Cards.StartTurnHand();   // draw next turn's hand right away
+            if (!Turns.IsGameOver() && Cards != null) Cards.StartTurnHand();   // draw next turn's hand right away
         }
     }
 }

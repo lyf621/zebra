@@ -129,6 +129,7 @@ public class StatManager : MonoBehaviour
 
     public int GetMajesty() { return Majesty; }
     public int GetFight() { return Fight; }
+    public int GetMaxStat() { return MaxStat; }
 
     public void UpdateMajesty(int x) { Majesty += x; }
     public void UpdateFight(int x) { Fight += x; }

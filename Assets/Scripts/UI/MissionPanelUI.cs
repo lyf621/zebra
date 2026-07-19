@@ -74,6 +74,7 @@ public class MissionPanelUI : MonoBehaviour
             Button btn = go.GetComponentInChildren<Button>();
             if (btn != null)
             {
+                GameUITheme.StyleButton(btn);
                 btn.onClick.RemoveAllListeners();
                 btn.onClick.AddListener(() => manager.OnResolutionSelected(capturedIndex));
             }
