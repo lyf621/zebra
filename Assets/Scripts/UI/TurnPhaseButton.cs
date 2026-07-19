@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 /// <summary>
 /// Single button that drives the turn phases.
@@ -16,6 +17,7 @@ public class TurnPhaseButton : MonoBehaviour
     [SerializeField] private EventManager Events;
     [SerializeField] private MissionManager Missions;
     [SerializeField] private ZebraGameController Cards;
+    private Button PhaseButton;
 
     private void Awake()
     {
@@ -23,6 +25,15 @@ public class TurnPhaseButton : MonoBehaviour
         if (Events == null) Events = FindAnyObjectByType<EventManager>();
         if (Missions == null) Missions = FindAnyObjectByType<MissionManager>();
         if (Cards == null) Cards = FindAnyObjectByType<ZebraGameController>();
+        PhaseButton = GetComponent<Button>();
+    }
+
+    private void Update()
+    {
+        if (PhaseButton == null || Turns == null) return;
+        bool decisionOpen = (Events != null && Events.IsAwaitingChoice()) || (Missions != null && Missions.IsAwaitingChoice());
+        bool cardsReady = Cards == null || Turns.CheckTurnPhase() == 3 || Cards.CanAdvanceTurnPhase();
+        PhaseButton.interactable = !Turns.IsGameOver() && !decisionOpen && cardsReady;
     }
 
     public void HandleTurnPhase()
@@ -30,6 +41,7 @@ public class TurnPhaseButton : MonoBehaviour
         // Force the player to finish the current decision before the phase can move on.
         if (Events != null && Events.IsAwaitingChoice()) return;
         if (Missions != null && Missions.IsAwaitingChoice()) return;
+        if (Cards != null && Turns.CheckTurnPhase() != 3 && !Cards.CanAdvanceTurnPhase()) return;
 
         int phase = Turns.CheckTurnPhase();
 

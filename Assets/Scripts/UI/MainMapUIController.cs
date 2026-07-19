@@ -8,7 +8,10 @@ public class MainMapUIController : MonoBehaviour
     private StatManager mStats;
     private TurnController mTurns;
     private ZebraGameController mCards;
+    private EventManager mEvents;
+    private MissionManager mMissions;
     private Text mHudText;
+    private Button mShowMissionButton;
 
     // 确保场景中只有一个 UI 完善控制器；由 TurnController 启动时调用。
     public static MainMapUIController EnsureExists()
@@ -27,6 +30,8 @@ public class MainMapUIController : MonoBehaviour
         mStats = FindAnyObjectByType<StatManager>();
         mTurns = FindAnyObjectByType<TurnController>();
         mCards = FindAnyObjectByType<ZebraGameController>();
+        mEvents = FindAnyObjectByType<EventManager>();
+        mMissions = FindAnyObjectByType<MissionManager>();
 
         Canvas canvas = FindSceneCanvas();
         if (canvas == null)
@@ -66,6 +71,8 @@ public class MainMapUIController : MonoBehaviour
         }
 
         if (mCards == null) mCards = FindAnyObjectByType<ZebraGameController>();
+        bool decisionOpen = (mEvents != null && mEvents.IsAwaitingChoice()) || (mMissions != null && mMissions.IsAwaitingChoice());
+        if (mShowMissionButton != null) mShowMissionButton.interactable = mMissions != null && mMissions.HasMission() && !decisionOpen && (mCards == null || !mCards.IsDecisionReviewMode) && !mTurns.IsGameOver();
         bool chinese = mCards != null && mCards.UseChinese;
         if (chinese)
         {
@@ -137,6 +144,7 @@ public class MainMapUIController : MonoBehaviour
     {
         Transform nextPhase = FindDescendant(canvasTransform, "NextPhaseButton");
         Transform showMission = FindDescendant(canvasTransform, "ShowMissionButton");
+        if (showMission != null) mShowMissionButton = showMission.GetComponent<Button>();
         ConfigureMainButton(nextPhase, new Vector2(-22f, -106f));
         ConfigureMainButton(showMission, new Vector2(-22f, -160f));
     }
