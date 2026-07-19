@@ -24,6 +24,9 @@ public class EventPanelUI : MonoBehaviour
     [SerializeField] private GameObject optionButtonPrefab;
 
     private readonly List<GameObject> spawnedButtons = new List<GameObject>();
+    private EventSO currentEvent;
+    private EventManager currentManager;
+    private ZebraGameController cards;
 
     private void Awake()
     {
@@ -31,13 +34,25 @@ public class EventPanelUI : MonoBehaviour
         if (panelRoot != null) panelRoot.SetActive(false);
     }
 
+    private void Start()
+    {
+        cards = FindAnyObjectByType<ZebraGameController>();
+        if (cards != null) cards.LanguageChanged += RefreshLanguage;
+    }
+
+    private void OnDestroy()
+    {
+        if (cards != null) cards.LanguageChanged -= RefreshLanguage;
+    }
+
     /// <summary>Populate and show the panel for the given event.</summary>
     public void Show(EventSO ev, EventManager manager)
     {
         if (ev == null || manager == null) return;
 
-        if (titleText != null) titleText.text = ev.eventTitle;
-        if (descriptionText != null) descriptionText.text = ev.eventDescription;
+        currentEvent = ev;
+        currentManager = manager;
+        ApplyTexts();
 
         BuildOptions(ev, manager);
 
@@ -49,6 +64,8 @@ public class EventPanelUI : MonoBehaviour
     {
         ClearButtons();
         if (panelRoot != null) panelRoot.SetActive(false);
+        currentEvent = null;
+        currentManager = null;
     }
 
     private void BuildOptions(EventSO ev, EventManager manager)
@@ -65,7 +82,7 @@ public class EventPanelUI : MonoBehaviour
             spawnedButtons.Add(go);
 
             TMP_Text label = go.GetComponentInChildren<TMP_Text>();
-            if (label != null) label.text = option.buttonText;
+            if (label != null) label.text = option.GetButtonText(cards != null && cards.UseChinese);
 
             Button btn = go.GetComponentInChildren<Button>();
             if (btn != null)
@@ -76,6 +93,26 @@ public class EventPanelUI : MonoBehaviour
             }
         }
     }
+
+    // 切换语言时立即刷新当前事件与选项，无需关闭事件界面。
+    private void RefreshLanguage(bool chinese)
+    {
+        if (currentEvent == null || currentManager == null) return;
+        ApplyTexts();
+        BuildOptions(currentEvent, currentManager);
+    }
+
+    // 使用当前语言填充标题和说明。
+    private void ApplyTexts()
+    {
+        if (currentEvent == null) return;
+        bool chinese = cards != null && cards.UseChinese;
+        if (titleText != null) titleText.text = currentEvent.GetTitle(chinese);
+        if (descriptionText != null) descriptionText.text = currentEvent.GetDescription(chinese);
+    }
+
+    // 半返回控制器用此方法暂时隐藏或恢复事件界面，不清除玩家尚未选择的按钮。
+    public void SetVisibleForReview(bool visible) { if (panelRoot != null) panelRoot.SetActive(visible); }
 
     private void ClearButtons()
     {

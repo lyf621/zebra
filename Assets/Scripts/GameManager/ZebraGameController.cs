@@ -71,6 +71,7 @@ public class ZebraGameController : MonoBehaviour
     private int mNextCardId = 1;
     private int mRoundNumber = 1;
     private bool mUseChinese = false;
+    private bool mDecisionReviewMode = false;
 
     // Card play is driven by the map turn:
     //   mCardPhaseActive = the card board is up with a hand drawn (Phases 0-2).
@@ -92,10 +93,13 @@ public class ZebraGameController : MonoBehaviour
     [SerializeField] private TurnController mTurns;
 
     public bool UseChinese => mUseChinese;
+    public event System.Action<bool> LanguageChanged;
+    public bool IsDecisionReviewMode => mDecisionReviewMode;
 
     private void Start()
     {
         ResolveBaseReferences();
+        mIntegrated = mTurns != null;
         mFont = Resources.Load<Font>("Fonts/NotoSansSC");
         if (mFont == null)
         {
@@ -104,7 +108,6 @@ public class ZebraGameController : MonoBehaviour
         BuildInterface();
         CreateInitialCards();
         RefreshInterface();
-        mIntegrated = mTurns != null;
         if (mIntegrated)
         {
             // Integrated: the map turn drives the card flow. Draw the first turn's hand now so
@@ -150,6 +153,29 @@ public class ZebraGameController : MonoBehaviour
         ShowCardInterface(true);
         StartCoroutine(StartRoundRoutine());   // draw this turn's hand
     }
+
+    // 决策期间切换只读查看模式；允许查看牌堆和设置，但禁止出牌、买牌与删牌。
+    public void SetDecisionReviewMode(bool reviewing)
+    {
+        mDecisionReviewMode = reviewing;
+        if (reviewing)
+        {
+            ClearSelection();
+            ShowCardInterface(true);
+            SetStatus("Review mode: cards and locations are view-only.", "查看模式：只能查看卡牌和地块，不能执行操作。");
+        }
+        else if (!mCardPhaseActive)
+        {
+            ShowCardInterface(false);
+        }
+        RefreshInterface();
+    }
+
+    // 接收地图控制器创建的队友地块实例，供卡牌匹配与高亮使用。
+    public void SetLocations(ClickOnLocation[] locations) { mLocations = locations; }
+
+    // 阶段按钮调用此方法，确保动画、弹窗、设置或选地点时不能推进流程。
+    public bool CanAdvanceTurnPhase() { return !mDecisionReviewMode && mPhase == GamePhase.PlayerAction && mOverlay == null && mSettingsOverlay == null; }
 
     // Turn Phase 1: the event is resolved, so let the player play the hand already drawn.
     public void EnableCardPlay()
@@ -213,7 +239,7 @@ public class ZebraGameController : MonoBehaviour
     // 左键选中或打出卡牌，右键取消当前选中的卡牌。
     public void OnHandCardClicked(CardView cardView, PointerEventData.InputButton button)
     {
-        if (mOverlay != null || mSettingsOverlay != null || mPhase != GamePhase.PlayerAction || (mIntegrated && !mCardPlayEnabled))
+        if (mDecisionReviewMode || mOverlay != null || mSettingsOverlay != null || mPhase != GamePhase.PlayerAction || (mIntegrated && !mCardPlayEnabled))
         {
             return;
         }
@@ -245,14 +271,14 @@ public class ZebraGameController : MonoBehaviour
     // 只有玩家行动阶段的未锁定手牌可以响应悬停效果。
     public bool CanHoverCard(CardView cardView)
     {
-        return mOverlay == null && mSettingsOverlay == null && mPhase == GamePhase.PlayerAction && (!mIntegrated || mCardPlayEnabled) && (mSelectedCardView == null || mSelectedCardView == cardView);
+        return !mDecisionReviewMode && mOverlay == null && mSettingsOverlay == null && mPhase == GamePhase.PlayerAction && (!mIntegrated || mCardPlayEnabled) && (mSelectedCardView == null || mSelectedCardView == cardView);
     }
 
     // Called by a scene ClickOnLocation when it is clicked while the player is playing a card.
     // Returns true if the card is accepted (so the location then occupies + fires its effect).
     public bool TryPlayCardOnLocation(ClickOnLocation location)
     {
-        if (mOverlay != null || mSettingsOverlay != null || mPhase != GamePhase.ChoosingLocation || mPendingCard == null)
+        if (mDecisionReviewMode || mOverlay != null || mSettingsOverlay != null || mPhase != GamePhase.ChoosingLocation || mPendingCard == null)
         {
             return false;
         }
@@ -265,6 +291,14 @@ public class ZebraGameController : MonoBehaviour
         if (!CardCanUseLocation(mPendingCard, location.GetLocationType()))
         {
             ReturnSelectedCardToHand("That location cannot use this card. Card returned to hand.", "该地点不能使用这张牌，卡牌已返回手牌。");
+            return false;
+        }
+
+        var gate = location.GetComponent<EntryCostCheck>();
+        if (gate != null && !gate.CanEnter())
+        {
+            ReturnSelectedCardToHand("You can't afford to enter that location.",
+                             "资源不足，无法进入该地点。");
             return false;
         }
 
@@ -300,11 +334,11 @@ public class ZebraGameController : MonoBehaviour
         background.texture = Resources.Load<Texture2D>("Art/PaperBackground");
         background.color = new Color(0.78f, 0.72f, 0.61f, 1f);
         background.raycastTarget = false;
-        background.enabled = !IntegrationPlaceholderMode.Enabled;
+        background.enabled = !mIntegrated && !IntegrationPlaceholderMode.Enabled;
 
         Image shade = CreatePanel("Background Shade", canvasObject.transform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero, new Color(0.08f, 0.09f, 0.08f, 0.28f));
         shade.raycastTarget = false;
-        shade.enabled = !IntegrationPlaceholderMode.Enabled;
+        shade.enabled = !mIntegrated && !IntegrationPlaceholderMode.Enabled;
         CreatePanel("Top Bar", canvasObject.transform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0f, -35f), new Vector2(0f, 70f), new Color(0.09f, 0.11f, 0.1f, 0.94f));
 
         mStatsText = CreateText("Stats", canvasObject.transform, "", 17, FontStyle.Bold, TextAnchor.MiddleLeft, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(24f, -35f), new Vector2(570f, 44f), Color.white);
@@ -505,7 +539,11 @@ public class ZebraGameController : MonoBehaviour
         {
             foreach (ClickOnLocation location in mLocations)
             {
-                bool canUseLocation = location.IsAvailable() && CardCanUseLocation(mPendingCard, location.GetLocationType());
+                var gate = location.GetComponent<EntryCostCheck>();
+                bool affordable = gate == null || gate.CanEnter();
+                bool canUseLocation = location.IsAvailable()
+                    && CardCanUseLocation(mPendingCard, location.GetLocationType())
+                    && affordable;
                 location.SetHighlighted(canUseLocation);
                 if (canUseLocation)
                 {
@@ -692,7 +730,7 @@ public class ZebraGameController : MonoBehaviour
 
     private bool CanOpenOverlay()
     {
-        return mOverlay == null && mSettingsOverlay == null && (mPhase == GamePhase.PlayerAction || mPhase == GamePhase.ChoosingLocation);
+        return mOverlay == null && mSettingsOverlay == null && (mDecisionReviewMode || mPhase == GamePhase.PlayerAction || mPhase == GamePhase.ChoosingLocation);
     }
 
     // 创建可用鼠标滚轮上下滚动的卡牌查看、删牌或购买界面。
@@ -963,6 +1001,10 @@ public class ZebraGameController : MonoBehaviour
 
         mSettingsOverlay = new GameObject("Settings Overlay", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
         mSettingsOverlay.transform.SetParent(mCanvasRect, false);
+        Canvas settingsCanvas = mSettingsOverlay.AddComponent<Canvas>();
+        settingsCanvas.overrideSorting = true;
+        settingsCanvas.sortingOrder = 500;
+        mSettingsOverlay.AddComponent<GraphicRaycaster>();
         RectTransform overlayRect = mSettingsOverlay.GetComponent<RectTransform>();
         StretchToParent(overlayRect);
         mSettingsOverlay.GetComponent<Image>().color = new Color(0.03f, 0.03f, 0.025f, 0.88f);
@@ -986,6 +1028,7 @@ public class ZebraGameController : MonoBehaviour
         CloseSettings();
         RefreshLocalizedInterface();
         RefreshInterface();
+        LanguageChanged?.Invoke(mUseChinese);
     }
 
     private void CloseSettings()
@@ -1035,8 +1078,8 @@ public class ZebraGameController : MonoBehaviour
         mRoundText.text = mUseChinese ? "第 " + mRoundNumber + " 回合    大臣 " + ministersLeft + "/" + maxMinisters : "ROUND " + mRoundNumber + "    MINISTERS " + ministersLeft + "/" + maxMinisters;
         mDrawCountText.text = mDrawPile.Count.ToString();
         mDiscardCountText.text = mDiscardPile.Count.ToString();
-        bool playerAction = mPhase == GamePhase.PlayerAction && mOverlay == null && mSettingsOverlay == null;
-        bool canView = mOverlay == null && mSettingsOverlay == null && (mPhase == GamePhase.PlayerAction || mPhase == GamePhase.ChoosingLocation);
+        bool playerAction = !mDecisionReviewMode && mPhase == GamePhase.PlayerAction && mOverlay == null && mSettingsOverlay == null;
+        bool canView = mOverlay == null && mSettingsOverlay == null && (mDecisionReviewMode || mPhase == GamePhase.PlayerAction || mPhase == GamePhase.ChoosingLocation);
         bool buyAllowed = mIntegrated ? (playerAction && mBuyingEnabled) : playerAction;
         mBuyButton.interactable = buyAllowed && mMarketCards.Count > 0;
         mDeleteButton.interactable = buyAllowed && mOwnedCards.Count > 0;

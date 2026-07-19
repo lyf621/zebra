@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5833458f6ad86394ea697a12cf869edf, type: 3}
+  m_Name: Offence2
+  m_EditorClassIdentifier: Assembly-CSharp::MissionSO
+  missionTitle: Retaliate
+  missionDescription: If we intend to prevent future conflicts, we mustn't look weak.
+    A comprehensive counter strike shall make them think twice next time!
+  missionTitleChinese: "\u56DE\u51FB"
+  missionDescriptionChinese: "\u4E3A\u4E86\u9884\u9632\u672A\u6765\u7684\u51B2\u7A81\uFF0C\u6211\u4EEC\u7EDD\u4E0D\u80FD\u793A\u5F31\u3002\u4E00\u573A\u5168\u9762\u53CD\u51FB\u4F1A\u8BA9\u4ED6\u4EEC\u4E0B\u6B21\u4E09\u601D\u800C\u540E\u884C\uFF01"
+  possibleResolutions:
+  - buttonText: Accept
+    buttonTextChinese: "\u63A5\u53D7"
+    resolutionEffect:
+      gold: 0
+      po: 0
+      ms: 0
+      al: 0
+      kr: 0
+      cr: 0
+      ar: 0
+    isFailure: 0
+  - buttonText: Reject
+    buttonTextChinese: "\u62D2\u7EDD"
+    resolutionEffect:
+      gold: 0
+      po: 0
+      ms: 0
+      al: 0
+      kr: 0
+      cr: 0
+      ar: 0
+    isFailure: 1

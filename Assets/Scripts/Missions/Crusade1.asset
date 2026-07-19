@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5833458f6ad86394ea697a12cf869edf, type: 3}
+  m_Name: Crusade1
+  m_EditorClassIdentifier: Assembly-CSharp::MissionSO
+  missionTitle: Send Crusaders
+  missionDescription: To fight in sacred battles is an obligation of all believers.
+    We must fufil that obligation. God wills it!
+  missionTitleChinese: "\u6D3E\u51FA\u5341\u5B57\u519B"
+  missionDescriptionChinese: "\u53C2\u52A0\u795E\u5723\u7684\u6218\u6597\u662F\u6240\u6709\u4FE1\u5F92\u7684\u4E49\u52A1\u3002\u6211\u4EEC\u5FC5\u987B\u5C65\u884C\u8FD9\u9879\u4E49\u52A1\u3002\u6B64\u4E43\u5929\u610F\uFF01"
+  possibleResolutions:
+  - buttonText: Accept
+    buttonTextChinese: "\u63A5\u53D7"
+    resolutionEffect:
+      gold: 0
+      po: 0
+      ms: 0
+      al: 0
+      kr: 0
+      cr: 0
+      ar: 0
+    isFailure: 0
+  - buttonText: Reject
+    buttonTextChinese: "\u62D2\u7EDD"
+    resolutionEffect:
+      gold: 0
+      po: 0
+      ms: 0
+      al: 0
+      kr: 0
+      cr: 0
+      ar: 0
+    isFailure: 1

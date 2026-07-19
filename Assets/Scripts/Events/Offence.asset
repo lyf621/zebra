@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f7837c2f07c3cd4b906c4ed98d0c167, type: 3}
+  m_Name: Offence
+  m_EditorClassIdentifier: Assembly-CSharp::EventSO
+  eventTitle: Offence!
+  eventDescription: Scouts reported an offence from another noble house. A remote
+    village was raided. We could solve the problem diplomatically, or we could retaliate
+    and display strength.
+  eventTitleChinese: "\u88AD\u6270\uFF01"
+  eventDescriptionChinese: "\u65A5\u5019\u62A5\u544A\u53E6\u4E00\u4E2A\u8D35\u65CF\u5BB6\u65CF\u4FB5\u72AF\u4E86\u6211\u4EEC\u7684\u9886\u5730\u3002\u4E00\u4E2A\u504F\u8FDC\u7684\u6751\u5E84\u906D\u5230\u88AD\u51FB\u3002\u6211\u4EEC\u53EF\u4EE5\u5C1D\u8BD5\u7528\u5916\u4EA4\u624B\u6BB5\u89E3\u51B3\u95EE\u9898\uFF0C\u6216\u8005\u6211\u4EEC\u4E5F\u53EF\u4EE5\u56DE\u51FB\u5E76\u5C55\u793A\u5B9E\u529B\u3002"
+  availableOptions:
+  - buttonText: Be Diplomatic
+    buttonTextChinese: "\u5916\u4EA4"
+    immediateEffect:
+      gold: 0
+      po: 0
+      ms: 0
+      al: 0
+      kr: 0
+      cr: 0
+      ar: 0
+    linkedMission: {fileID: 11400000, guid: 09a55f244204b5141842f8666f87f10c, type: 2}
+  - buttonText: Retaliate
+    buttonTextChinese: "\u56DE\u51FB"
+    immediateEffect:
+      gold: 0
+      po: 0
+      ms: 0
+      al: 0
+      kr: 0
+      cr: 0
+      ar: 0
+    linkedMission: {fileID: 11400000, guid: b8f90bce4cf1f1f44a78dceca79012c0, type: 2}

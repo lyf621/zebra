@@ -104,6 +104,12 @@ public class MissionPanelUI : MonoBehaviour
         if (panelRoot != null) panelRoot.SetActive(!panelRoot.activeSelf);
     }
 
+    // 决策查看控制器用此方法暂时隐藏或恢复任务界面，不清除玩家尚未选择的按钮。
+    public void SetVisibleForReview(bool visible)
+    {
+        if (panelRoot != null) panelRoot.SetActive(visible);
+    }
+
     private void ClearButtons()
     {
         foreach (GameObject go in spawnedButtons)

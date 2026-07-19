@@ -19,6 +19,7 @@ public class TurnController : MonoBehaviour
     private int TurnPhase = 0;
     private int MinistersLeft;
     private bool GameEnded = false;
+    private ZebraGameController Cards;
     public ClickOnLocation[] LocationList;
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -27,6 +28,9 @@ public class TurnController : MonoBehaviour
         if (Stats == null) Stats = FindAnyObjectByType<StatManager>();
         if (Ending == null) Ending = GameEndingController.EnsureExists();
         MainMapUIController.EnsureExists();
+        DecisionReviewController.EnsureExists();
+        Cards = FindAnyObjectByType<ZebraGameController>();
+        RegisterSceneLocations();
         TurnCount = 1;
         MinistersLeft = MaxMinisters;
     }
@@ -54,6 +58,19 @@ public class TurnController : MonoBehaviour
     public int GetTurnCount() { return TurnCount; }
     public int GetMaxTurnCount() { return MaxTurns; }
     public bool IsGameOver() { return GameEnded; }
+    public void SetLocations(ClickOnLocation[] locations)
+    {
+        LocationList = locations;
+        if (Cards == null) Cards = FindAnyObjectByType<ZebraGameController>();
+        if (Cards != null) Cards.SetLocations(LocationList);
+    }
+
+    // 自动收集队友在场景中摆放的地块，不改变它们的位置、数量或外观。
+    private void RegisterSceneLocations()
+    {
+        LocationList = FindObjectsByType<ClickOnLocation>(FindObjectsSortMode.None);
+        if (Cards != null) Cards.SetLocations(LocationList);
+    }
 
     // 结束当前回合；第十回合直接结算胜负，其他回合继续执行原有重置流程。
     public void EndTurn()
@@ -71,15 +88,13 @@ public class TurnController : MonoBehaviour
         Stats.ClearTurnStat();
         RestoreMinister();
         TurnCount++;
-        foreach (var tile in LocationList)
-            tile.ResetObject();
+        if (LocationList != null) foreach (var tile in LocationList) if (tile != null) tile.ResetObject();
         TurnPhase = 0;
     }
 
     public void MovesRunOut()
     {
-        foreach (var tile in LocationList)
-            tile.DisableObject();
+        if (LocationList != null) foreach (var tile in LocationList) if (tile != null) tile.DisableObject();
     }
 
     public void NextTurnPhase() { TurnPhase ++; }
@@ -87,11 +102,12 @@ public class TurnController : MonoBehaviour
 
     public string UpdateTurnPhase()
     {
-        if (GameEnded) return "Game Over";
-        if(TurnPhase == 0) return "Next:Event";
-        if(TurnPhase == 1) return "Next:Reveal";
-        if(TurnPhase == 2) return "Next:Mission";
-        if(TurnPhase == 3) return "EndTurn";
+        bool chinese = Cards != null && Cards.UseChinese;
+        if (GameEnded) return chinese ? "游戏结束" : "Game Over";
+        if(TurnPhase == 0) return chinese ? "开始事件" : "Begin Event";
+        if(TurnPhase == 1) return chinese ? "结束出牌并揭示" : "Reveal Hand";
+        if(TurnPhase == 2) return chinese ? "结束买牌并处理任务" : "Resolve Mission";
+        if(TurnPhase == 3) return chinese ? "结束回合" : "End Turn";
         return "???";
     }
 }
