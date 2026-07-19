@@ -27,5 +27,6 @@ GitHub Pages files are stored under `docs/`.
 Published integrated game: `main@a4a47b3`, built with Unity `6000.5.3f1` on 2026-07-19.
 
 - [Integrated Game](https://lyf621.github.io/zebra/game/)
+- [Before UI and Ending](https://lyf621.github.io/zebra/game-before-ui-ending/)
 - [Prototype 01: Card Turn Cycle](docs/prototypes/01-card-turn-cycle/)
 - [Prototype 02: Card Play and Reveal](docs/prototypes/02-card-play-reveal/)
