@@ -19,6 +19,12 @@ public class ClickOnLocation : MonoBehaviour, IPointerClickHandler
     [SerializeField] private TurnController Turns;
     [SerializeField] private ZebraGameController Cards;
 
+    [Header("右键信息浮窗（手动填写；中文留空则回退英文）")]
+    [SerializeField] private string infoName;
+    [SerializeField] private string infoNameChinese;
+    [TextArea][SerializeField] private string infoDescription;
+    [TextArea][SerializeField] private string infoDescriptionChinese;
+
     private Collider2D collider2D;
     private SpriteRenderer spriteRenderer;
     private bool hasBeenClicked = false;
@@ -37,6 +43,13 @@ public class ClickOnLocation : MonoBehaviour, IPointerClickHandler
     // IPointerClickHandler 接口实现
     public void OnPointerClick(PointerEventData eventData)
     {
+        // 右键任意时刻显示地点信息浮窗（即使该地点已被占用）。
+        if (eventData.button == PointerEventData.InputButton.Right)
+        {
+            ShowInfoPopup(eventData.position);
+            return;
+        }
+
         if (hasBeenClicked) return; // 已经触发过，忽略
 
         // 卡牌驱动：只有当玩家正在打出一张匹配的卡牌时，这个地点才会响应。
@@ -75,9 +88,27 @@ public class ClickOnLocation : MonoBehaviour, IPointerClickHandler
         if (spriteRenderer != null)
             spriteRenderer.color = clickedColor;
 
-        // 3. 禁用碰撞器，阻止后续射线检测（彻底关闭交互）
-        if (collider2D != null)
-            collider2D.enabled = false;
+        // 3. 保持碰撞器启用，使被占用的地点仍能被右键查看信息；
+        //    再次出牌由 hasBeenClicked / IsAvailable() 拦截。
+    }
+
+    // 右键：在鼠标旁弹出地点信息浮窗（名称 + 描述）。
+    private void ShowInfoPopup(Vector2 screenPos)
+    {
+        bool chinese = Cards != null && Cards.UseChinese;
+        LocationInfoPopup.EnsureExists().Show(GetInfoName(chinese), GetInfoDescription(chinese), screenPos);
+    }
+
+    public string GetInfoName(bool chinese)
+    {
+        if (chinese && !string.IsNullOrEmpty(infoNameChinese)) return infoNameChinese;
+        return infoName;
+    }
+
+    public string GetInfoDescription(bool chinese)
+    {
+        if (chinese && !string.IsNullOrEmpty(infoDescriptionChinese)) return infoDescriptionChinese;
+        return infoDescription;
     }
 
     // 高亮当前所选卡牌可以放置的地点（由卡牌系统调用）。

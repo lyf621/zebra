@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f7837c2f07c3cd4b906c4ed98d0c167, type: 3}
+  m_Name: Corruption
+  m_EditorClassIdentifier: Assembly-CSharp::EventSO
+  eventTitle: Corruption!
+  eventDescription: The city council protested that severe corruption plagued the
+    citizens. This is due to our declining authority. We need to address the problem,
+    whether by ourselves or with external help.
+  eventTitleChinese: "\u8150\u8D25\uFF01"
+  eventDescriptionChinese: "\u5E02\u8BAE\u4F1A\u6297\u8BAE\u79F0\u4E25\u91CD\u7684\u8150\u8D25\u95EE\u9898\u6DF1\u6DF1\u56F0\u6270\u7740\u5E02\u6C11\u3002\u8FD9\u662F\u6211\u4EEC\u4E0D\u65AD\u4E0B\u6ED1\u7684\u6743\u5A01\u5BFC\u81F4\u7684\u3002\u6211\u4EEC\u9700\u8981\u89E3\u51B3\u8FD9\u4E2A\u95EE\u9898\uFF0C\u4E0D\u7BA1\u662F\u9760\u6211\u4EEC\u81EA\u5DF1\u8FD8\u662F\u501F\u52A9\u5916\u529B\u3002"
+  availableOptions:
+  - buttonText: Anti-Corruption Campaign
+    buttonTextChinese: "\u53CD\u8150\u8D25\u884C\u52A8"
+    immediateEffect:
+      gold: 0
+      po: 0
+      ms: 0
+      al: 0
+      kr: 0
+      cr: 0
+      ar: 0
+    linkedMission: {fileID: 11400000, guid: d54ea557d9aa9dc49a6b5acaab90105a, type: 2}
+  - buttonText: Ask for Royal Inspection
+    buttonTextChinese: "\u5BFB\u6C42\u7687\u5BA4\u76D1\u5BDF"
+    immediateEffect:
+      gold: 0
+      po: 0
+      ms: 0
+      al: 0
+      kr: 0
+      cr: 0
+      ar: 0
+    linkedMission: {fileID: 11400000, guid: 2974d2791503e144581680c10d9fe006, type: 2}

@@ -163,16 +163,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e022220addb59eb458794c4eef245652, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EventManager
-  eventPool:
-  - {fileID: 11400000, guid: e1e7fe5aebde8ab4387d12b78efc9deb, type: 2}
-  - {fileID: 11400000, guid: 8ba2e6619126d2f4283d144a4f9e93d7, type: 2}
-  - {fileID: 11400000, guid: 2535e82348d3a1d43945821ed6639c26, type: 2}
-  - {fileID: 11400000, guid: d11c55b54e29b21448afe4d3b2cd674d, type: 2}
-  - {fileID: 11400000, guid: dc92fe5053d802b42a5795af31f0f04b, type: 2}
+  eventPoolsByTurn:
+  - events: []
   eventPanel: {fileID: 1076121969}
   missionManager: {fileID: 907450760}
   stats: {fileID: 307285969}
   cards: {fileID: 210239227}
+  turns: {fileID: 639306590}
 --- !u!1001 &121919510
 PrefabInstance:
   m_ObjectHideFlags: 0

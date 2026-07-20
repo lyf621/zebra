@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f7837c2f07c3cd4b906c4ed98d0c167, type: 3}
+  m_Name: Celebration
+  m_EditorClassIdentifier: Assembly-CSharp::EventSO
+  eventTitle: Celebration!
+  eventDescription: The people are content with our administration. They're organizing
+    a celebration to express their gratitude. Perhaps we should join them?
+  eventTitleChinese: "\u6B22\u5E86\uFF01"
+  eventDescriptionChinese: "\u4EBA\u6C11\u5BF9\u6211\u4EEC\u7684\u6CBB\u7406\u76F8\u5F53\u6EE1\u610F\u3002\u4ED6\u4EEC\u6253\u7B97\u7EC4\u7EC7\u4E00\u573A\u5E86\u5178\u6765\u8868\u8FBE\u4ED6\u4EEC\u7684\u611F\u6FC0\u4E4B\u60C5\u3002\u4E5F\u8BB8\u6211\u4EEC\u5E94\u8BE5\u52A0\u5165\uFF1F"
+  availableOptions:
+  - buttonText: Of Course!
+    buttonTextChinese: "\u5F53\u7136\uFF01"
+    immediateEffect:
+      gold: 0
+      po: 0
+      ms: 0
+      al: 0
+      kr: 0
+      cr: 0
+      ar: 0
+    linkedMission: {fileID: 11400000, guid: 27fb0468800e77b4dada9f4cb4b0d091, type: 2}
+  - buttonText: Tax Them Instead
+    buttonTextChinese: "\u501F\u673A\u5F81\u7A0E"
+    immediateEffect:
+      gold: 0
+      po: 0
+      ms: 0
+      al: 0
+      kr: 0
+      cr: 0
+      ar: 0
+    linkedMission: {fileID: 11400000, guid: 87839196b1c58b24d8c0c1ae968f27f5, type: 2}
