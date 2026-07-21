@@ -361,7 +361,7 @@ public class ZebraGameController : MonoBehaviour
 
         // Locations are now scene-fixed 2D GameObjects (ClickOnLocation), not built here.
 
-        mStatusText = CreateText("Status", canvasObject.transform, "", 16, FontStyle.Bold, TextAnchor.MiddleCenter, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, -82f), new Vector2(700f, 38f), new Color(1f, 0.95f, 0.78f));
+        mStatusText = CreateText("Status", canvasObject.transform, "", 16, FontStyle.Bold, TextAnchor.MiddleCenter, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -120f), new Vector2(700f, 38f), new Color(1f, 0.95f, 0.78f));
         mInHandText = CreateText("In Hand", canvasObject.transform, "IN HAND", 15, FontStyle.Bold, TextAnchor.MiddleCenter, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0f, 18f), new Vector2(240f, 28f), Color.white);
 
         mDrawPileButton = CreatePileButton("Draw Pile", canvasObject.transform, "DECK", new Vector2(-550f, -128f), out mDrawCountText, out mDrawPileNameText);
@@ -1096,6 +1096,11 @@ public class ZebraGameController : MonoBehaviour
         mStatusEnglish = english;
         mStatusChinese = chinese;
         mStatusText.text = mUseChinese ? chinese : english;
+
+        // 第一回合：每次状态刷新都用带关闭按钮的模态面板强制展示，避免玩家忽略状态提示。
+        // (TurnController 起始回合计数为 1；开局早期可能为 0，故用 <= 1。)
+        if (mTurns != null && mTurns.GetTurnCount() <= 1)
+            StatusPopup.EnsureExists().Show(mUseChinese ? chinese : english, mUseChinese);
     }
 
     private string GetCardTypeText(CardModel card)

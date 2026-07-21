@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using TMPro;
 
 /// <summary>
@@ -22,6 +23,8 @@ public class MissionPanelUI : MonoBehaviour
     [SerializeField] private TMP_Text descriptionText;
     [Tooltip("Optional: shows the outcome text after a resolution is chosen.")]
     [SerializeField] private TMP_Text resultText;
+    [Tooltip("Optional: shows the full list of all resolutions and their stat changes on the panel.")]
+    [SerializeField] private TMP_Text resolutionPreviewText;
 
     [Header("Resolution buttons")]
     [Tooltip("Empty parent under which resolution buttons are spawned.")]
@@ -124,13 +127,37 @@ public class MissionPanelUI : MonoBehaviour
         if (currentResult != null) ApplyResultText();
     }
 
-    // 使用当前语言填充标题和说明。
+    // 使用当前语言填充标题、说明，以及面板上所有处理选项的数值变化清单。
     private void ApplyTexts()
     {
         if (currentMission == null) return;
         bool chinese = cards != null && cards.UseChinese;
         if (titleText != null) titleText.text = currentMission.GetTitle(chinese);
         if (descriptionText != null) descriptionText.text = currentMission.GetDescription(chinese);
+        if (resolutionPreviewText != null) resolutionPreviewText.text = BuildResolutionList(chinese);
+    }
+
+    // 列出当前任务的每个处理选项及其七项数值变化（直接显示在面板上）。
+    private string BuildResolutionList(bool chinese)
+    {
+        if (currentMission == null || currentMission.possibleResolutions == null) return string.Empty;
+        System.Text.StringBuilder sb = new System.Text.StringBuilder();
+        for (int i = 0; i < currentMission.possibleResolutions.Count; i++)
+        {
+            MissionResolution res = currentMission.possibleResolutions[i];
+            if (res == null) continue;
+            StatModifier e = res.resolutionEffect;
+            if (sb.Length > 0) sb.Append('\n');
+            sb.Append(res.GetButtonText(chinese)).Append('\n');
+            sb.Append("  Gold ").Append(Sign(e.gold))
+              .Append("   PO ").Append(Sign(e.po))
+              .Append("   MS ").Append(Sign(e.ms))
+              .Append("   AL ").Append(Sign(e.al))
+              .Append("   KR ").Append(Sign(e.kr))
+              .Append("   CR ").Append(Sign(e.cr))
+              .Append("   AR ").Append(Sign(e.ar));
+        }
+        return sb.ToString();
     }
 
     // 使用当前语言重建任务处理选项按钮。
@@ -160,8 +187,36 @@ public class MissionPanelUI : MonoBehaviour
                 btn.onClick.RemoveAllListeners();
                 btn.onClick.AddListener(() => manager.OnResolutionSelected(capturedIndex));
             }
+
+            // 悬停预览该处理选项的数值变化（与事件面板相同的浮窗）。
+            MissionResolution hovered = res;
+            EventTrigger trigger = go.GetComponent<EventTrigger>();
+            if (trigger == null) trigger = go.AddComponent<EventTrigger>();
+            trigger.triggers.Clear();
+            AddTrigger(trigger, EventTriggerType.PointerEnter, d => ShowResolutionPreview(hovered, ((PointerEventData)d).position));
+            AddTrigger(trigger, EventTriggerType.PointerExit, d => MissionPreviewTooltip.HideTooltip());
         }
     }
+
+    private void AddTrigger(EventTrigger trigger, EventTriggerType type, System.Action<BaseEventData> callback)
+    {
+        EventTrigger.Entry entry = new EventTrigger.Entry { eventID = type };
+        entry.callback.AddListener(d => callback(d));
+        trigger.triggers.Add(entry);
+    }
+
+    // 悬停某处理选项时，用与事件面板一致的浮窗显示其数值变化。
+    private void ShowResolutionPreview(MissionResolution res, Vector2 screenPos)
+    {
+        if (res == null) return;
+        bool chinese = cards != null && cards.UseChinese;
+        StatModifier e = res.resolutionEffect;
+        string body = "Gold " + Sign(e.gold) + "   PO " + Sign(e.po) + "   MS " + Sign(e.ms) + "   AL " + Sign(e.al) +
+                      "   KR " + Sign(e.kr) + "   CR " + Sign(e.cr) + "   AR " + Sign(e.ar);
+        MissionPreviewTooltip.EnsureExists().Show(res.GetButtonText(chinese), body, screenPos);
+    }
+
+    private string Sign(int v) { return (v > 0 ? "+" : "") + v; }
 
     // 使用当前语言填充结果文本。
     private void ApplyResultText()
@@ -177,6 +232,7 @@ public class MissionPanelUI : MonoBehaviour
 
     private void ClearButtons()
     {
+        MissionPreviewTooltip.HideTooltip();   // 清理/重建按钮时收起悬停预览
         foreach (GameObject go in spawnedButtons)
             if (go != null) Destroy(go);
         spawnedButtons.Clear();
