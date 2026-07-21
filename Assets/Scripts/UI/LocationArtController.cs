@@ -43,9 +43,18 @@ public sealed class LocationArtController : MonoBehaviour
 
             SpriteRenderer renderer = location.GetComponent<SpriteRenderer>();
             if (renderer == null) continue;
+
+            // The scene tiles have deliberate world-space dimensions. Preserve those before
+            // replacing their small placeholder sprites with high-resolution location art.
+            Vector2 originalWorldSize = renderer.bounds.size;
+            Vector3 worldScale = renderer.transform.lossyScale;
+            Vector2 localSize = new Vector2(
+                Mathf.Abs(worldScale.x) > Mathf.Epsilon ? originalWorldSize.x / Mathf.Abs(worldScale.x) : 1f,
+                Mathf.Abs(worldScale.y) > Mathf.Epsilon ? originalWorldSize.y / Mathf.Abs(worldScale.y) : 1f);
+
             renderer.sprite = sprite;
             renderer.drawMode = SpriteDrawMode.Sliced;
-            renderer.size = new Vector2(1f, 1f);
+            renderer.size = localSize;
             renderer.color = Color.white;
         }
     }

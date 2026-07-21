@@ -96,6 +96,17 @@ public class ZebraGameController : MonoBehaviour
     public event System.Action<bool> LanguageChanged;
     public bool IsDecisionReviewMode => mDecisionReviewMode;
 
+    private void Update()
+    {
+        if (!Input.GetKeyDown(KeyCode.Escape)) return;
+
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
+#endif
+    }
+
     private void Start()
     {
         ResolveBaseReferences();
