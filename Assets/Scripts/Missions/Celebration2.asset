@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5833458f6ad86394ea697a12cf869edf, type: 3}
+  m_Name: Celebration2
+  m_EditorClassIdentifier: Assembly-CSharp::MissionSO
+  missionTitle: Festive Tax
+  missionDescription: If our people can afford a festival, they sure can pay some
+    extra taxes. They wouldn't mind our reasonable requirement, would they?
+  missionTitleChinese: "\u8282\u65E5\u7A0E"
+  missionDescriptionChinese: "\u5982\u679C\u6211\u4EEC\u7684\u4EBA\u6C11\u6709\u94B1\u529E\u8282\u65E5\u5E86\u5178\uFF0C\u4ED6\u4EEC\u4E00\u5B9A\u4E5F\u4ED8\u5F97\u8D77\u4E00\u70B9\u989D\u5916\u7684\u7A0E\u91D1\u3002\u4ED6\u4EEC\u4E0D\u4F1A\u4ECB\u610F\u8FD9\u70B9\u5408\u7406\u7684\u8981\u6C42\uFF0C\u5BF9\u5427\uFF1F"
+  possibleResolutions:
+  - buttonText: Accept
+    buttonTextChinese: "\u63A5\u53D7"
+    resolutionEffect:
+      gold: 0
+      po: 0
+      ms: 0
+      al: 0
+      kr: 0
+      cr: 0
+      ar: 0
+    isFailure: 0
+  - buttonText: Reject
+    buttonTextChinese: "\u62D2\u7EDD"
+    resolutionEffect:
+      gold: 0
+      po: 0
+      ms: 0
+      al: 0
+      kr: 0
+      cr: 0
+      ar: 0
+    isFailure: 1

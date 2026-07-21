@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f7837c2f07c3cd4b906c4ed98d0c167, type: 3}
+  m_Name: Monumental
+  m_EditorClassIdentifier: Assembly-CSharp::EventSO
+  eventTitle: Monumental!
+  eventDescription: 'Now that our authority and control over the realm are stronger
+    than ever, we have the chance to complete a historic project: a canal that leads
+    our capital to the sea, or a castle that stands for centuries.'
+  eventTitleChinese: "\u4E0D\u673D\uFF01"
+  eventDescriptionChinese: "\u6211\u4EEC\u7684\u6743\u5A01\u548C\u5BF9\u9886\u5730\u7684\u63A7\u5236\u529B\u6BD4\u4EE5\u5F80\u7684\u4EFB\u4F55\u65F6\u5019\u90FD\u5F3A\uFF0C\u73B0\u5728\u6211\u4EEC\u6709\u673A\u4F1A\u5B8C\u6210\u4E00\u9879\u5386\u53F2\u6027\u7684\u5DE5\u7A0B\uFF1A\u4E00\u6761\u5C06\u6211\u4EEC\u7684\u9996\u90FD\u548C\u5927\u6D77\u8FDE\u63A5\u8D77\u6765\u7684\u8FD0\u6CB3\uFF0C\u6216\u8005\u4E00\u5EA7\u53EF\u4EE5\u5C79\u7ACB\u5343\u5E74\u7684\u57CE\u5821\u3002"
+  availableOptions:
+  - buttonText: The Canal
+    buttonTextChinese: "\u5927\u8FD0\u6CB3"
+    immediateEffect:
+      gold: 0
+      po: 0
+      ms: 0
+      al: 0
+      kr: 0
+      cr: 0
+      ar: 0
+    linkedMission: {fileID: 11400000, guid: 5f23c0cf3cf1fa44880defc710b0493e, type: 2}
+  - buttonText: The Castle
+    buttonTextChinese: "\u65B0\u57CE\u5821"
+    immediateEffect:
+      gold: 0
+      po: 0
+      ms: 0
+      al: 0
+      kr: 0
+      cr: 0
+      ar: 0
+    linkedMission: {fileID: 11400000, guid: 22563f3b00da7c94b99057f3ddbf226c, type: 2}

@@ -1126,6 +1126,10 @@ public class ZebraGameController : MonoBehaviour
         {
             return "行政";
         }
+        if (locationType == LocationType.Diplomacy)
+        {
+            return "外交";
+        }
         return "任意";
     }
 

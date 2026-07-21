@@ -10,8 +10,15 @@ public class MainMapUIController : MonoBehaviour
     private ZebraGameController mCards;
     private EventManager mEvents;
     private MissionManager mMissions;
-    private Text mHudText;
+    private Text mHudSummaryText;
+    private StatBar[] mStatBars;
     private Button mShowMissionButton;
+
+    private sealed class StatBar
+    {
+        public Text label;
+        public Image[] segments;
+    }
 
     // 确保场景中只有一个 UI 完善控制器；由 TurnController 启动时调用。
     public static MainMapUIController EnsureExists()
@@ -65,7 +72,7 @@ public class MainMapUIController : MonoBehaviour
     // 每帧刷新 HUD，确保回合、资源和临时属性与 StatManager 保持同步。
     private void Update()
     {
-        if (mHudText == null || mStats == null || mTurns == null)
+        if (mHudSummaryText == null || mStats == null || mTurns == null)
         {
             return;
         }
@@ -74,16 +81,16 @@ public class MainMapUIController : MonoBehaviour
         bool decisionOpen = (mEvents != null && mEvents.IsAwaitingChoice()) || (mMissions != null && mMissions.IsAwaitingChoice());
         if (mShowMissionButton != null) mShowMissionButton.interactable = mMissions != null && mMissions.HasMission() && !decisionOpen && (mCards == null || !mCards.IsDecisionReviewMode) && !mTurns.IsGameOver();
         bool chinese = mCards != null && mCards.UseChinese;
-        if (chinese)
-        {
-            mHudText.text = "回合 " + mTurns.GetTurnCount() + "/" + mTurns.GetMaxTurnCount() + "    大臣 " + mTurns.GetMinistersLeft() + "/" + mTurns.GetMaxMinisters() + "    金币 " + mStats.GetGold() + "    威严 " + mStats.GetMajesty() + "    战斗力 " + mStats.GetFight() + "\n" +
-                            "资源  民意 " + mStats.GetPO() + "  军力 " + mStats.GetMS() + "  权威 " + mStats.GetAL() + "      声望  王室 " + mStats.GetKR() + "  教会 " + mStats.GetCR() + "  大贵族 " + mStats.GetAR();
-        }
-        else
-        {
-            mHudText.text = "TURN " + mTurns.GetTurnCount() + "/" + mTurns.GetMaxTurnCount() + "    MINISTERS " + mTurns.GetMinistersLeft() + "/" + mTurns.GetMaxMinisters() + "    GOLD " + mStats.GetGold() + "    MAJESTY " + mStats.GetMajesty() + "    FIGHT " + mStats.GetFight() + "\n" +
-                            "RESOURCES  PO " + mStats.GetPO() + "  MS " + mStats.GetMS() + "  AL " + mStats.GetAL() + "      REPUTATION  KING " + mStats.GetKR() + "  CHURCH " + mStats.GetCR() + "  ARISTOCRATS " + mStats.GetAR();
-        }
+        mHudSummaryText.text = chinese
+            ? "回合 " + mTurns.GetTurnCount() + "/" + mTurns.GetMaxTurnCount() + "    大臣 " + mTurns.GetMinistersLeft() + "/" + mTurns.GetMaxMinisters() + "    金币 " + mStats.GetGold() + "    威严 " + mStats.GetMajesty() + "    战斗力 " + mStats.GetFight()
+            : "TURN " + mTurns.GetTurnCount() + "/" + mTurns.GetMaxTurnCount() + "    MINISTERS " + mTurns.GetMinistersLeft() + "/" + mTurns.GetMaxMinisters() + "    GOLD " + mStats.GetGold() + "    MAJESTY " + mStats.GetMajesty() + "    FIGHT " + mStats.GetFight();
+
+        SetStatBar(0, chinese ? "民意" : "PUBLIC OPINION", mStats.GetPO(), mStats.GetMaxStat());
+        SetStatBar(1, chinese ? "军力" : "MILITARY", mStats.GetMS(), mStats.GetMaxStat());
+        SetStatBar(2, chinese ? "权威" : "AUTHORITY", mStats.GetAL(), mStats.GetMaxStat());
+        SetStatBar(3, chinese ? "王室" : "KING", mStats.GetKR(), mStats.GetMaxStat());
+        SetStatBar(4, chinese ? "教会" : "CHURCH", mStats.GetCR(), mStats.GetMaxStat());
+        SetStatBar(5, chinese ? "大贵族" : "ARISTOCRATS", mStats.GetAR(), mStats.GetMaxStat());
     }
 
     // 找到队友场景中原有的 Canvas，排除卡牌系统运行时创建的 Game Canvas。
@@ -99,7 +106,7 @@ public class MainMapUIController : MonoBehaviour
         return null;
     }
 
-    // 在主 Canvas 顶部创建不会拦截鼠标的两行属性 HUD。
+    // 在主 Canvas 顶部创建摘要行与六组十格属性条。
     private void BuildHud(Transform canvasTransform)
     {
         GameObject panelObject = new GameObject("Game HUD", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
@@ -109,7 +116,7 @@ public class MainMapUIController : MonoBehaviour
         panelRect.anchorMin = new Vector2(0f, 1f);
         panelRect.anchorMax = new Vector2(1f, 1f);
         panelRect.pivot = new Vector2(0.5f, 1f);
-        panelRect.offsetMin = new Vector2(12f, -82f);
+        panelRect.offsetMin = new Vector2(12f, -96f);
         panelRect.offsetMax = new Vector2(-220f, -10f);
         Image panelImage = panelObject.GetComponent<Image>();
         panelImage.color = GameUITheme.DeepGreen;
@@ -118,25 +125,106 @@ public class MainMapUIController : MonoBehaviour
         outline.effectColor = GameUITheme.Gold;
         outline.effectDistance = new Vector2(2f, -2f);
 
-        GameObject textObject = new GameObject("HUD Text", typeof(RectTransform), typeof(CanvasRenderer), typeof(Text));
+        GameObject textObject = new GameObject("HUD Summary", typeof(RectTransform), typeof(CanvasRenderer), typeof(Text));
         textObject.transform.SetParent(panelObject.transform, false);
         RectTransform textRect = textObject.GetComponent<RectTransform>();
-        textRect.anchorMin = Vector2.zero;
-        textRect.anchorMax = Vector2.one;
-        textRect.offsetMin = new Vector2(14f, 6f);
+        textRect.anchorMin = new Vector2(0f, 1f);
+        textRect.anchorMax = new Vector2(1f, 1f);
+        textRect.pivot = new Vector2(0.5f, 1f);
+        textRect.offsetMin = new Vector2(14f, -27f);
         textRect.offsetMax = new Vector2(-14f, -6f);
-        mHudText = textObject.GetComponent<Text>();
-        mHudText.font = GameUITheme.GetLegacyFont();
-        mHudText.fontSize = 15;
-        mHudText.fontStyle = FontStyle.Bold;
-        mHudText.color = Color.white;
-        mHudText.alignment = TextAnchor.MiddleLeft;
-        mHudText.horizontalOverflow = HorizontalWrapMode.Wrap;
-        mHudText.verticalOverflow = VerticalWrapMode.Truncate;
-        mHudText.raycastTarget = false;
-        mHudText.resizeTextForBestFit = true;
-        mHudText.resizeTextMinSize = 12;
-        mHudText.resizeTextMaxSize = 15;
+        mHudSummaryText = textObject.GetComponent<Text>();
+        mHudSummaryText.font = GameUITheme.GetLegacyFont();
+        mHudSummaryText.fontSize = 14;
+        mHudSummaryText.fontStyle = FontStyle.Bold;
+        mHudSummaryText.color = Color.white;
+        mHudSummaryText.alignment = TextAnchor.MiddleLeft;
+        mHudSummaryText.horizontalOverflow = HorizontalWrapMode.Overflow;
+        mHudSummaryText.verticalOverflow = VerticalWrapMode.Truncate;
+        mHudSummaryText.raycastTarget = false;
+
+        mStatBars = new StatBar[6];
+        string[] keys = { "PO", "MS", "AL", "KING", "CHURCH", "ARISTOCRATS" };
+        for (int i = 0; i < mStatBars.Length; i++)
+        {
+            int column = i / 3;
+            int row = i % 3;
+            mStatBars[i] = CreateStatBar(panelObject.transform, keys[i], column, row);
+        }
+    }
+
+    private StatBar CreateStatBar(Transform parent, string key, int column, int row)
+    {
+        GameObject root = new GameObject("Stat " + key, typeof(RectTransform));
+        root.transform.SetParent(parent, false);
+        RectTransform rootRect = root.GetComponent<RectTransform>();
+        rootRect.anchorMin = new Vector2(column == 0 ? 0f : 0.5f, 1f);
+        rootRect.anchorMax = new Vector2(column == 0 ? 0.5f : 1f, 1f);
+        rootRect.pivot = new Vector2(0f, 1f);
+        rootRect.offsetMin = new Vector2(column == 0 ? 14f : 8f, -52f - row * 14f);
+        rootRect.offsetMax = new Vector2(column == 0 ? -8f : -14f, -38f - row * 14f);
+
+        GameObject labelObject = new GameObject("Label", typeof(RectTransform), typeof(CanvasRenderer), typeof(Text));
+        labelObject.transform.SetParent(root.transform, false);
+        RectTransform labelRect = labelObject.GetComponent<RectTransform>();
+        labelRect.anchorMin = new Vector2(0f, 0f);
+        labelRect.anchorMax = new Vector2(0f, 1f);
+        labelRect.pivot = new Vector2(0f, 0.5f);
+        labelRect.sizeDelta = new Vector2(94f, 0f);
+        Text label = labelObject.GetComponent<Text>();
+        label.font = GameUITheme.GetLegacyFont();
+        label.fontSize = 10;
+        label.fontStyle = FontStyle.Bold;
+        label.color = GameUITheme.Parchment;
+        label.alignment = TextAnchor.MiddleLeft;
+        label.horizontalOverflow = HorizontalWrapMode.Overflow;
+        label.raycastTarget = false;
+
+        GameObject segmentsObject = new GameObject("Segments", typeof(RectTransform), typeof(HorizontalLayoutGroup));
+        segmentsObject.transform.SetParent(root.transform, false);
+        RectTransform segmentsRect = segmentsObject.GetComponent<RectTransform>();
+        segmentsRect.anchorMin = new Vector2(0f, 0f);
+        segmentsRect.anchorMax = new Vector2(1f, 1f);
+        segmentsRect.offsetMin = new Vector2(98f, 1f);
+        segmentsRect.offsetMax = new Vector2(0f, -1f);
+        HorizontalLayoutGroup layout = segmentsObject.GetComponent<HorizontalLayoutGroup>();
+        layout.spacing = 2f;
+        layout.childControlWidth = true;
+        layout.childControlHeight = true;
+        layout.childForceExpandWidth = true;
+        layout.childForceExpandHeight = true;
+
+        Image[] segments = new Image[10];
+        for (int i = 0; i < segments.Length; i++)
+        {
+            GameObject segment = new GameObject("Cell " + (i + 1), typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+            segment.transform.SetParent(segmentsObject.transform, false);
+            Image image = segment.GetComponent<Image>();
+            image.color = new Color(0.18f, 0.22f, 0.19f, 1f);
+            image.raycastTarget = false;
+            Outline outline = segment.AddComponent<Outline>();
+            outline.effectColor = new Color(0.72f, 0.63f, 0.37f, 0.5f);
+            outline.effectDistance = new Vector2(1f, -1f);
+            segments[i] = image;
+        }
+
+        return new StatBar { label = label, segments = segments };
+    }
+
+    private void SetStatBar(int index, string label, int value, int max)
+    {
+        if (mStatBars == null || index < 0 || index >= mStatBars.Length) return;
+        StatBar bar = mStatBars[index];
+        bar.label.text = label + " " + Mathf.Clamp(value, 0, max) + "/" + max;
+
+        // 高于 6 变绿，低于 4 变红，介于 4~6 保持默认金色（仅影响条形图，不影响文本）。
+        Color fill = value > 6 ? new Color(0.30f, 0.70f, 0.32f)
+                   : value < 4 ? new Color(0.80f, 0.26f, 0.22f)
+                   : GameUITheme.Gold;
+        for (int i = 0; i < bar.segments.Length; i++)
+        {
+            bar.segments[i].color = i < value ? fill : new Color(0.18f, 0.22f, 0.19f, 1f);
+        }
     }
 
     // 调整两个主操作按钮的位置与尺寸，并应用统一按钮样式。

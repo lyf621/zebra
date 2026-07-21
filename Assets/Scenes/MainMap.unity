@@ -163,16 +163,42 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e022220addb59eb458794c4eef245652, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EventManager
-  eventPool:
-  - {fileID: 11400000, guid: e1e7fe5aebde8ab4387d12b78efc9deb, type: 2}
-  - {fileID: 11400000, guid: 8ba2e6619126d2f4283d144a4f9e93d7, type: 2}
-  - {fileID: 11400000, guid: 2535e82348d3a1d43945821ed6639c26, type: 2}
-  - {fileID: 11400000, guid: d11c55b54e29b21448afe4d3b2cd674d, type: 2}
-  - {fileID: 11400000, guid: dc92fe5053d802b42a5795af31f0f04b, type: 2}
+  eventPoolsByTurn:
+  - events:
+    - {fileID: 11400000, guid: 50f900db4ad8b5c44b95a08ad65a8221, type: 2}
+    - {fileID: 11400000, guid: d11c55b54e29b21448afe4d3b2cd674d, type: 2}
+  - events:
+    - {fileID: 11400000, guid: 50f900db4ad8b5c44b95a08ad65a8221, type: 2}
+    - {fileID: 11400000, guid: d11c55b54e29b21448afe4d3b2cd674d, type: 2}
+  - events:
+    - {fileID: 11400000, guid: 50f900db4ad8b5c44b95a08ad65a8221, type: 2}
+    - {fileID: 11400000, guid: d11c55b54e29b21448afe4d3b2cd674d, type: 2}
+  - events:
+    - {fileID: 11400000, guid: 50f900db4ad8b5c44b95a08ad65a8221, type: 2}
+    - {fileID: 11400000, guid: d11c55b54e29b21448afe4d3b2cd674d, type: 2}
+  - events:
+    - {fileID: 11400000, guid: d7a350147114adb49ae6f89618f8ba4f, type: 2}
+    - {fileID: 11400000, guid: e1e7fe5aebde8ab4387d12b78efc9deb, type: 2}
+  - events:
+    - {fileID: 11400000, guid: c78d27d307e79f5429eeae125abf8e17, type: 2}
+    - {fileID: 11400000, guid: af87251df459d4a43989f3ee4c4d8111, type: 2}
+  - events:
+    - {fileID: 11400000, guid: 72f7a94c71f9c90459c354f433290323, type: 2}
+    - {fileID: 11400000, guid: 1470c182c6880a947903dc05ac0e45f1, type: 2}
+  - events:
+    - {fileID: 11400000, guid: d90fbdc586d79904799e83742e72180d, type: 2}
+    - {fileID: 11400000, guid: 2535e82348d3a1d43945821ed6639c26, type: 2}
+  - events:
+    - {fileID: 11400000, guid: 8ba2e6619126d2f4283d144a4f9e93d7, type: 2}
+    - {fileID: 11400000, guid: e7e4fac46e4c4b140aa8d0047585ed7c, type: 2}
+  - events:
+    - {fileID: 11400000, guid: dc92fe5053d802b42a5795af31f0f04b, type: 2}
+    - {fileID: 11400000, guid: 5ad5756654917984dbba57431f5b4a4e, type: 2}
   eventPanel: {fileID: 1076121969}
   missionManager: {fileID: 907450760}
   stats: {fileID: 307285969}
   cards: {fileID: 210239227}
+  turns: {fileID: 639306590}
 --- !u!1001 &121919510
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -250,8 +276,26 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 639306590}
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+      propertyPath: infoName
+      value: Generous Donation
+      objectReference: {fileID: 0}
+    - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: locationType
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+      propertyPath: infoDescription
+      value: 'Diplomacy/The Church
+
+        Gold-3; PO+1, CR+2'
+      objectReference: {fileID: 0}
+    - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+      propertyPath: infoNameChinese
+      value: "\u6177\u6168\u6350\u8D60"
+      objectReference: {fileID: 0}
+    - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+      propertyPath: infoDescriptionChinese
+      value: "\u5916\u4EA4/\u6559\u4F1A\nGold-3; PO+1, CR+2"
       objectReference: {fileID: 0}
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: onFirstClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -758,6 +802,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 639306590}
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+      propertyPath: infoName
+      value: Market
+      objectReference: {fileID: 0}
+    - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: locationType
       value: 0
       objectReference: {fileID: 0}
@@ -772,6 +820,20 @@ PrefabInstance:
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: defaultColor.r
       value: 0.73333335
+      objectReference: {fileID: 0}
+    - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+      propertyPath: infoDescription
+      value: 'Economy
+
+        PO-1, AL-1; Gold+6'
+      objectReference: {fileID: 0}
+    - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+      propertyPath: infoNameChinese
+      value: "\u5E02\u573A"
+      objectReference: {fileID: 0}
+    - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+      propertyPath: infoDescriptionChinese
+      value: "\u7ECF\u6D4E\nPO-1, AL-1; Gold+6"
       objectReference: {fileID: 0}
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: onFirstClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -883,6 +945,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 639306590}
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+      propertyPath: infoName
+      value: Patrol
+      objectReference: {fileID: 0}
+    - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: locationType
       value: 2
       objectReference: {fileID: 0}
@@ -897,6 +963,20 @@ PrefabInstance:
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: defaultColor.r
       value: 0.40784317
+      objectReference: {fileID: 0}
+    - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+      propertyPath: infoDescription
+      value: 'Administration
+
+        PO-1, MS-1; AL+3'
+      objectReference: {fileID: 0}
+    - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+      propertyPath: infoNameChinese
+      value: "\u5DE1\u903B"
+      objectReference: {fileID: 0}
+    - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+      propertyPath: infoDescriptionChinese
+      value: "\u884C\u653F\nPO-1, MS-1; AL+3"
       objectReference: {fileID: 0}
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: onFirstClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -1558,6 +1638,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 639306590}
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+      propertyPath: infoName
+      value: Guild
+      objectReference: {fileID: 0}
+    - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: locationType
       value: 0
       objectReference: {fileID: 0}
@@ -1572,6 +1656,22 @@ PrefabInstance:
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: defaultColor.r
       value: 0.74509805
+      objectReference: {fileID: 0}
+    - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+      propertyPath: infoDescription
+      value: 'Economy
+
+        Gold-2, AL-1; PO+2, MS+1
+
+'
+      objectReference: {fileID: 0}
+    - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+      propertyPath: infoNameChinese
+      value: "\u884C\u4F1A"
+      objectReference: {fileID: 0}
+    - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+      propertyPath: infoDescriptionChinese
+      value: "\u7ECF\u6D4E\nGold-2, AL-1; PO+2, MS+1"
       objectReference: {fileID: 0}
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: onFirstClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -1816,6 +1916,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 639306590}
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+      propertyPath: infoName
+      value: Arsenal
+      objectReference: {fileID: 0}
+    - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: locationType
       value: 1
       objectReference: {fileID: 0}
@@ -1830,6 +1934,20 @@ PrefabInstance:
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: defaultColor.r
       value: 0.68235296
+      objectReference: {fileID: 0}
+    - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+      propertyPath: infoDescription
+      value: 'Military
+
+        Gold-4; MS+3'
+      objectReference: {fileID: 0}
+    - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+      propertyPath: infoNameChinese
+      value: "\u519B\u68B0\u5E93"
+      objectReference: {fileID: 0}
+    - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+      propertyPath: infoDescriptionChinese
+      value: "\u519B\u4E8B\nGold-4; MS+3"
       objectReference: {fileID: 0}
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: onFirstClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -2534,6 +2652,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 639306590}
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+      propertyPath: infoName
+      value: Ceremony
+      objectReference: {fileID: 0}
+    - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: locationType
       value: 2
       objectReference: {fileID: 0}
@@ -2548,6 +2670,20 @@ PrefabInstance:
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: defaultColor.r
       value: 0.40784317
+      objectReference: {fileID: 0}
+    - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+      propertyPath: infoDescription
+      value: 'Administration
+
+        Gold-4; PO+1, AL+3'
+      objectReference: {fileID: 0}
+    - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+      propertyPath: infoNameChinese
+      value: "\u4EEA\u5F0F"
+      objectReference: {fileID: 0}
+    - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+      propertyPath: infoDescriptionChinese
+      value: "\u884C\u653F\nGold-4; PO+1, AL+3"
       objectReference: {fileID: 0}
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: onFirstClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -3010,6 +3146,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 639306590}
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+      propertyPath: infoName
+      value: Alliance
+      objectReference: {fileID: 0}
+    - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: locationType
       value: 3
       objectReference: {fileID: 0}
@@ -3024,6 +3164,20 @@ PrefabInstance:
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: defaultColor.r
       value: 0.34117648
+      objectReference: {fileID: 0}
+    - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+      propertyPath: infoDescription
+      value: 'Diplomacy/The Aristocrats
+
+        MS-2; Gold+2, AR+2'
+      objectReference: {fileID: 0}
+    - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+      propertyPath: infoNameChinese
+      value: "\u7ED3\u76DF"
+      objectReference: {fileID: 0}
+    - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+      propertyPath: infoDescriptionChinese
+      value: "\u5916\u4EA4/\u5927\u8D35\u65CF\nMS-2; Gold+2, AR+2"
       objectReference: {fileID: 0}
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: onFirstClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -3718,6 +3872,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 639306590}
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+      propertyPath: infoName
+      value: Royal Grace
+      objectReference: {fileID: 0}
+    - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: locationType
       value: 3
       objectReference: {fileID: 0}
@@ -3732,6 +3890,20 @@ PrefabInstance:
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: defaultColor.r
       value: 0.6509804
+      objectReference: {fileID: 0}
+    - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+      propertyPath: infoDescription
+      value: 'Diplomacy/The King
+
+        AL-1; Gold+1, KR+2'
+      objectReference: {fileID: 0}
+    - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+      propertyPath: infoNameChinese
+      value: "\u7687\u5BA4\u6069\u5178"
+      objectReference: {fileID: 0}
+    - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+      propertyPath: infoDescriptionChinese
+      value: "\u5916\u4EA4/\u738B\u5BA4\nAL-1; Gold+1, KR+2"
       objectReference: {fileID: 0}
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: onFirstClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -4012,6 +4184,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 639306590}
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+      propertyPath: infoName
+      value: Mobilization
+      objectReference: {fileID: 0}
+    - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: locationType
       value: 1
       objectReference: {fileID: 0}
@@ -4026,6 +4202,20 @@ PrefabInstance:
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: defaultColor.r
       value: 0.68235296
+      objectReference: {fileID: 0}
+    - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+      propertyPath: infoDescription
+      value: 'Military
+
+        PO-1; MS+2'
+      objectReference: {fileID: 0}
+    - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+      propertyPath: infoNameChinese
+      value: "\u52A8\u5458"
+      objectReference: {fileID: 0}
+    - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+      propertyPath: infoDescriptionChinese
+      value: "\u519B\u4E8B\nPO-1; MS+2"
       objectReference: {fileID: 0}
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: onFirstClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -4203,6 +4393,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 639306590}
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+      propertyPath: infoName
+      value: Bureaucracy
+      objectReference: {fileID: 0}
+    - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: locationType
       value: 2
       objectReference: {fileID: 0}
@@ -4217,6 +4411,20 @@ PrefabInstance:
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: defaultColor.r
       value: 0.40784317
+      objectReference: {fileID: 0}
+    - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+      propertyPath: infoDescription
+      value: 'Administration
+
+        Gold-2; AL+2'
+      objectReference: {fileID: 0}
+    - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+      propertyPath: infoNameChinese
+      value: "\u5B98\u50DA\u673A\u6784"
+      objectReference: {fileID: 0}
+    - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+      propertyPath: infoDescriptionChinese
+      value: "\u884C\u653F\nGold-2; AL+2"
       objectReference: {fileID: 0}
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: onFirstClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -4328,6 +4536,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 639306590}
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+      propertyPath: infoName
+      value: Barrack
+      objectReference: {fileID: 0}
+    - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: locationType
       value: 1
       objectReference: {fileID: 0}
@@ -4342,6 +4554,20 @@ PrefabInstance:
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: defaultColor.r
       value: 0.68235296
+      objectReference: {fileID: 0}
+    - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+      propertyPath: infoDescription
+      value: 'Military
+
+        AL-1; MS+2'
+      objectReference: {fileID: 0}
+    - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+      propertyPath: infoNameChinese
+      value: "\u5175\u8425"
+      objectReference: {fileID: 0}
+    - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+      propertyPath: infoDescriptionChinese
+      value: "\u519B\u4E8B\nAL-1; MS+2"
       objectReference: {fileID: 0}
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: onFirstClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -4532,6 +4758,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 639306590}
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+      propertyPath: infoName
+      value: Farm
+      objectReference: {fileID: 0}
+    - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: locationType
       value: 0
       objectReference: {fileID: 0}
@@ -4546,6 +4776,20 @@ PrefabInstance:
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: defaultColor.r
       value: 0.7433963
+      objectReference: {fileID: 0}
+    - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+      propertyPath: infoDescription
+      value: 'Economy
+
+        AL-1; Gold+2, PO+1'
+      objectReference: {fileID: 0}
+    - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+      propertyPath: infoNameChinese
+      value: "\u519C\u5E84"
+      objectReference: {fileID: 0}
+    - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+      propertyPath: infoDescriptionChinese
+      value: "\u7ECF\u6D4E\nAL-1; Gold+2, PO+1"
       objectReference: {fileID: 0}
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: onFirstClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target

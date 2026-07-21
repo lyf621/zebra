@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5833458f6ad86394ea697a12cf869edf, type: 3}
+  m_Name: Unrest1
+  m_EditorClassIdentifier: Assembly-CSharp::MissionSO
+  missionTitle: Appease
+  missionDescription: 'We can''t afford to irritate the army. Give them what they
+    want: honor, titles, gold and presents, even in times of peace. Keep them motivated
+    and loyal.'
+  missionTitleChinese: "\u5B89\u629A"
+  missionDescriptionChinese: "\u6211\u4EEC\u8D1F\u62C5\u4E0D\u8D77\u6FC0\u6012\u519B\u961F\u7684\u4EE3\u4EF7\u3002\u7ED9\u4ED6\u4EEC\u60F3\u8981\u7684\u4E00\u5207\uFF1A\u8363\u8A89\uFF0C\u5934\u8854\uFF0C\u9EC4\u91D1\u548C\u8D4F\u8D50\uFF0C\u5373\u4F7F\u5728\u548C\u5E73\u65F6\u671F\u4E5F\u4E0D\u8981\u541D\u556C\u3002\u8BA9\u4ED6\u4EEC\u4FDD\u6301\u632F\u594B\u548C\u5FE0\u8BDA\u3002"
+  possibleResolutions:
+  - buttonText: Accept
+    buttonTextChinese: "\u63A5\u53D7"
+    resolutionEffect:
+      gold: 0
+      po: 0
+      ms: 0
+      al: 0
+      kr: 0
+      cr: 0
+      ar: 0
+    isFailure: 0
+  - buttonText: Reject
+    buttonTextChinese: "\u62D2\u7EDD"
+    resolutionEffect:
+      gold: 0
+      po: 0
+      ms: 0
+      al: 0
+      kr: 0
+      cr: 0
+      ar: 0
+    isFailure: 1

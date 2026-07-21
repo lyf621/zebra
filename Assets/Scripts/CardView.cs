@@ -74,7 +74,7 @@ public class CardView : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
         }
         else if (useChinese)
         {
-            mLocation.text = Card.Location == LocationType.Economy ? "经济" : Card.Location == LocationType.Military ? "军事" : Card.Location == LocationType.Administration ? "行政" : "任意";
+            mLocation.text = Card.Location == LocationType.Economy ? "经济" : Card.Location == LocationType.Military ? "军事" : Card.Location == LocationType.Administration ? "行政" : Card.Location == LocationType.Diplomacy ? "外交" : "任意";
         }
         else
         {

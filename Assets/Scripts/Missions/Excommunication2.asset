@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5833458f6ad86394ea697a12cf869edf, type: 3}
+  m_Name: Excommunication2
+  m_EditorClassIdentifier: Assembly-CSharp::MissionSO
+  missionTitle: Target the Bishop
+  missionDescription: The leading noble house of the Kingdom, your house, shall not
+    be intimidated by a monk. Evict the current bishop, name a loyal one instead.
+    Remind everyone of the true ruler of the land!
+  missionTitleChinese: "\u653B\u51FB\u4E3B\u6559"
+  missionDescriptionChinese: "\u738B\u56FD\u7684\u4E3B\u5BFC\u5BB6\u65CF\u4E4B\u4E00\u2014\u2014\u4F60\u7684\u5BB6\u65CF\u2014\u2014\u4E0D\u5E94\u8BE5\u5C48\u670D\u4E8E\u4E00\u4E2A\u50E7\u4FA3\u7684\u5A01\u80C1\u3002\u9A71\u9010\u73B0\u5728\u7684\u4E3B\u6559\uFF0C\u4EFB\u547D\u4E00\u4E2A\u7EC8\u4E8E\u4F60\u7684\u4E3B\u6559\u66FF\u4EE3\u4ED6\u3002\u8BA9\u6240\u6709\u4EBA\u8BB0\u4F4F\u8C01\u624D\u662F\u8FD9\u7247\u9886\u5730\u771F\u6B63\u7684\u7EDF\u6CBB\u8005\uFF01"
+  possibleResolutions:
+  - buttonText: Accept
+    buttonTextChinese: "\u63A5\u53D7"
+    resolutionEffect:
+      gold: 0
+      po: 0
+      ms: 0
+      al: 0
+      kr: 0
+      cr: 0
+      ar: 0
+    isFailure: 0
+  - buttonText: Reject
+    buttonTextChinese: "\u62D2\u7EDD"
+    resolutionEffect:
+      gold: 0
+      po: 0
+      ms: 0
+      al: 0
+      kr: 0
+      cr: 0
+      ar: 0
+    isFailure: 1

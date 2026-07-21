@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using TMPro;
 
 /// <summary>
@@ -91,8 +92,63 @@ public class EventPanelUI : MonoBehaviour
                 btn.onClick.RemoveAllListeners();
                 btn.onClick.AddListener(() => manager.OnOptionSelected(capturedIndex));
             }
+
+            // 悬停时预览该选项所连任务的潜在数值变化。
+            if (option.linkedMission != null)
+            {
+                MissionSO mission = option.linkedMission;
+                EventTrigger trigger = go.GetComponent<EventTrigger>();
+                if (trigger == null) trigger = go.AddComponent<EventTrigger>();
+                trigger.triggers.Clear();
+                AddTrigger(trigger, EventTriggerType.PointerEnter, d => ShowMissionPreview(mission, ((PointerEventData)d).position));
+                AddTrigger(trigger, EventTriggerType.PointerExit, d => HideMissionPreview());
+            }
         }
     }
+
+    private void AddTrigger(EventTrigger trigger, EventTriggerType type, System.Action<BaseEventData> callback)
+    {
+        EventTrigger.Entry entry = new EventTrigger.Entry { eventID = type };
+        entry.callback.AddListener(d => callback(d));
+        trigger.triggers.Add(entry);
+    }
+
+    private void ShowMissionPreview(MissionSO mission, Vector2 screenPos)
+    {
+        if (mission == null) return;
+        bool chinese = cards != null && cards.UseChinese;
+        MissionPreviewTooltip.EnsureExists().Show(mission.GetTitle(chinese), BuildMissionPreview(mission, chinese), screenPos);
+    }
+
+    private void HideMissionPreview()
+    {
+        MissionPreviewTooltip.HideTooltip();
+    }
+
+    // 列出任务每个处理选项及其七项数值变化（Gold / PO / MS / AL / KR / CR / AR）。
+    private string BuildMissionPreview(MissionSO mission, bool chinese)
+    {
+        if (mission == null || mission.possibleResolutions == null) return string.Empty;
+        System.Text.StringBuilder sb = new System.Text.StringBuilder();
+        for (int i = 0; i < mission.possibleResolutions.Count; i++)
+        {
+            MissionResolution res = mission.possibleResolutions[i];
+            if (res == null) continue;
+            StatModifier e = res.resolutionEffect;
+            if (sb.Length > 0) sb.Append('\n');
+            sb.Append(res.GetButtonText(chinese)).Append('\n');
+            sb.Append("  Gold ").Append(Sign(e.gold))
+              .Append("   PO ").Append(Sign(e.po))
+              .Append("   MS ").Append(Sign(e.ms))
+              .Append("   AL ").Append(Sign(e.al))
+              .Append("   KR ").Append(Sign(e.kr))
+              .Append("   CR ").Append(Sign(e.cr))
+              .Append("   AR ").Append(Sign(e.ar));
+        }
+        return sb.ToString();
+    }
+
+    private string Sign(int v) { return (v > 0 ? "+" : "") + v; }
 
     // 切换语言时立即刷新当前事件与选项，无需关闭事件界面。
     private void RefreshLanguage(bool chinese)
@@ -116,6 +172,7 @@ public class EventPanelUI : MonoBehaviour
 
     private void ClearButtons()
     {
+        MissionPreviewTooltip.HideTooltip();   // 清理/重建按钮时收起悬停预览
         foreach (GameObject go in spawnedButtons)
             if (go != null) Destroy(go);
         spawnedButtons.Clear();

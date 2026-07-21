@@ -33,6 +33,7 @@ public class TurnController : MonoBehaviour
         RegisterSceneLocations();
         TurnCount = 1;
         MinistersLeft = MaxMinisters;
+        LocationArtController.EnsureExists();
     }
 
     // Update is called once per frame
