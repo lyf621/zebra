@@ -6,6 +6,8 @@ public static class WebGLBuilder
     // 将正式游戏构建到命令行指定的 WebGL 目录。
     public static void Build()
     {
+        PlayerSettings.WebGL.compressionFormat = WebGLCompressionFormat.Disabled;
+        PlayerSettings.WebGL.decompressionFallback = false;
         string outputPath = "Build/WebGL";
         string[] arguments = System.Environment.GetCommandLineArgs();
         for (int i = 0; i < arguments.Length - 1; i++)
