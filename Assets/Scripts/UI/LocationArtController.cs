@@ -44,17 +44,22 @@ public sealed class LocationArtController : MonoBehaviour
             SpriteRenderer renderer = location.GetComponent<SpriteRenderer>();
             if (renderer == null) continue;
 
-            // The scene tiles have deliberate world-space dimensions. Preserve those before
-            // replacing their small placeholder sprites with high-resolution location art.
-            Vector2 originalWorldSize = renderer.bounds.size;
-            Vector3 worldScale = renderer.transform.lossyScale;
-            Vector2 localSize = new Vector2(
-                Mathf.Abs(worldScale.x) > Mathf.Epsilon ? originalWorldSize.x / Mathf.Abs(worldScale.x) : 1f,
-                Mathf.Abs(worldScale.y) > Mathf.Epsilon ? originalWorldSize.y / Mathf.Abs(worldScale.y) : 1f);
+            Sprite originalSprite = renderer.sprite;
+            if (originalSprite == null) continue;
 
-            renderer.sprite = sprite;
-            renderer.drawMode = SpriteDrawMode.Sliced;
-            renderer.size = localSize;
+            // The prefab uses a 1 x 1 local sprite with a large transform scale. Imported
+            // artwork has a much larger native Sprite size, so create a fitted runtime sprite
+            // whose full aspect-ratio image stays within the original tile bounds.
+            Vector2 originalSize = originalSprite.bounds.size;
+            float pixelsPerUnit = Mathf.Max(
+                sprite.rect.width / Mathf.Max(originalSize.x, Mathf.Epsilon),
+                sprite.rect.height / Mathf.Max(originalSize.y, Mathf.Epsilon));
+            Vector2 pivot = new Vector2(
+                sprite.pivot.x / sprite.rect.width,
+                sprite.pivot.y / sprite.rect.height);
+
+            renderer.drawMode = SpriteDrawMode.Simple;
+            renderer.sprite = Sprite.Create(sprite.texture, sprite.rect, pivot, pixelsPerUnit, 0, SpriteMeshType.FullRect);
             renderer.color = Color.white;
         }
     }
