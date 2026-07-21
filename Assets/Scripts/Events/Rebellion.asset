@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f7837c2f07c3cd4b906c4ed98d0c167, type: 3}
+  m_Name: Rebellion
+  m_EditorClassIdentifier: Assembly-CSharp::EventSO
+  eventTitle: Rebellion!
+  eventDescription: Whispers of rebellion are spreading through our realm. Looks
+    like our seemingly weak military force gave those troublemakers confidence. We
+    must prove them wrong.
+  eventTitleChinese: "\u53DB\u4E71\uFF01"
+  eventDescriptionChinese: "\u53DB\u4E71\u7684\u4F4E\u8BED\u5728\u9886\u5730\u4E2D\u4F20\u64AD\u3002\u770B\u8D77\u6765\u6211\u4EEC\u8C8C\u4F3C\u8106\u5F31\u7684\u519B\u4E8B\u529B\u91CF\u8BA9\u4E00\u4E9B\u60F9\u662F\u751F\u975E\u7684\u5BB6\u4F19\u627E\u5230\u4E86\u81EA\u4FE1\u3002\u6211\u4EEC\u5FC5\u987B\u8BC1\u660E\u4ED6\u4EEC\u9519\u4E86\u3002"
+  availableOptions:
+  - buttonText: Extensive Arrest
+    buttonTextChinese: "\u5927\u89C4\u6A21\u902E\u6355"
+    immediateEffect:
+      gold: 0
+      po: 0
+      ms: 0
+      al: 0
+      kr: 0
+      cr: 0
+      ar: 0
+    linkedMission: {fileID: 11400000, guid: 86c39bff654f38c4cae8fc6b750af483, type: 2}
+  - buttonText: Secret Investigation
+    buttonTextChinese: "\u79D8\u5BC6\u8C03\u67E5"
+    immediateEffect:
+      gold: 0
+      po: 0
+      ms: 0
+      al: 0
+      kr: 0
+      cr: 0
+      ar: 0
+    linkedMission: {fileID: 11400000, guid: d752119ccb2f69143a705b0145f9bb6b, type: 2}

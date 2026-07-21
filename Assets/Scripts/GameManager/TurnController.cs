@@ -28,12 +28,12 @@ public class TurnController : MonoBehaviour
         if (Stats == null) Stats = FindAnyObjectByType<StatManager>();
         if (Ending == null) Ending = GameEndingController.EnsureExists();
         MainMapUIController.EnsureExists();
-        LocationArtController.EnsureExists();
         DecisionReviewController.EnsureExists();
         Cards = FindAnyObjectByType<ZebraGameController>();
         RegisterSceneLocations();
         TurnCount = 1;
         MinistersLeft = MaxMinisters;
+        LocationArtController.EnsureExists();
     }
 
     // Update is called once per frame

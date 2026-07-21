@@ -91,12 +91,28 @@ public class EventManager : MonoBehaviour
     private EventSO PickTurn2(List<EventSO> pool)  { return PickRandom(pool); }
     private EventSO PickTurn3(List<EventSO> pool)  { return PickRandom(pool); }
     private EventSO PickTurn4(List<EventSO> pool)  { return PickRandom(pool); }
-    private EventSO PickTurn5(List<EventSO> pool)  { return PickRandom(pool); }
-    private EventSO PickTurn6(List<EventSO> pool)  { return PickRandom(pool); }
-    private EventSO PickTurn7(List<EventSO> pool)  { return PickRandom(pool); }
-    private EventSO PickTurn8(List<EventSO> pool)  { return PickRandom(pool); }
-    private EventSO PickTurn9(List<EventSO> pool)  { return PickRandom(pool); }
-    private EventSO PickTurn10(List<EventSO> pool) { return PickRandom(pool); }
+    private EventSO PickTurn5(List<EventSO> pool)  { return PickByStat(stats != null ? stats.GetPO() : 5, 6, 4, pool); }
+    private EventSO PickTurn6(List<EventSO> pool)  { return PickByStat(stats != null ? stats.GetMS() : 5, 6, 4, pool); }
+    private EventSO PickTurn7(List<EventSO> pool)  { return PickByStat(stats != null ? stats.GetPO() : 5, 6, 4, pool); }
+    private EventSO PickTurn8(List<EventSO> pool)  { return PickByRelation(stats != null ? stats.AristocratRel() : 3, pool); }
+    private EventSO PickTurn9(List<EventSO> pool)  { return PickByRelation(stats != null ? stats.ChurchRel() : 3, pool); }
+    private EventSO PickTurn10(List<EventSO> pool) { return PickByRelation(stats != null ? stats.KingRel() : 3, pool); }
+
+    // 依据数值取事件：value > high 用 pool[0]，value < low 用 pool[1]，介于两者之间时随机。
+    // 对 pool[1] 做越界保护，避免该回合事件池不足两个时报错。
+    private EventSO PickByStat(int value, int high, int low, List<EventSO> pool)
+    {
+        if (pool == null || pool.Count == 0) return null;
+        if (value > high) return pool[0];
+        if (value < low) return pool.Count > 1 ? pool[1] : pool[0];
+        return PickRandom(pool);
+    }
+
+    // 关系值版本：>3 用 pool[0]，<3 用 pool[1]，=3 随机。
+    private EventSO PickByRelation(int rel, List<EventSO> pool)
+    {
+        return PickByStat(rel, 3, 3, pool);
+    }
 
     // 从事件池中等概率随机取一个。
     private EventSO PickRandom(List<EventSO> pool)

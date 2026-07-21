@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5833458f6ad86394ea697a12cf869edf, type: 3}
+  m_Name: Pestilence2
+  m_EditorClassIdentifier: Assembly-CSharp::MissionSO
+  missionTitle: 'Pray '
+  missionDescription: Our lives are given and taken by God's will. The most courageous
+    priests will pray for God's mercy, reassuring the panicked people.
+  missionTitleChinese: "\u7948\u7977"
+  missionDescriptionChinese: "\u6211\u4EEC\u7684\u751F\u547D\u7531\u795E\u7ED9\u4E88\uFF0C\u4E5F\u7531\u795E\u5265\u593A\u3002\u6700\u52C7\u6562\u7684\u7267\u5E08\u4EEC\u4F1A\u7948\u7977\u795E\u964D\u4E0B\u4EC1\u6148\uFF0C\u5B89\u629A\u6050\u614C\u4E2D\u7684\u4EBA\u6C11\u3002"
+  possibleResolutions:
+  - buttonText: Accept
+    buttonTextChinese: "\u63A5\u53D7"
+    resolutionEffect:
+      gold: 0
+      po: 0
+      ms: 0
+      al: 0
+      kr: 0
+      cr: 0
+      ar: 0
+    isFailure: 0
+  - buttonText: Reject
+    buttonTextChinese: "\u62D2\u7EDD"
+    resolutionEffect:
+      gold: 0
+      po: 0
+      ms: 0
+      al: 0
+      kr: 0
+      cr: 0
+      ar: 0
+    isFailure: 1
