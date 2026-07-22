@@ -1206,7 +1206,8 @@ public class ZebraGameController : MonoBehaviour
         mDiscardCountText.text = mDiscardPile.Count.ToString();
         bool missionLocked = MissionModalOpen();
         bool playerAction = !mDecisionReviewMode && !missionLocked && mPhase == GamePhase.PlayerAction && mOverlay == null && mSettingsOverlay == null;
-        // canView 不含任务面板锁：All Cards 与 Settings 始终可用；抽/弃牌堆仍受任务面板锁限制。
+        // Card piles are reference views and remain available during the first-round
+        // mission prompt. Only another overlay or the settings panel blocks them.
         bool canView = mOverlay == null && mSettingsOverlay == null && (mDecisionReviewMode || mPhase == GamePhase.PlayerAction || mPhase == GamePhase.ChoosingLocation);
         bool buyAllowed = mIntegrated ? (playerAction && mBuyingEnabled) : playerAction;
         mBuyButton.interactable = buyAllowed && mMarketCards.Count > 0;
@@ -1214,8 +1215,8 @@ public class ZebraGameController : MonoBehaviour
         mEndRoundButton.interactable = !mIntegrated && playerAction;   // map turn controls rounds when integrated
         mCancelPlayButton.gameObject.SetActive(mPhase == GamePhase.ChoosingLocation);
         mAllCardsButton.interactable = canView;                          // 始终可用（不受任务面板影响）
-        mDrawPileButton.interactable = canView && !missionLocked;
-        mDiscardPileButton.interactable = canView && !missionLocked;
+        mDrawPileButton.interactable = canView;
+        mDiscardPileButton.interactable = canView;
         mSettingsButton.interactable = mOverlay == null && mSettingsOverlay == null && mPhase != GamePhase.Animating;   // 始终可用
     }
 
