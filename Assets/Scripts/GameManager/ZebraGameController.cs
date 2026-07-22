@@ -1051,8 +1051,9 @@ public class ZebraGameController : MonoBehaviour
         {
             float centerOffset = i - (count - 1) * 0.5f;
             float normalizedOffset = count <= 1 ? 0f : centerOffset / ((count - 1) * 0.5f);
-            // Full-size fan keeps the hand legible while leaving the map clear above it.
-            Vector2 position = new Vector2(-totalWidth * 0.5f + i * spacing, -210f - normalizedOffset * normalizedOffset * 46f);
+            // Keep resting cards below the illustrated map. Selected cards are raised by
+            // CardView so their complete face remains readable before placement.
+            Vector2 position = new Vector2(-totalWidth * 0.5f + i * spacing, -280f - normalizedOffset * normalizedOffset * 46f);
             float angle = -normalizedOffset * 15f;
             CardView view = mHandViews[mHand[i]];
             view.transform.SetSiblingIndex(i);

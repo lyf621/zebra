@@ -145,14 +145,16 @@ public class ClickOnLocation : MonoBehaviour, IPointerClickHandler, IPointerEnte
             highlightFrame = gameObject.AddComponent<LineRenderer>();
         }
 
-        highlightFrame.useWorldSpace = false;
+        // Location transforms scale to the individual map districts. Draw the frame in
+        // world space so its thickness remains consistent across all twelve regions.
+        highlightFrame.useWorldSpace = true;
         highlightFrame.loop = false;
         highlightFrame.positionCount = 5;
-        highlightFrame.startWidth = 0.03f;
-        highlightFrame.endWidth = 0.03f;
+        highlightFrame.startWidth = 0.42f;
+        highlightFrame.endWidth = 0.42f;
         highlightFrame.numCornerVertices = 4;
         highlightFrame.numCapVertices = 2;
-        highlightFrame.sortingOrder = 20;
+        highlightFrame.sortingOrder = 50;
         highlightFrame.material = new Material(Shader.Find("Sprites/Default"));
         UpdateFrameShape();
         highlightFrame.enabled = false;
@@ -166,11 +168,11 @@ public class ClickOnLocation : MonoBehaviour, IPointerClickHandler, IPointerEnte
         float halfHeight = size.y * 0.5f;
         highlightFrame.SetPositions(new[]
         {
-            new Vector3(-halfWidth, -halfHeight, 0f),
-            new Vector3(-halfWidth, halfHeight, 0f),
-            new Vector3(halfWidth, halfHeight, 0f),
-            new Vector3(halfWidth, -halfHeight, 0f),
-            new Vector3(-halfWidth, -halfHeight, 0f)
+            transform.TransformPoint(-halfWidth, -halfHeight, 0f),
+            transform.TransformPoint(-halfWidth, halfHeight, 0f),
+            transform.TransformPoint(halfWidth, halfHeight, 0f),
+            transform.TransformPoint(halfWidth, -halfHeight, 0f),
+            transform.TransformPoint(-halfWidth, -halfHeight, 0f)
         });
     }
 

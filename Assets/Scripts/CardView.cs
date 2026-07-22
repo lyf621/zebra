@@ -193,7 +193,9 @@ public class CardView : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
         }
 
         bool raised = mSelected || mHovered;
-        float raiseAmount = mSelected ? 54f : mHovered ? 34f : 0f;
+        // The resting fan sits below the map. A selected card rises fully into view;
+        // a hover only lifts enough to indicate focus without obscuring a district.
+        float raiseAmount = mSelected ? 65f : mHovered ? 20f : 0f;
         float scale = mSelected ? 1.1f : mHovered ? 1.07f : 1f;
         RectTransform.anchoredPosition = mLayoutPosition + new Vector2(0f, raiseAmount);
         RectTransform.localRotation = Quaternion.Euler(0f, 0f, raised ? 0f : mLayoutAngle);
