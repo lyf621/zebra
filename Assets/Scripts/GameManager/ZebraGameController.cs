@@ -96,17 +96,6 @@ public class ZebraGameController : MonoBehaviour
     public event System.Action<bool> LanguageChanged;
     public bool IsDecisionReviewMode => mDecisionReviewMode;
 
-    private void Update()
-    {
-        if (!Input.GetKeyDown(KeyCode.Escape)) return;
-
-#if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
-#else
-        Application.Quit();
-#endif
-    }
-
     private void Start()
     {
         ResolveBaseReferences();
@@ -1107,11 +1096,6 @@ public class ZebraGameController : MonoBehaviour
         mStatusEnglish = english;
         mStatusChinese = chinese;
         mStatusText.text = mUseChinese ? chinese : english;
-
-        // 第一回合：每次状态刷新都用带关闭按钮的模态面板强制展示，避免玩家忽略状态提示。
-        // (TurnController 起始回合计数为 1；开局早期可能为 0，故用 <= 1。)
-        if (mTurns != null && mTurns.GetTurnCount() <= 1)
-            StatusPopup.EnsureExists().Show(mUseChinese ? chinese : english, mUseChinese);
     }
 
     private string GetCardTypeText(CardModel card)

@@ -10,22 +10,22 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5833458f6ad86394ea697a12cf869edf, type: 3}
-  m_Name: Service2
+  m_Name: Outlaw1
   m_EditorClassIdentifier: Assembly-CSharp::MissionSO
-  missionTitle: Scutage
-  missionDescription: We noble houses possess the ancient right to pay an extra tax
-    to avoid military service. It is time that we exercise that right.
-  missionTitleChinese: "\u5175\u5F79\u514D\u9664\u7A0E"
-  missionDescriptionChinese: "\u6211\u4EEC\u8D35\u65CF\u5BB6\u65CF\u4EAB\u53D7\u7740\u652F\u4ED8\u989D\u5916\u7A0E\u6B3E\u6765\u514D\u9664\u5175\u5F79\u7684\u53E4\u8001\u6743\u5229\u3002\u73B0\u5728\u662F\u65F6\u5019\u884C\u4F7F\u8FD9\u9879\u6743\u5229\u4E86\u3002"
+  missionTitle: Hunting
+  missionDescription: It is the Duke's duty to protect the people from the evil.
+    Those outlaws should learn to respect our power.
+  missionTitleChinese: "\u72E9\u730E"
+  missionDescriptionChinese: "\u4FDD\u62A4\u4EBA\u6C11\u514D\u53D7\u90AA\u6076\u4E4B\u4EBA\u6B8B\u5BB3\u662F\u516C\u7235\u7684\u8D23\u4EFB\u3002\u90A3\u4E9B\u4E0D\u6CD5\u4E4B\u5F92\u5E94\u8BE5\u5B66\u4F1A\u5C0A\u91CD\u6211\u4EEC\u7684\u6743\u529B\u3002"
   possibleResolutions:
   - buttonText: Accept
     buttonTextChinese: "\u63A5\u53D7"
     resolutionEffect:
-      gold: -3
-      po: 0
-      ms: 0
+      gold: 0
+      po: 1
+      ms: -1
       al: 1
-      kr: 1
+      kr: 0
       cr: 0
       ar: 0
     isFailure: 0
@@ -33,10 +33,10 @@ MonoBehaviour:
     buttonTextChinese: "\u62D2\u7EDD"
     resolutionEffect:
       gold: 0
-      po: 0
+      po: -1
       ms: 0
       al: 0
-      kr: -2
+      kr: 0
       cr: 0
       ar: 0
     isFailure: 1

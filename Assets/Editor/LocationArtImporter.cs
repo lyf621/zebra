@@ -1,3 +1,5 @@
+// 已停用：地点美术导入功能。整段脚本已注释掉（未删除），需要时取消注释即可恢复。
+/*
 using UnityEditor;
 
 public sealed class LocationArtImporter : AssetPostprocessor
@@ -17,3 +19,4 @@ public sealed class LocationArtImporter : AssetPostprocessor
         importer.textureCompression = TextureImporterCompression.Compressed;
     }
 }
+*/

@@ -1,3 +1,5 @@
+// 已停用：地点美术运行时应用功能。整段脚本已注释掉（未删除），需要时取消注释即可恢复。
+/*
 using UnityEngine;
 
 /// <summary>
@@ -64,3 +66,4 @@ public sealed class LocationArtController : MonoBehaviour
         }
     }
 }
+*/

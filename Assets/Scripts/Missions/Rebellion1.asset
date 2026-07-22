@@ -23,9 +23,9 @@ MonoBehaviour:
     buttonTextChinese: "\u63A5\u53D7"
     resolutionEffect:
       gold: 0
-      po: 0
-      ms: 0
-      al: 0
+      po: -1
+      ms: 1
+      al: 1
       kr: 0
       cr: 0
       ar: 0
@@ -36,7 +36,7 @@ MonoBehaviour:
       gold: 0
       po: 0
       ms: 0
-      al: 0
+      al: -2
       kr: 0
       cr: 0
       ar: 0

@@ -22,13 +22,13 @@ MonoBehaviour:
   - buttonText: Accept
     buttonTextChinese: "\u63A5\u53D7"
     resolutionEffect:
-      gold: 0
-      po: 0
+      gold: 6
+      po: 1
       ms: 0
       al: 0
       kr: 0
       cr: 0
-      ar: 0
+      ar: -2
     isFailure: 0
   - buttonText: Reject
     buttonTextChinese: "\u62D2\u7EDD"
@@ -36,8 +36,8 @@ MonoBehaviour:
       gold: 0
       po: 0
       ms: 0
-      al: 0
+      al: 1
       kr: 0
       cr: 0
-      ar: 0
+      ar: -1
     isFailure: 1

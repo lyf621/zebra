@@ -106,7 +106,7 @@ public static class GameUITheme
         }
     }
 
-    // Applies the shared font and metrics while deliberately preserving the Inspector colour.
+    // 为 TMP 文本应用统一字体与字号，但保留 Inspector 中设置的颜色（不再在代码里强制改色）。
     public static void StyleTmpText(TMP_Text text, float fontSize, FontStyles style)
     {
         if (text == null)

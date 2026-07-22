@@ -23,11 +23,11 @@ MonoBehaviour:
     resolutionEffect:
       gold: 0
       po: 0
-      ms: 0
+      ms: -2
       al: 0
-      kr: 0
+      kr: 2
       cr: 0
-      ar: 0
+      ar: 1
     isFailure: 0
   - buttonText: Reject
     buttonTextChinese: "\u62D2\u7EDD"
@@ -36,7 +36,7 @@ MonoBehaviour:
       po: 0
       ms: 0
       al: 0
-      kr: 0
+      kr: -2
       cr: 0
       ar: 0
     isFailure: 1
