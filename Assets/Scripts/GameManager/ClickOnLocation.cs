@@ -103,7 +103,9 @@ public class ClickOnLocation : MonoBehaviour, IPointerClickHandler, IPointerEnte
         hasBeenClicked = true;
 
         // 2. 视觉反馈：改变颜色以示不可交互
-        SetFrameVisible(true, clickedColor);
+        // Occupied districts remain available for right-click information, but frames
+        // are reserved for valid card-placement highlights.
+        SetFrameVisible(false, clickedColor);
 
         // 3. 保持碰撞器启用，使被占用的地点仍能被右键查看信息；
         //    再次出牌由 hasBeenClicked / IsAvailable() 拦截。
@@ -146,8 +148,8 @@ public class ClickOnLocation : MonoBehaviour, IPointerClickHandler, IPointerEnte
         highlightFrame.useWorldSpace = false;
         highlightFrame.loop = false;
         highlightFrame.positionCount = 5;
-        highlightFrame.startWidth = 0.7f;
-        highlightFrame.endWidth = 0.7f;
+        highlightFrame.startWidth = 0.03f;
+        highlightFrame.endWidth = 0.03f;
         highlightFrame.numCornerVertices = 4;
         highlightFrame.numCapVertices = 2;
         highlightFrame.sortingOrder = 20;

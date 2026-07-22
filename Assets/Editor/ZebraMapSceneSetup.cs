@@ -14,21 +14,26 @@ public static class ZebraMapSceneSetup
     private const float MapWidth = 200f;
     private const float MapCenterY = 8f;
 
-    private static readonly Dictionary<string, Vector2Int> LocationCells = new Dictionary<string, Vector2Int>
+    // Pixel rectangles traced from ZebraWorldMap. Their edges meet at the roads, rather
+    // than treating the illustrated districts as a uniform four-by-three grid.
+    private static readonly Dictionary<string, Rect> LocationRects = new Dictionary<string, Rect>
     {
-        { "royalgrace", new Vector2Int(0, 0) },
-        { "bureaucracy", new Vector2Int(1, 0) },
-        { "farm", new Vector2Int(2, 0) },
-        { "barrack", new Vector2Int(3, 0) },
-        { "generousdonation", new Vector2Int(0, 1) },
-        { "ceremony", new Vector2Int(1, 1) },
-        { "guild", new Vector2Int(2, 1) },
-        { "arsenal", new Vector2Int(3, 1) },
-        { "alliance", new Vector2Int(0, 2) },
-        { "patrol", new Vector2Int(1, 2) },
-        { "market", new Vector2Int(2, 2) },
-        { "mobilization", new Vector2Int(3, 2) }
+        { "royalgrace", new Rect(0, 0, 435, 331) },
+        { "bureaucracy", new Rect(435, 0, 393, 331) },
+        { "farm", new Rect(828, 0, 417, 331) },
+        { "barrack", new Rect(1245, 0, 427, 331) },
+        { "generousdonation", new Rect(0, 331, 411, 274) },
+        { "ceremony", new Rect(411, 331, 391, 274) },
+        { "guild", new Rect(802, 331, 412, 274) },
+        { "arsenal", new Rect(1214, 331, 458, 274) },
+        { "alliance", new Rect(0, 605, 467, 336) },
+        { "patrol", new Rect(467, 605, 294, 336) },
+        { "market", new Rect(761, 605, 435, 336) },
+        { "mobilization", new Rect(1196, 605, 476, 336) }
     };
+
+    private const float MapPixelWidth = 1672f;
+    private const float MapPixelHeight = 941f;
 
     [MenuItem("Zebra/Apply Unified Map Layout")]
     public static void Apply()
@@ -116,14 +121,12 @@ public static class ZebraMapSceneSetup
     private static void LayoutLocations(float mapAspect)
     {
         float mapHeight = MapWidth / mapAspect;
-        float cellWidth = MapWidth / 4f;
-        float cellHeight = mapHeight / 3f;
         List<string> unmapped = new List<string>();
 
         foreach (ClickOnLocation location in UnityEngine.Object.FindObjectsByType<ClickOnLocation>(FindObjectsInactive.Include, FindObjectsSortMode.None))
         {
             string key = Normalize(location.name);
-            if (!LocationCells.TryGetValue(key, out Vector2Int cell))
+            if (!LocationRects.TryGetValue(key, out Rect rect))
             {
                 unmapped.Add(location.name);
                 continue;
@@ -131,10 +134,13 @@ public static class ZebraMapSceneSetup
 
             location.transform.SetParent(null, true);
             location.transform.position = new Vector3(
-                -MapWidth * 0.5f + cellWidth * (cell.x + 0.5f),
-                MapCenterY + mapHeight * 0.5f - cellHeight * (cell.y + 0.5f),
+                -MapWidth * 0.5f + (rect.x + rect.width * 0.5f) / MapPixelWidth * MapWidth,
+                MapCenterY + mapHeight * 0.5f - (rect.y + rect.height * 0.5f) / MapPixelHeight * mapHeight,
                 0f);
-            location.transform.localScale = new Vector3(cellWidth, cellHeight, 1f);
+            location.transform.localScale = new Vector3(
+                rect.width / MapPixelWidth * MapWidth,
+                rect.height / MapPixelHeight * mapHeight,
+                1f);
 
             BoxCollider2D collider = location.GetComponent<BoxCollider2D>();
             if (collider != null)

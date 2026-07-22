@@ -64,7 +64,7 @@ public class MainMapUIController : MonoBehaviour
 
         if (Camera.main != null)
         {
-            Camera.main.backgroundColor = new Color(0.045f, 0.075f, 0.065f, 1f);
+            Camera.main.backgroundColor = new Color(0.23f, 0.15f, 0.08f, 1f);
         }
 
         BuildHud(canvas.transform);
