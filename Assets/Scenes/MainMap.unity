@@ -699,9 +699,22 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 2fc515144ba44ad448a328bcbb4f8ad7, type: 2}
   - {fileID: 11400000, guid: 01557b2882f676544babbdc982fc49c0, type: 2}
   - {fileID: 11400000, guid: 68ba948febec0284ab61f2297d6f74c2, type: 2}
+  - {fileID: 11400000, guid: 68ba948febec0284ab61f2297d6f74c2, type: 2}
+  - {fileID: 11400000, guid: 68ba948febec0284ab61f2297d6f74c2, type: 2}
+  - {fileID: 11400000, guid: 68ba948febec0284ab61f2297d6f74c2, type: 2}
+  - {fileID: 11400000, guid: 68ba948febec0284ab61f2297d6f74c2, type: 2}
+  - {fileID: 11400000, guid: 68ba948febec0284ab61f2297d6f74c2, type: 2}
+  - {fileID: 11400000, guid: 68ba948febec0284ab61f2297d6f74c2, type: 2}
+  - {fileID: 11400000, guid: 68ba948febec0284ab61f2297d6f74c2, type: 2}
+  - {fileID: 11400000, guid: 68ba948febec0284ab61f2297d6f74c2, type: 2}
+  - {fileID: 11400000, guid: 68ba948febec0284ab61f2297d6f74c2, type: 2}
+  - {fileID: 11400000, guid: 68ba948febec0284ab61f2297d6f74c2, type: 2}
+  - {fileID: 11400000, guid: 68ba948febec0284ab61f2297d6f74c2, type: 2}
+  - {fileID: 11400000, guid: 68ba948febec0284ab61f2297d6f74c2, type: 2}
   deleteMajestyCost: 3
   mStats: {fileID: 307285969}
   mTurns: {fileID: 639306590}
+  mMissions: {fileID: 0}
 --- !u!4 &210239228
 Transform:
   m_ObjectHideFlags: 0

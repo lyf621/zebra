@@ -8,7 +8,6 @@ public class MainMapUIController : MonoBehaviour
     private StatManager mStats;
     private TurnController mTurns;
     private ZebraGameController mCards;
-    private EventManager mEvents;
     private MissionManager mMissions;
     private Text mHudSummaryText;
     private StatBar[] mStatBars;
@@ -37,7 +36,6 @@ public class MainMapUIController : MonoBehaviour
         mStats = FindAnyObjectByType<StatManager>();
         mTurns = FindAnyObjectByType<TurnController>();
         mCards = FindAnyObjectByType<ZebraGameController>();
-        mEvents = FindAnyObjectByType<EventManager>();
         mMissions = FindAnyObjectByType<MissionManager>();
 
         Canvas canvas = FindSceneCanvas();
@@ -78,8 +76,8 @@ public class MainMapUIController : MonoBehaviour
         }
 
         if (mCards == null) mCards = FindAnyObjectByType<ZebraGameController>();
-        bool decisionOpen = (mEvents != null && mEvents.IsAwaitingChoice()) || (mMissions != null && mMissions.IsAwaitingChoice());
-        if (mShowMissionButton != null) mShowMissionButton.interactable = mMissions != null && mMissions.HasMission() && !decisionOpen && (mCards == null || !mCards.IsDecisionReviewMode) && !mTurns.IsGameOver();
+        // 只要存在任务就允许开关任务面板（含处理阶段），这样模态锁定时玩家仍能显示/隐藏面板。
+        if (mShowMissionButton != null) mShowMissionButton.interactable = mMissions != null && mMissions.HasMission() && (mCards == null || !mCards.IsDecisionReviewMode) && !mTurns.IsGameOver();
         bool chinese = mCards != null && mCards.UseChinese;
         mHudSummaryText.text = chinese
             ? "回合 " + mTurns.GetTurnCount() + "/" + mTurns.GetMaxTurnCount() + "    大臣 " + mTurns.GetMinistersLeft() + "/" + mTurns.GetMaxMinisters() + "    金币 " + mStats.GetGold() + "    威严 " + mStats.GetMajesty() + "    战斗力 " + mStats.GetFight()
@@ -208,6 +206,9 @@ public class MainMapUIController : MonoBehaviour
             segments[i] = image;
         }
 
+        // 让标签绘制在格子之上，避免较长的英文/两位数标签溢出到条形图下方被遮住而“消失”。
+        labelObject.transform.SetAsLastSibling();
+
         return new StatBar { label = label, segments = segments };
     }
 
@@ -234,20 +235,26 @@ public class MainMapUIController : MonoBehaviour
         Transform showMission = FindDescendant(canvasTransform, "ShowMissionButton");
         if (showMission != null) mShowMissionButton = showMission.GetComponent<Button>();
         ConfigureMainButton(nextPhase, new Vector2(-22f, -106f));
-        ConfigureMainButton(showMission, new Vector2(-22f, -160f));
+        ConfigureMainButton(showMission, new Vector2(-22f, -160f));   // 右上角，位于阶段按钮下方
     }
 
     // 设置单个主操作按钮的右上角锚点、稳定尺寸与视觉状态。
     private void ConfigureMainButton(Transform buttonTransform, Vector2 position)
+    {
+        ConfigureMainButton(buttonTransform, Vector2.one, position);   // 默认锚定右上角
+    }
+
+    // anchor 同时用作 anchorMin/anchorMax/pivot：右上角 (1,1)，左上角 (0,1)。
+    private void ConfigureMainButton(Transform buttonTransform, Vector2 anchor, Vector2 position)
     {
         if (buttonTransform == null)
         {
             return;
         }
         RectTransform rect = buttonTransform as RectTransform;
-        rect.anchorMin = Vector2.one;
-        rect.anchorMax = Vector2.one;
-        rect.pivot = Vector2.one;
+        rect.anchorMin = anchor;
+        rect.anchorMax = anchor;
+        rect.pivot = anchor;
         rect.anchoredPosition = position;
         rect.sizeDelta = new Vector2(180f, 44f);
         GameUITheme.StyleButton(buttonTransform.GetComponent<Button>());

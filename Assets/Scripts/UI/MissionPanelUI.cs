@@ -48,6 +48,10 @@ public class MissionPanelUI : MonoBehaviour
     {
         cards = FindAnyObjectByType<ZebraGameController>();
         if (cards != null) cards.LanguageChanged += RefreshLanguage;
+
+        // 效果预览用与标题/说明相同的运行时字体（由 NotoSansSC 动态生成，含中文字形），避免中文变方块。
+        if (resolutionPreviewText != null && GameUITheme.GetTmpFont() != null)
+            resolutionPreviewText.font = GameUITheme.GetTmpFont();
     }
 
     private void OnDestroy()
@@ -110,6 +114,12 @@ public class MissionPanelUI : MonoBehaviour
     public void ToggleWindow()
     {
         if (panelRoot != null) panelRoot.SetActive(!panelRoot.activeSelf);
+    }
+
+    /// <summary>True while the mission panel is visible (used to make it modal).</summary>
+    public bool IsOpen()
+    {
+        return panelRoot != null && panelRoot.activeSelf;
     }
 
     // 决策查看控制器用此方法暂时隐藏或恢复任务界面，不清除玩家尚未选择的按钮。
@@ -184,6 +194,7 @@ public class MissionPanelUI : MonoBehaviour
             if (btn != null)
             {
                 GameUITheme.StyleButton(btn);
+                btn.interactable = manager.CanAffordResolution(res);   // 金币不足则禁用该处理选项
                 btn.onClick.RemoveAllListeners();
                 btn.onClick.AddListener(() => manager.OnResolutionSelected(capturedIndex));
             }
@@ -213,6 +224,9 @@ public class MissionPanelUI : MonoBehaviour
         StatModifier e = res.resolutionEffect;
         string body = "Gold " + Sign(e.gold) + "   PO " + Sign(e.po) + "   MS " + Sign(e.ms) + "   AL " + Sign(e.al) +
                       "   KR " + Sign(e.kr) + "   CR " + Sign(e.cr) + "   AR " + Sign(e.ar);
+        // 金币不足以支付时，提示无法选择。
+        if (currentManager != null && !currentManager.CanAffordResolution(res))
+            body += chinese ? "\n金币不足，无法选择" : "\nNot enough gold";
         MissionPreviewTooltip.EnsureExists().Show(res.GetButtonText(chinese), body, screenPos);
     }
 
