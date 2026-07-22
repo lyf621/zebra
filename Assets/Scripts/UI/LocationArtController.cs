@@ -1,3 +1,5 @@
+// 已停用：地点美术运行时应用功能。整段脚本已注释掉（未删除），需要时取消注释即可恢复。
+/*
 using UnityEngine;
 
 /// <summary>
@@ -43,10 +45,25 @@ public sealed class LocationArtController : MonoBehaviour
 
             SpriteRenderer renderer = location.GetComponent<SpriteRenderer>();
             if (renderer == null) continue;
-            renderer.sprite = sprite;
-            renderer.drawMode = SpriteDrawMode.Sliced;
-            renderer.size = new Vector2(1f, 1f);
+
+            Sprite originalSprite = renderer.sprite;
+            if (originalSprite == null) continue;
+
+            // The prefab uses a 1 x 1 local sprite with a large transform scale. Imported
+            // artwork has a much larger native Sprite size, so create a fitted runtime sprite
+            // whose full aspect-ratio image stays within the original tile bounds.
+            Vector2 originalSize = originalSprite.bounds.size;
+            float pixelsPerUnit = Mathf.Max(
+                sprite.rect.width / Mathf.Max(originalSize.x, Mathf.Epsilon),
+                sprite.rect.height / Mathf.Max(originalSize.y, Mathf.Epsilon));
+            Vector2 pivot = new Vector2(
+                sprite.pivot.x / sprite.rect.width,
+                sprite.pivot.y / sprite.rect.height);
+
+            renderer.drawMode = SpriteDrawMode.Simple;
+            renderer.sprite = Sprite.Create(sprite.texture, sprite.rect, pivot, pixelsPerUnit, 0, SpriteMeshType.FullRect);
             renderer.color = Color.white;
         }
     }
 }
+*/

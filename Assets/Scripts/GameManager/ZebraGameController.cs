@@ -67,6 +67,7 @@ public class ZebraGameController : MonoBehaviour
     private string mStatusChinese;
     private CardView mSelectedCardView;
     private CardModel mPendingCard;
+    private ClickOnLocation mHoveredLocation;
     private GamePhase mPhase = GamePhase.WaitingToStart;
     private int mNextCardId = 1;
     private int mRoundNumber = 1;
@@ -91,6 +92,7 @@ public class ZebraGameController : MonoBehaviour
     [Header("Integration with base project (authoritative game state)")]
     [SerializeField] private StatManager mStats;
     [SerializeField] private TurnController mTurns;
+    [SerializeField] private MissionManager mMissions;
 
     public bool UseChinese => mUseChinese;
     public event System.Action<bool> LanguageChanged;
@@ -124,12 +126,65 @@ public class ZebraGameController : MonoBehaviour
         }
     }
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+#else
+            Application.Quit();
+#endif
+        }
+
+        UpdateLocationPreview();
+    }
+
+    private void UpdateLocationPreview()
+    {
+        if (mPhase != GamePhase.ChoosingLocation || mPendingCard == null)
+        {
+            if (mHoveredLocation != null)
+            {
+                ClearLocationEffectPreview(mHoveredLocation);
+                mHoveredLocation = null;
+            }
+            return;
+        }
+
+        Camera mapCamera = Camera.main;
+        if (mapCamera == null)
+        {
+            return;
+        }
+
+        Vector3 worldPosition = mapCamera.ScreenToWorldPoint(Input.mousePosition);
+        Collider2D hit = Physics2D.OverlapPoint(worldPosition);
+        ClickOnLocation hoveredLocation = hit != null ? hit.GetComponent<ClickOnLocation>() : null;
+        if (hoveredLocation == mHoveredLocation)
+        {
+            return;
+        }
+
+        if (mHoveredLocation != null)
+        {
+            ClearLocationEffectPreview(mHoveredLocation);
+        }
+
+        mHoveredLocation = hoveredLocation;
+        if (mHoveredLocation != null)
+        {
+            PreviewLocationEffect(mHoveredLocation);
+        }
+    }
+
     // 绑定基础项目中的权威状态（StatManager / TurnController）。
     // 缺失时给出警告但不崩溃，方便卡牌场景单独运行调试。
     private void ResolveBaseReferences()
     {
         if (mStats == null) mStats = FindAnyObjectByType<StatManager>();
         if (mTurns == null) mTurns = FindAnyObjectByType<TurnController>();
+        if (mMissions == null) mMissions = FindAnyObjectByType<MissionManager>();
         if (mLocations == null || mLocations.Length == 0)
             mLocations = FindObjectsByType<ClickOnLocation>(FindObjectsSortMode.None);
         if (mStats == null)
@@ -175,7 +230,10 @@ public class ZebraGameController : MonoBehaviour
     public void SetLocations(ClickOnLocation[] locations) { mLocations = locations; }
 
     // 阶段按钮调用此方法，确保动画、弹窗、设置或选地点时不能推进流程。
-    public bool CanAdvanceTurnPhase() { return !mDecisionReviewMode && mPhase == GamePhase.PlayerAction && mOverlay == null && mSettingsOverlay == null; }
+    // 任务面板打开时视为模态：锁定除“显示任务”按钮与任务处理选项之外的所有操作。
+    private bool MissionModalOpen() { return mMissions != null && mMissions.IsPanelOpen(); }
+
+    public bool CanAdvanceTurnPhase() { return !mDecisionReviewMode && !MissionModalOpen() && mPhase == GamePhase.PlayerAction && mOverlay == null && mSettingsOverlay == null; }
 
     // Turn Phase 1: the event is resolved, so let the player play the hand already drawn.
     public void EnableCardPlay()
@@ -239,17 +297,31 @@ public class ZebraGameController : MonoBehaviour
     // 左键选中或打出卡牌，右键取消当前选中的卡牌。
     public void OnHandCardClicked(CardView cardView, PointerEventData.InputButton button)
     {
-        if (mDecisionReviewMode || mOverlay != null || mSettingsOverlay != null || mPhase != GamePhase.PlayerAction || (mIntegrated && !mCardPlayEnabled))
+        // A card may be cancelled both while raised and while choosing a location.
+        // Modal states still take priority so a background card cannot be changed accidentally.
+        if (mDecisionReviewMode || MissionModalOpen() || mOverlay != null || mSettingsOverlay != null)
         {
             return;
         }
 
         if (button == PointerEventData.InputButton.Right)
         {
-            if (mSelectedCardView == cardView && cardView.IsFollowingPointer)
+            if (mSelectedCardView == cardView)
             {
-                ReturnSelectedCardToHand("Card selection cancelled.", "已取消选择卡牌。");
+                if (mPhase == GamePhase.ChoosingLocation)
+                {
+                    CancelPendingPlay();
+                }
+                else if (mPhase == GamePhase.PlayerAction)
+                {
+                    ReturnSelectedCardToHand("Card selection cancelled.", "已取消选择卡牌。");
+                }
             }
+            return;
+        }
+
+        if (mPhase != GamePhase.PlayerAction || (mIntegrated && !mCardPlayEnabled))
+        {
             return;
         }
 
@@ -258,9 +330,9 @@ public class ZebraGameController : MonoBehaviour
             return;
         }
 
-        if (mSelectedCardView == cardView && cardView.IsFollowingPointer)
+        if (mSelectedCardView == cardView)
         {
-            cardView.StopFollowingPointer();
+            // 第二次点击：进入选地点阶段（不再需要停止跟随，因为已不跟随鼠标）。
             BeginPlaySelectedCard();
             return;
         }
@@ -271,14 +343,14 @@ public class ZebraGameController : MonoBehaviour
     // 只有玩家行动阶段的未锁定手牌可以响应悬停效果。
     public bool CanHoverCard(CardView cardView)
     {
-        return !mDecisionReviewMode && mOverlay == null && mSettingsOverlay == null && mPhase == GamePhase.PlayerAction && (!mIntegrated || mCardPlayEnabled) && (mSelectedCardView == null || mSelectedCardView == cardView);
+        return !mDecisionReviewMode && !MissionModalOpen() && mOverlay == null && mSettingsOverlay == null && mPhase == GamePhase.PlayerAction && (!mIntegrated || mCardPlayEnabled) && (mSelectedCardView == null || mSelectedCardView == cardView);
     }
 
     // Called by a scene ClickOnLocation when it is clicked while the player is playing a card.
     // Returns true if the card is accepted (so the location then occupies + fires its effect).
     public bool TryPlayCardOnLocation(ClickOnLocation location)
     {
-        if (mDecisionReviewMode || mOverlay != null || mSettingsOverlay != null || mPhase != GamePhase.ChoosingLocation || mPendingCard == null)
+        if (mDecisionReviewMode || MissionModalOpen() || mOverlay != null || mSettingsOverlay != null || mPhase != GamePhase.ChoosingLocation || mPendingCard == null)
         {
             return false;
         }
@@ -304,6 +376,46 @@ public class ZebraGameController : MonoBehaviour
 
         StartCoroutine(ResolvePlayedCardRoutine());
         return true;
+    }
+
+    public void PreviewLocationEffect(ClickOnLocation location)
+    {
+        if (mPhase != GamePhase.ChoosingLocation || mPendingCard == null || !location.IsAvailable() ||
+            !CardCanUseLocation(mPendingCard, location.GetLocationType()))
+        {
+            ClearLocationEffectPreview(location);
+            return;
+        }
+
+        EntryCostCheck gate = location.GetComponent<EntryCostCheck>();
+        if (gate != null && !gate.CanEnter())
+        {
+            ClearLocationEffectPreview(location);
+            return;
+        }
+
+        if (location.TryGetPreviewEffect(out StatModifier effect))
+        {
+            MainMapUIController ui = FindAnyObjectByType<MainMapUIController>();
+            if (ui != null)
+            {
+                ui.SetLocationPreview(location, effect);
+            }
+        }
+    }
+
+    public void ClearLocationEffectPreview(ClickOnLocation location)
+    {
+        MainMapUIController ui = FindAnyObjectByType<MainMapUIController>();
+        if (ui != null)
+        {
+            ui.ClearLocationPreview(location);
+        }
+
+        if (location == null || location == mHoveredLocation)
+        {
+            mHoveredLocation = null;
+        }
     }
 
     // 创建响应式 Canvas 和游戏所需的全部运行时 UI。
@@ -361,7 +473,7 @@ public class ZebraGameController : MonoBehaviour
 
         // Locations are now scene-fixed 2D GameObjects (ClickOnLocation), not built here.
 
-        mStatusText = CreateText("Status", canvasObject.transform, "", 16, FontStyle.Bold, TextAnchor.MiddleCenter, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, -82f), new Vector2(700f, 38f), new Color(1f, 0.95f, 0.78f));
+        mStatusText = CreateText("Status", canvasObject.transform, "", 16, FontStyle.Bold, TextAnchor.MiddleCenter, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -120f), new Vector2(700f, 38f), new Color(1f, 0.95f, 0.78f));
         mInHandText = CreateText("In Hand", canvasObject.transform, "IN HAND", 15, FontStyle.Bold, TextAnchor.MiddleCenter, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0f, 18f), new Vector2(240f, 28f), Color.white);
 
         mDrawPileButton = CreatePileButton("Draw Pile", canvasObject.transform, "DECK", new Vector2(-550f, -128f), out mDrawCountText, out mDrawPileNameText);
@@ -378,7 +490,7 @@ public class ZebraGameController : MonoBehaviour
         mEndRoundButton = CreateButton("End Round", canvasObject.transform, "End Round", new Vector2(1f, 0.5f), new Vector2(-24f, 18f), new Vector2(120f, 42f), new Color(0.17f, 0.31f, 0.38f));
         mEndRoundButton.GetComponent<RectTransform>().pivot = new Vector2(1f, 0.5f);
         mEndRoundButton.onClick.AddListener(EndRound);
-        mCancelPlayButton = CreateButton("Cancel Play", canvasObject.transform, "Cancel", new Vector2(1f, 0.5f), new Vector2(-24f, -36f), new Vector2(120f, 42f), new Color(0.32f, 0.31f, 0.29f));
+        mCancelPlayButton = CreateButton("Cancel Play", canvasObject.transform, "Cancel", new Vector2(0.5f, 0.5f), new Vector2(550f, -258f), new Vector2(120f, 42f), new Color(0.32f, 0.31f, 0.29f));
         mCancelPlayButton.GetComponent<RectTransform>().pivot = new Vector2(1f, 0.5f);
         mCancelPlayButton.onClick.AddListener(CancelPendingPlay);
 
@@ -513,9 +625,8 @@ public class ZebraGameController : MonoBehaviour
         }
 
         mSelectedCardView = cardView;
-        mSelectedCardView.SetSelected(true);
-        mSelectedCardView.BeginFollowingPointer();
-        SetStatus("Click the held card again to play it.", "再次点击拿起的卡牌即可打出。");
+        mSelectedCardView.SetSelected(true);   // 第一次点击：抬到弹出位（不再跟随鼠标）
+        SetStatus("Click the raised card again to choose a location.", "再次点击已抬起的卡牌即可选择地点。");
     }
 
     private void BeginPlaySelectedCard()
@@ -574,6 +685,7 @@ public class ZebraGameController : MonoBehaviour
         CardView view = mHandViews[card];
         mPendingCard = null;
         mSelectedCardView = null;
+        ClearLocationEffectPreview(null);
         mHand.Remove(card);
         mHandViews.Remove(card);
         if (mLocations != null)
@@ -716,7 +828,7 @@ public class ZebraGameController : MonoBehaviour
     {
         if (mPhase == GamePhase.PlayerAction && mOverlay == null && mSettingsOverlay == null)
         {
-            OpenOverlay("Delete a Card", "删除卡牌", mOwnedCards.OrderBy(card => card.InstanceId).ToList(), OverlayMode.Delete);
+            OpenOverlay("Delete a Card (Cost:3)", "删除卡牌 (花费：3)", mOwnedCards.OrderBy(card => card.InstanceId).ToList(), OverlayMode.Delete);
         }
     }
 
@@ -730,6 +842,7 @@ public class ZebraGameController : MonoBehaviour
 
     private bool CanOpenOverlay()
     {
+        // 允许在任务面板打开时打开 All Cards（抽/弃牌堆按钮已被锁定，不会经此打开）。
         return mOverlay == null && mSettingsOverlay == null && (mDecisionReviewMode || mPhase == GamePhase.PlayerAction || mPhase == GamePhase.ChoosingLocation);
     }
 
@@ -756,6 +869,11 @@ public class ZebraGameController : MonoBehaviour
         RectTransform overlayRect = mOverlay.GetComponent<RectTransform>();
         StretchToParent(overlayRect);
         mOverlay.GetComponent<Image>().color = new Color(0.03f, 0.03f, 0.025f, 0.88f);
+        // 让卡牌浮层（All Cards 等）与设置面板同层级（500），从而覆盖任务面板等其它界面。
+        Canvas overlayCanvas = mOverlay.AddComponent<Canvas>();
+        overlayCanvas.overrideSorting = true;
+        overlayCanvas.sortingOrder = 500;
+        mOverlay.AddComponent<GraphicRaycaster>();
 
         Image panel = CreatePanel("Panel", mOverlay.transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(980f, 620f), new Color(0.88f, 0.84f, 0.72f, 1f));
         RectTransform panelRect = panel.GetComponent<RectTransform>();
@@ -840,6 +958,11 @@ public class ZebraGameController : MonoBehaviour
         faceRect.offsetMax = new Vector2(-5f, -5f);
         face.raycastTarget = false;
         CreateText("Title", button.transform, mUseChinese ? card.NameChinese : card.NameEnglish, 16, FontStyle.Bold, TextAnchor.UpperCenter, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -34f), new Vector2(122f, 48f), new Color(0.12f, 0.11f, 0.09f));
+        if (card.MajestyCost > 0)
+        {
+            // 购买该卡所需的威严花费，显示在标题下方。
+            CreateText("Cost", button.transform, (mUseChinese ? "花费 " : "Cost ") + card.MajestyCost, 12, FontStyle.Bold, TextAnchor.UpperCenter, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -52f), new Vector2(122f, 16f), new Color(0.5f, 0.36f, 0.08f));
+        }
         CreateText("Description", button.transform, mUseChinese ? card.DescriptionChinese : card.DescriptionEnglish, 12, FontStyle.Normal, TextAnchor.MiddleCenter, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, -2f), new Vector2(120f, 76f), new Color(0.12f, 0.11f, 0.09f));
         CreateText("Type", button.transform, GetCardTypeText(card), 11, FontStyle.Bold, TextAnchor.LowerCenter, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0f, 18f), new Vector2(122f, 28f), new Color(0.12f, 0.11f, 0.09f));
         return button;
@@ -928,7 +1051,9 @@ public class ZebraGameController : MonoBehaviour
         {
             float centerOffset = i - (count - 1) * 0.5f;
             float normalizedOffset = count <= 1 ? 0f : centerOffset / ((count - 1) * 0.5f);
-            Vector2 position = new Vector2(-totalWidth * 0.5f + i * spacing, -210f - normalizedOffset * normalizedOffset * 46f);
+            // Keep the hand at the bottom edge, with only its upper half visible. This keeps
+            // the card titles accessible while reserving the map itself for location input.
+            Vector2 position = new Vector2(-totalWidth * 0.5f + i * spacing, -265f - normalizedOffset * normalizedOffset * 18f);
             float angle = -normalizedOffset * 15f;
             CardView view = mHandViews[mHand[i]];
             view.transform.SetSiblingIndex(i);
@@ -980,6 +1105,7 @@ public class ZebraGameController : MonoBehaviour
         }
         mSelectedCardView = null;
         mPendingCard = null;
+        ClearLocationEffectPreview(null);
     }
 
     // 打开设置页；语言切换是当前版本的第一个正式设置项。
@@ -1016,10 +1142,20 @@ public class ZebraGameController : MonoBehaviour
         englishButton.onClick.AddListener(() => SetLanguage(false));
         Button chineseButton = CreateButton("Chinese", panel.transform, "中文", new Vector2(0.5f, 0.5f), new Vector2(92f, -10f), new Vector2(160f, 46f), mUseChinese ? new Color(0.18f, 0.43f, 0.31f) : new Color(0.34f, 0.33f, 0.3f));
         chineseButton.onClick.AddListener(() => SetLanguage(true));
+
+        Button rulesButton = CreateButton("Rules", panel.transform, mUseChinese ? "规则" : "Rules", new Vector2(0.5f, 0.5f), new Vector2(0f, -72f), new Vector2(160f, 46f), new Color(0.20f, 0.34f, 0.42f));
+        rulesButton.onClick.AddListener(OpenRules);
+
         Button closeButton = CreateButton("Close Settings", panel.transform, mUseChinese ? "关闭" : "Close", new Vector2(0.5f, 0f), new Vector2(0f, 38f), new Vector2(140f, 42f), new Color(0.32f, 0.3f, 0.27f));
         closeButton.onClick.AddListener(CloseSettings);
         mSettingsOverlay.transform.SetAsLastSibling();
         RefreshInterface();
+    }
+
+    // 点击"规则"按钮时打开规则网页（PDF/Word）。把下面的链接替换为实际地址即可。
+    private void OpenRules()
+    {
+        Application.OpenURL("https://example.com/rules.pdf");
     }
 
     private void SetLanguage(bool useChinese)
@@ -1078,17 +1214,19 @@ public class ZebraGameController : MonoBehaviour
         mRoundText.text = mUseChinese ? "第 " + mRoundNumber + " 回合    大臣 " + ministersLeft + "/" + maxMinisters : "ROUND " + mRoundNumber + "    MINISTERS " + ministersLeft + "/" + maxMinisters;
         mDrawCountText.text = mDrawPile.Count.ToString();
         mDiscardCountText.text = mDiscardPile.Count.ToString();
-        bool playerAction = !mDecisionReviewMode && mPhase == GamePhase.PlayerAction && mOverlay == null && mSettingsOverlay == null;
+        bool missionLocked = MissionModalOpen();
+        bool playerAction = !mDecisionReviewMode && !missionLocked && mPhase == GamePhase.PlayerAction && mOverlay == null && mSettingsOverlay == null;
+        // canView 不含任务面板锁：All Cards 与 Settings 始终可用；抽/弃牌堆仍受任务面板锁限制。
         bool canView = mOverlay == null && mSettingsOverlay == null && (mDecisionReviewMode || mPhase == GamePhase.PlayerAction || mPhase == GamePhase.ChoosingLocation);
         bool buyAllowed = mIntegrated ? (playerAction && mBuyingEnabled) : playerAction;
         mBuyButton.interactable = buyAllowed && mMarketCards.Count > 0;
         mDeleteButton.interactable = buyAllowed && mOwnedCards.Count > 0;
         mEndRoundButton.interactable = !mIntegrated && playerAction;   // map turn controls rounds when integrated
         mCancelPlayButton.gameObject.SetActive(mPhase == GamePhase.ChoosingLocation);
-        mAllCardsButton.interactable = canView;
-        mDrawPileButton.interactable = canView;
-        mDiscardPileButton.interactable = canView;
-        mSettingsButton.interactable = mOverlay == null && mSettingsOverlay == null && mPhase != GamePhase.Animating;
+        mAllCardsButton.interactable = canView;                          // 始终可用（不受任务面板影响）
+        mDrawPileButton.interactable = canView && !missionLocked;
+        mDiscardPileButton.interactable = canView && !missionLocked;
+        mSettingsButton.interactable = mOverlay == null && mSettingsOverlay == null && mPhase != GamePhase.Animating;   // 始终可用
     }
 
     private void SetStatus(string english, string chinese)
@@ -1105,12 +1243,14 @@ public class ZebraGameController : MonoBehaviour
             return "";
         }
 
-        if (card.IsRoyal)
-        {
-            return mUseChinese ? "皇家牌" : "ROYAL";
-        }
-        return mUseChinese ? GetLocationChinese(card.Location) : card.Location.ToString().ToUpperInvariant();
+        string typeLabel = card.IsRoyal
+            ? (mUseChinese ? "皇家牌" : "ROYAL")
+            : (mUseChinese ? GetLocationChinese(card.Location) : card.Location.ToString().ToUpperInvariant());
+        // 与手牌一致：地点类型后附上揭示阶段的威严/战斗力收益，例如 "Economy +1/+0"。
+        return typeLabel + " " + SignInt(card.MajestyGain) + "/" + SignInt(card.FightGain);
     }
+
+    private string SignInt(int v) { return (v >= 0 ? "+" : "") + v; }
 
     private string GetLocationChinese(LocationType locationType)
     {
@@ -1125,6 +1265,10 @@ public class ZebraGameController : MonoBehaviour
         if (locationType == LocationType.Administration)
         {
             return "行政";
+        }
+        if (locationType == LocationType.Diplomacy)
+        {
+            return "外交";
         }
         return "任意";
     }

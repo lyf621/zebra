@@ -68,19 +68,26 @@ public class CardView : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
 
         mTitle.text = useChinese ? Card.NameChinese : Card.NameEnglish;
         mDescription.text = useChinese ? Card.DescriptionChinese : Card.DescriptionEnglish;
+        string locationLabel;
         if (Card.IsRoyal)
         {
-            mLocation.text = useChinese ? "皇家牌" : "ROYAL";
+            locationLabel = useChinese ? "皇家牌" : "ROYAL";
         }
         else if (useChinese)
         {
-            mLocation.text = Card.Location == LocationType.Economy ? "经济" : Card.Location == LocationType.Military ? "军事" : Card.Location == LocationType.Administration ? "行政" : "任意";
+            locationLabel = Card.Location == LocationType.Economy ? "经济" : Card.Location == LocationType.Military ? "军事" : Card.Location == LocationType.Administration ? "行政" : Card.Location == LocationType.Diplomacy ? "外交" : "任意";
         }
         else
         {
-            mLocation.text = Card.Location.ToString().ToUpperInvariant();
+            locationLabel = Card.Location.ToString().ToUpperInvariant();
         }
+
+        // 在地点类型后附上揭示阶段的收益：威严/战斗力，例如 "Economy +1/+0"。
+        mLocation.text = locationLabel + " " + Sign(Card.MajestyGain) + "/" + Sign(Card.FightGain);
     }
+
+    // 带符号显示（+0、+1、-1）。
+    private static string Sign(int v) { return (v >= 0 ? "+" : "") + v; }
 
     // 保存卡牌在扇形手牌中的基础位置和角度。
     public void SetLayout(Vector2 position, float angle)

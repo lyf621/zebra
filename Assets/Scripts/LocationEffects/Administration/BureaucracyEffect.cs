@@ -1,6 +1,6 @@
  using UnityEngine;
 
-public class BureaucracyEffect : MonoBehaviour, EntryCostCheck
+public class BureaucracyEffect : MonoBehaviour, EntryCostCheck, ILocationEffectPreview
 {
     private ClickOnLocation Clicks; 
     private StatManager Stats;
@@ -24,8 +24,8 @@ public class BureaucracyEffect : MonoBehaviour, EntryCostCheck
     public void VisitTest()
     {
         Turns.AssignMinister();
-        Stats.UpdateGold(-2);
-        Stats.UpdateResource(0,0,2);
-        Stats.UpdateReputation(0,0,0);
+        GetPreviewEffect().ApplyTo(Stats);
     }
+
+    public StatModifier GetPreviewEffect() => new StatModifier { gold = -2, al = 2 };
 }

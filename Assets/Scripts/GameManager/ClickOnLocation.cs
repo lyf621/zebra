@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class ClickOnLocation : MonoBehaviour, IPointerClickHandler
+public class ClickOnLocation : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
 {
     [Header("地点类型（决定哪些卡牌可放置）")]
     [SerializeField] private LocationType locationType = LocationType.Any;
@@ -27,6 +27,7 @@ public class ClickOnLocation : MonoBehaviour, IPointerClickHandler
 
     private Collider2D collider2D;
     private SpriteRenderer spriteRenderer;
+    private LineRenderer highlightFrame;
     private bool hasBeenClicked = false;
 
     private void Start()
@@ -34,6 +35,12 @@ public class ClickOnLocation : MonoBehaviour, IPointerClickHandler
         // 获取必要组件
         collider2D = GetComponent<Collider2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        if (spriteRenderer != null)
+        {
+            // The unified map supplies the artwork. Location sprites are now invisible hit areas.
+            spriteRenderer.enabled = false;
+        }
+        CreateHighlightFrame();
         if (Cards == null) Cards = FindAnyObjectByType<ZebraGameController>();
 
         if (collider2D == null)
@@ -65,6 +72,18 @@ public class ClickOnLocation : MonoBehaviour, IPointerClickHandler
         onFirstClick?.Invoke();   // 效果来自 LocationEffects 中的脚本
     }
 
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        if (Cards == null) Cards = FindAnyObjectByType<ZebraGameController>();
+        if (Cards != null) Cards.PreviewLocationEffect(this);
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        if (Cards == null) Cards = FindAnyObjectByType<ZebraGameController>();
+        if (Cards != null) Cards.ClearLocationEffectPreview(this);
+    }
+
     /// 重置物体，使其可再次被点击。
     public void ResetObject()
     {
@@ -76,8 +95,7 @@ public class ClickOnLocation : MonoBehaviour, IPointerClickHandler
             collider2D.enabled = true;
 
         // 恢复外观（如果有 SpriteRenderer）
-        if (spriteRenderer != null)
-            spriteRenderer.color = defaultColor;
+        SetFrameVisible(false, defaultColor);
     }
 
     public void DisableObject()
@@ -85,8 +103,7 @@ public class ClickOnLocation : MonoBehaviour, IPointerClickHandler
         hasBeenClicked = true;
 
         // 2. 视觉反馈：改变颜色以示不可交互
-        if (spriteRenderer != null)
-            spriteRenderer.color = clickedColor;
+        SetFrameVisible(true, clickedColor);
 
         // 3. 保持碰撞器启用，使被占用的地点仍能被右键查看信息；
         //    再次出牌由 hasBeenClicked / IsAvailable() 拦截。
@@ -114,12 +131,73 @@ public class ClickOnLocation : MonoBehaviour, IPointerClickHandler
     // 高亮当前所选卡牌可以放置的地点（由卡牌系统调用）。
     public void SetHighlighted(bool highlighted)
     {
-        if (spriteRenderer == null || hasBeenClicked) return;
-        spriteRenderer.color = highlighted ? highlightColor : defaultColor;
+        if (hasBeenClicked) return;
+        SetFrameVisible(highlighted, highlightColor);
+    }
+
+    private void CreateHighlightFrame()
+    {
+        highlightFrame = GetComponent<LineRenderer>();
+        if (highlightFrame == null)
+        {
+            highlightFrame = gameObject.AddComponent<LineRenderer>();
+        }
+
+        highlightFrame.useWorldSpace = false;
+        highlightFrame.loop = false;
+        highlightFrame.positionCount = 5;
+        highlightFrame.startWidth = 0.7f;
+        highlightFrame.endWidth = 0.7f;
+        highlightFrame.numCornerVertices = 4;
+        highlightFrame.numCapVertices = 2;
+        highlightFrame.sortingOrder = 20;
+        highlightFrame.material = new Material(Shader.Find("Sprites/Default"));
+        UpdateFrameShape();
+        highlightFrame.enabled = false;
+    }
+
+    private void UpdateFrameShape()
+    {
+        if (highlightFrame == null) return;
+        Vector2 size = collider2D is BoxCollider2D box ? box.size : Vector2.one;
+        float halfWidth = size.x * 0.5f;
+        float halfHeight = size.y * 0.5f;
+        highlightFrame.SetPositions(new[]
+        {
+            new Vector3(-halfWidth, -halfHeight, 0f),
+            new Vector3(-halfWidth, halfHeight, 0f),
+            new Vector3(halfWidth, halfHeight, 0f),
+            new Vector3(halfWidth, -halfHeight, 0f),
+            new Vector3(-halfWidth, -halfHeight, 0f)
+        });
+    }
+
+    private void SetFrameVisible(bool visible, Color color)
+    {
+        if (highlightFrame == null) return;
+        UpdateFrameShape();
+        highlightFrame.startColor = color;
+        highlightFrame.endColor = color;
+        highlightFrame.enabled = visible;
     }
 
     public LocationType GetLocationType() { return locationType; }
     public bool IsAvailable() { return !hasBeenClicked; }
+
+    public bool TryGetPreviewEffect(out StatModifier effect)
+    {
+        foreach (MonoBehaviour behaviour in GetComponents<MonoBehaviour>())
+        {
+            if (behaviour is ILocationEffectPreview previewProvider)
+            {
+                effect = previewProvider.GetPreviewEffect();
+                return true;
+            }
+        }
+
+        effect = default;
+        return false;
+    }
 
     public StatManager VisitStats() { return Stats; }
     public TurnController VisitTurns() { return Turns; }

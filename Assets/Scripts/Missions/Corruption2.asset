@@ -23,10 +23,10 @@ MonoBehaviour:
     buttonTextChinese: "\u63A5\u53D7"
     resolutionEffect:
       gold: 0
-      po: 0
+      po: -1
       ms: 0
-      al: 0
-      kr: 0
+      al: 1
+      kr: 1
       cr: 0
       ar: 0
     isFailure: 0

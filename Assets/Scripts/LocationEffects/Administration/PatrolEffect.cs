@@ -1,6 +1,6 @@
  using UnityEngine;
 
-public class PatrolEffect : MonoBehaviour, EntryCostCheck
+public class PatrolEffect : MonoBehaviour, EntryCostCheck, ILocationEffectPreview
 {
     private ClickOnLocation Clicks; 
     private StatManager Stats;
@@ -24,8 +24,8 @@ public class PatrolEffect : MonoBehaviour, EntryCostCheck
     public void VisitTest()
     {
         Turns.AssignMinister();
-        Stats.UpdateGold(0);
-        Stats.UpdateResource(-1,-1,3);
-        Stats.UpdateReputation(0,0,0);
+        GetPreviewEffect().ApplyTo(Stats);
     }
+
+    public StatModifier GetPreviewEffect() => new StatModifier { po = -1, ms = -1, al = 3 };
 }

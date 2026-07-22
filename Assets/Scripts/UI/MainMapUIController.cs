@@ -8,11 +8,16 @@ public class MainMapUIController : MonoBehaviour
     private StatManager mStats;
     private TurnController mTurns;
     private ZebraGameController mCards;
-    private EventManager mEvents;
     private MissionManager mMissions;
     private Text mHudSummaryText;
     private StatBar[] mStatBars;
     private Button mShowMissionButton;
+    private bool mHasLocationPreview;
+    private ClickOnLocation mPreviewLocation;
+    private StatModifier mLocationPreview;
+
+    private static readonly Color PreviewIncreaseColor = new Color(0.55f, 0.88f, 0.62f, 1f);
+    private static readonly Color PreviewDecreaseColor = new Color(1f, 0.55f, 0.50f, 1f);
 
     private sealed class StatBar
     {
@@ -37,7 +42,6 @@ public class MainMapUIController : MonoBehaviour
         mStats = FindAnyObjectByType<StatManager>();
         mTurns = FindAnyObjectByType<TurnController>();
         mCards = FindAnyObjectByType<ZebraGameController>();
-        mEvents = FindAnyObjectByType<EventManager>();
         mMissions = FindAnyObjectByType<MissionManager>();
 
         Canvas canvas = FindSceneCanvas();
@@ -78,19 +82,38 @@ public class MainMapUIController : MonoBehaviour
         }
 
         if (mCards == null) mCards = FindAnyObjectByType<ZebraGameController>();
-        bool decisionOpen = (mEvents != null && mEvents.IsAwaitingChoice()) || (mMissions != null && mMissions.IsAwaitingChoice());
-        if (mShowMissionButton != null) mShowMissionButton.interactable = mMissions != null && mMissions.HasMission() && !decisionOpen && (mCards == null || !mCards.IsDecisionReviewMode) && !mTurns.IsGameOver();
+        // 只要存在任务就允许开关任务面板（含处理阶段），这样模态锁定时玩家仍能显示/隐藏面板。
+        if (mShowMissionButton != null) mShowMissionButton.interactable = mMissions != null && mMissions.HasMission() && (mCards == null || !mCards.IsDecisionReviewMode) && !mTurns.IsGameOver();
         bool chinese = mCards != null && mCards.UseChinese;
         mHudSummaryText.text = chinese
-            ? "回合 " + mTurns.GetTurnCount() + "/" + mTurns.GetMaxTurnCount() + "    大臣 " + mTurns.GetMinistersLeft() + "/" + mTurns.GetMaxMinisters() + "    金币 " + mStats.GetGold() + "    威严 " + mStats.GetMajesty() + "    战斗力 " + mStats.GetFight()
-            : "TURN " + mTurns.GetTurnCount() + "/" + mTurns.GetMaxTurnCount() + "    MINISTERS " + mTurns.GetMinistersLeft() + "/" + mTurns.GetMaxMinisters() + "    GOLD " + mStats.GetGold() + "    MAJESTY " + mStats.GetMajesty() + "    FIGHT " + mStats.GetFight();
+            ? "回合 " + mTurns.GetTurnCount() + "/" + mTurns.GetMaxTurnCount() + "    大臣 " + mTurns.GetMinistersLeft() + "/" + mTurns.GetMaxMinisters() + "    金币 " + mStats.GetGold() + FormatPreviewDelta(mHasLocationPreview ? mLocationPreview.gold : 0) + "    威严 " + mStats.GetMajesty() + "    战斗力 " + mStats.GetFight()
+            : "TURN " + mTurns.GetTurnCount() + "/" + mTurns.GetMaxTurnCount() + "    MINISTERS " + mTurns.GetMinistersLeft() + "/" + mTurns.GetMaxMinisters() + "    GOLD " + mStats.GetGold() + FormatPreviewDelta(mHasLocationPreview ? mLocationPreview.gold : 0) + "    MAJESTY " + mStats.GetMajesty() + "    FIGHT " + mStats.GetFight();
 
-        SetStatBar(0, chinese ? "民意" : "PUBLIC OPINION", mStats.GetPO(), mStats.GetMaxStat());
-        SetStatBar(1, chinese ? "军力" : "MILITARY", mStats.GetMS(), mStats.GetMaxStat());
-        SetStatBar(2, chinese ? "权威" : "AUTHORITY", mStats.GetAL(), mStats.GetMaxStat());
-        SetStatBar(3, chinese ? "王室" : "KING", mStats.GetKR(), mStats.GetMaxStat());
-        SetStatBar(4, chinese ? "教会" : "CHURCH", mStats.GetCR(), mStats.GetMaxStat());
-        SetStatBar(5, chinese ? "大贵族" : "ARISTOCRATS", mStats.GetAR(), mStats.GetMaxStat());
+        SetStatBar(0, chinese ? "民意" : "PUBLIC OPINION", mStats.GetPO(), mStats.GetMaxStat(), mHasLocationPreview ? mLocationPreview.po : 0);
+        SetStatBar(1, chinese ? "军力" : "MILITARY", mStats.GetMS(), mStats.GetMaxStat(), mHasLocationPreview ? mLocationPreview.ms : 0);
+        SetStatBar(2, chinese ? "权威" : "AUTHORITY", mStats.GetAL(), mStats.GetMaxStat(), mHasLocationPreview ? mLocationPreview.al : 0);
+        SetStatBar(3, chinese ? "王室" : "KING", mStats.GetKR(), mStats.GetMaxStat(), mHasLocationPreview ? mLocationPreview.kr : 0);
+        SetStatBar(4, chinese ? "教会" : "CHURCH", mStats.GetCR(), mStats.GetMaxStat(), mHasLocationPreview ? mLocationPreview.cr : 0);
+        SetStatBar(5, chinese ? "大贵族" : "ARISTOCRATS", mStats.GetAR(), mStats.GetMaxStat(), mHasLocationPreview ? mLocationPreview.ar : 0);
+    }
+
+    public void SetLocationPreview(ClickOnLocation location, StatModifier effect)
+    {
+        mPreviewLocation = location;
+        mLocationPreview = effect;
+        mHasLocationPreview = true;
+    }
+
+    public void ClearLocationPreview(ClickOnLocation location)
+    {
+        if (location != null && location != mPreviewLocation)
+        {
+            return;
+        }
+
+        mPreviewLocation = null;
+        mLocationPreview = default;
+        mHasLocationPreview = false;
     }
 
     // 找到队友场景中原有的 Canvas，排除卡牌系统运行时创建的 Game Canvas。
@@ -185,7 +208,7 @@ public class MainMapUIController : MonoBehaviour
         RectTransform segmentsRect = segmentsObject.GetComponent<RectTransform>();
         segmentsRect.anchorMin = new Vector2(0f, 0f);
         segmentsRect.anchorMax = new Vector2(1f, 1f);
-        segmentsRect.offsetMin = new Vector2(98f, 1f);
+        segmentsRect.offsetMin = new Vector2(120f, 1f);
         segmentsRect.offsetMax = new Vector2(0f, -1f);
         HorizontalLayoutGroup layout = segmentsObject.GetComponent<HorizontalLayoutGroup>();
         layout.spacing = 2f;
@@ -208,18 +231,48 @@ public class MainMapUIController : MonoBehaviour
             segments[i] = image;
         }
 
+        // 让标签绘制在格子之上，避免较长的英文/两位数标签溢出到条形图下方被遮住而“消失”。
+        labelObject.transform.SetAsLastSibling();
+
         return new StatBar { label = label, segments = segments };
     }
 
-    private void SetStatBar(int index, string label, int value, int max)
+    private void SetStatBar(int index, string label, int value, int max, int previewDelta)
     {
         if (mStatBars == null || index < 0 || index >= mStatBars.Length) return;
         StatBar bar = mStatBars[index];
-        bar.label.text = label + " " + Mathf.Clamp(value, 0, max) + "/" + max;
+        int current = Mathf.Clamp(value, 0, max);
+        int projected = Mathf.Clamp(value + previewDelta, 0, max);
+        bar.label.text = label + " " + current + "/" + max + FormatPreviewDelta(previewDelta);
+
+        // 高于 6 变绿，低于 4 变红，介于 4~6 保持默认金色（仅影响条形图，不影响文本）。
+        Color fill = value > 6 ? new Color(0.30f, 0.70f, 0.32f)
+                   : value < 4 ? new Color(0.80f, 0.26f, 0.22f)
+                   : GameUITheme.Gold;
         for (int i = 0; i < bar.segments.Length; i++)
         {
-            bar.segments[i].color = i < value ? GameUITheme.Gold : new Color(0.18f, 0.22f, 0.19f, 1f);
+            Color segmentColor = i < current ? fill : new Color(0.18f, 0.22f, 0.19f, 1f);
+            if (projected > current && i >= current && i < projected)
+            {
+                segmentColor = PreviewIncreaseColor;
+            }
+            else if (projected < current && i >= projected && i < current)
+            {
+                segmentColor = PreviewDecreaseColor;
+            }
+            bar.segments[i].color = segmentColor;
         }
+    }
+
+    private static string FormatPreviewDelta(int delta)
+    {
+        if (delta == 0)
+        {
+            return string.Empty;
+        }
+
+        string color = delta > 0 ? "#8EE5A0" : "#FF8C80";
+        return " <color=" + color + ">" + (delta > 0 ? "+" : string.Empty) + delta + "</color>";
     }
 
     // 调整两个主操作按钮的位置与尺寸，并应用统一按钮样式。
@@ -229,20 +282,26 @@ public class MainMapUIController : MonoBehaviour
         Transform showMission = FindDescendant(canvasTransform, "ShowMissionButton");
         if (showMission != null) mShowMissionButton = showMission.GetComponent<Button>();
         ConfigureMainButton(nextPhase, new Vector2(-22f, -106f));
-        ConfigureMainButton(showMission, new Vector2(-22f, -160f));
+        ConfigureMainButton(showMission, new Vector2(-22f, -160f));   // 右上角，位于阶段按钮下方
     }
 
     // 设置单个主操作按钮的右上角锚点、稳定尺寸与视觉状态。
     private void ConfigureMainButton(Transform buttonTransform, Vector2 position)
+    {
+        ConfigureMainButton(buttonTransform, Vector2.one, position);   // 默认锚定右上角
+    }
+
+    // anchor 同时用作 anchorMin/anchorMax/pivot：右上角 (1,1)，左上角 (0,1)。
+    private void ConfigureMainButton(Transform buttonTransform, Vector2 anchor, Vector2 position)
     {
         if (buttonTransform == null)
         {
             return;
         }
         RectTransform rect = buttonTransform as RectTransform;
-        rect.anchorMin = Vector2.one;
-        rect.anchorMax = Vector2.one;
-        rect.pivot = Vector2.one;
+        rect.anchorMin = anchor;
+        rect.anchorMax = anchor;
+        rect.pivot = anchor;
         rect.anchoredPosition = position;
         rect.sizeDelta = new Vector2(180f, 44f);
         GameUITheme.StyleButton(buttonTransform.GetComponent<Button>());
@@ -331,7 +390,7 @@ public class MainMapUIController : MonoBehaviour
         rect.sizeDelta = size;
         text.alignment = alignment;
         text.overflowMode = TextOverflowModes.Ellipsis;
-        GameUITheme.StyleTmpText(text, fontSize, style, GameUITheme.Ink);
+        GameUITheme.StyleTmpText(text, fontSize, style);
     }
 
     // 在指定父节点的所有后代中按名称查找对象，也能找到当前未激活的面板。

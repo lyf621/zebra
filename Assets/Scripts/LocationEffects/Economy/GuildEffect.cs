@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class GuildEffect : MonoBehaviour, EntryCostCheck
+public class GuildEffect : MonoBehaviour, EntryCostCheck, ILocationEffectPreview
 {
     private ClickOnLocation Clicks; 
     private StatManager Stats;
@@ -24,8 +24,8 @@ public class GuildEffect : MonoBehaviour, EntryCostCheck
     public void VisitTest()
     {
         Turns.AssignMinister();
-        Stats.UpdateGold(-2);
-        Stats.UpdateResource(2,1,-1);
-        Stats.UpdateReputation(0,0,0);
+        GetPreviewEffect().ApplyTo(Stats);
     }
+
+    public StatModifier GetPreviewEffect() => new StatModifier { gold = -2, po = 2, ms = 1, al = -1 };
 }

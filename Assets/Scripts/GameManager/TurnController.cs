@@ -33,7 +33,7 @@ public class TurnController : MonoBehaviour
         RegisterSceneLocations();
         TurnCount = 1;
         MinistersLeft = MaxMinisters;
-        LocationArtController.EnsureExists();
+        // LocationArtController.EnsureExists();   // 已停用地点美术功能
     }
 
     // Update is called once per frame

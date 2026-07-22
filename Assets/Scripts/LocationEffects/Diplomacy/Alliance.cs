@@ -1,6 +1,6 @@
  using UnityEngine;
 
-public class Alliance : MonoBehaviour, EntryCostCheck
+public class Alliance : MonoBehaviour, EntryCostCheck, ILocationEffectPreview
 {
     private ClickOnLocation Clicks; 
     private StatManager Stats;
@@ -24,8 +24,8 @@ public class Alliance : MonoBehaviour, EntryCostCheck
     public void VisitTest()
     {
         Turns.AssignMinister();
-        Stats.UpdateGold(2);
-        Stats.UpdateResource(0,-2,0);
-        Stats.UpdateReputation(0,0,2);
+        GetPreviewEffect().ApplyTo(Stats);
     }
+
+    public StatModifier GetPreviewEffect() => new StatModifier { gold = 2, ms = -2, ar = 2 };
 }

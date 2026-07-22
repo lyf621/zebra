@@ -16,6 +16,16 @@ public class MissionManager : MonoBehaviour
     private bool awaitingResolution = false;
     public bool IsAwaitingChoice() { return awaitingResolution; }
     public bool HasMission() { return currentActiveMission != null; }
+    // True while the mission panel is on screen — used to lock all other operations (modal).
+    public bool IsPanelOpen() { return missionPanel != null && missionPanel.IsOpen(); }
+
+    // 金币检查（仅针对金币）：若处理方式扣金币（gold<0）且玩家金币不足以支付全额，则不能选择。
+    public bool CanAffordResolution(MissionResolution res)
+    {
+        if (res == null || stats == null) return true;
+        int goldDelta = res.resolutionEffect.gold;
+        return goldDelta >= 0 || stats.GetGold() + goldDelta >= 0;
+    }
 
     private void Awake()
     {
@@ -45,6 +55,9 @@ public class MissionManager : MonoBehaviour
         if (resolutionIndex < 0 || resolutionIndex >= currentActiveMission.possibleResolutions.Count) return;
 
         MissionResolution res = currentActiveMission.possibleResolutions[resolutionIndex];
+
+        // 金币不足以支付该处理方式的金币消耗时，不允许选择（仅针对金币，其它资源不检查）。
+        if (!CanAffordResolution(res)) return;
 
         // Apply the outcome. Fight (a temporary reveal-phase resource) absorbs part of any
         // military-strength cost: a negative ms is reduced toward zero by the current Fight.

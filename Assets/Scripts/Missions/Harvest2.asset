@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5833458f6ad86394ea697a12cf869edf, type: 3}
+  m_Name: Harvest2
+  m_EditorClassIdentifier: Assembly-CSharp::MissionSO
+  missionTitle: Increase Workload
+  missionDescription: 'Lack of farmhands is a typical excuse for laziness: one can
+    always work harder instead of looking for help from others.'
+  missionTitleChinese: "\u63D0\u5347\u5DE5\u4F5C\u91CF"
+  missionDescriptionChinese: "\u4EBA\u624B\u4E0D\u8DB3\u662F\u4E00\u4E2A\u5178\u578B\u7684\u501F\u53E3\uFF1A\u4E00\u4E2A\u4EBA\u603B\u662F\u53EF\u4EE5\u66F4\u52A0\u52AA\u529B\u5730\u5DE5\u4F5C\uFF0C\u800C\u4E0D\u662F\u5230\u5904\u627E\u5E2E\u624B\u3002"
+  possibleResolutions:
+  - buttonText: Accept
+    buttonTextChinese: "\u63A5\u53D7"
+    resolutionEffect:
+      gold: 4
+      po: -2
+      ms: 1
+      al: 0
+      kr: 0
+      cr: 0
+      ar: 0
+    isFailure: 0
+  - buttonText: Reject
+    buttonTextChinese: "\u62D2\u7EDD"
+    resolutionEffect:
+      gold: 0
+      po: 0
+      ms: 0
+      al: -1
+      kr: 0
+      cr: 0
+      ar: 0
+    isFailure: 1

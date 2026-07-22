@@ -32,8 +32,9 @@ public class TurnPhaseButton : MonoBehaviour
     {
         if (PhaseButton == null || Turns == null) return;
         bool decisionOpen = (Events != null && Events.IsAwaitingChoice()) || (Missions != null && Missions.IsAwaitingChoice());
+        bool missionPanelOpen = Missions != null && Missions.IsPanelOpen();   // 任务面板打开时锁定阶段按钮
         bool cardsReady = Cards == null || Turns.CheckTurnPhase() == 3 || Cards.CanAdvanceTurnPhase();
-        PhaseButton.interactable = !Turns.IsGameOver() && !decisionOpen && cardsReady;
+        PhaseButton.interactable = !Turns.IsGameOver() && !decisionOpen && !missionPanelOpen && cardsReady;
     }
 
     public void HandleTurnPhase()
@@ -41,6 +42,7 @@ public class TurnPhaseButton : MonoBehaviour
         // Force the player to finish the current decision before the phase can move on.
         if (Events != null && Events.IsAwaitingChoice()) return;
         if (Missions != null && Missions.IsAwaitingChoice()) return;
+        if (Missions != null && Missions.IsPanelOpen()) return;   // 任务面板打开时锁定：先关闭面板才能推进
         if (Cards != null && Turns.CheckTurnPhase() != 3 && !Cards.CanAdvanceTurnPhase()) return;
 
         int phase = Turns.CheckTurnPhase();

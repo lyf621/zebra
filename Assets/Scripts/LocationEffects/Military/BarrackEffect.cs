@@ -1,6 +1,6 @@
  using UnityEngine;
 
-public class BarrackEffect : MonoBehaviour, EntryCostCheck
+public class BarrackEffect : MonoBehaviour, EntryCostCheck, ILocationEffectPreview
 {
     private ClickOnLocation Clicks; 
     private StatManager Stats;
@@ -24,8 +24,8 @@ public class BarrackEffect : MonoBehaviour, EntryCostCheck
     public void VisitTest()
     {
         Turns.AssignMinister();
-        Stats.UpdateGold(0);
-        Stats.UpdateResource(0,2,-1);
-        Stats.UpdateReputation(0,0,0);
+        GetPreviewEffect().ApplyTo(Stats);
     }
+
+    public StatModifier GetPreviewEffect() => new StatModifier { ms = 2, al = -1 };
 }

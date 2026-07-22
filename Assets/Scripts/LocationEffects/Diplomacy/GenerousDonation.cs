@@ -1,6 +1,6 @@
  using UnityEngine;
 
-public class GenerousDonation : MonoBehaviour, EntryCostCheck
+public class GenerousDonation : MonoBehaviour, EntryCostCheck, ILocationEffectPreview
 {
     private ClickOnLocation Clicks; 
     private StatManager Stats;
@@ -24,8 +24,8 @@ public class GenerousDonation : MonoBehaviour, EntryCostCheck
     public void VisitTest()
     {
         Turns.AssignMinister();
-        Stats.UpdateGold(-3);
-        Stats.UpdateResource(1,0,0);
-        Stats.UpdateReputation(0,2,0);
+        GetPreviewEffect().ApplyTo(Stats);
     }
+
+    public StatModifier GetPreviewEffect() => new StatModifier { gold = -3, po = 1, cr = 2 };
 }

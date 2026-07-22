@@ -1,6 +1,6 @@
  using UnityEngine;
 
-public class CeremonyEffect : MonoBehaviour, EntryCostCheck
+public class CeremonyEffect : MonoBehaviour, EntryCostCheck, ILocationEffectPreview
 {
     private ClickOnLocation Clicks; 
     private StatManager Stats;
@@ -24,8 +24,8 @@ public class CeremonyEffect : MonoBehaviour, EntryCostCheck
     public void VisitTest()
     {
         Turns.AssignMinister();
-        Stats.UpdateGold(-4);
-        Stats.UpdateResource(1,0,3);
-        Stats.UpdateReputation(0,0,0);
+        GetPreviewEffect().ApplyTo(Stats);
     }
+
+    public StatModifier GetPreviewEffect() => new StatModifier { gold = -4, po = 1, al = 3 };
 }

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class FarmEffect : MonoBehaviour
+public class FarmEffect : MonoBehaviour, ILocationEffectPreview
 {
     private ClickOnLocation Clicks; 
     private StatManager Stats;
@@ -22,8 +22,8 @@ public class FarmEffect : MonoBehaviour
     public void VisitTest()
     {
         Turns.AssignMinister();
-        Stats.UpdateGold(2);
-        Stats.UpdateResource(1,0,-1);
-        Stats.UpdateReputation(0,0,0);
+        GetPreviewEffect().ApplyTo(Stats);
     }
+
+    public StatModifier GetPreviewEffect() => new StatModifier { gold = 2, po = 1, al = -1 };
 }

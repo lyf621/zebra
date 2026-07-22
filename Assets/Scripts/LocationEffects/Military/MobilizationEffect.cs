@@ -1,6 +1,6 @@
  using UnityEngine;
 
-public class MobilizationEffect : MonoBehaviour, EntryCostCheck
+public class MobilizationEffect : MonoBehaviour, EntryCostCheck, ILocationEffectPreview
 {
     private ClickOnLocation Clicks; 
     private StatManager Stats;
@@ -24,8 +24,8 @@ public class MobilizationEffect : MonoBehaviour, EntryCostCheck
     public void VisitTest()
     {
         Turns.AssignMinister();
-        Stats.UpdateGold(0);
-        Stats.UpdateResource(-1,2,0);
-        Stats.UpdateReputation(0,0,0);
+        GetPreviewEffect().ApplyTo(Stats);
     }
+
+    public StatModifier GetPreviewEffect() => new StatModifier { po = -1, ms = 2 };
 }

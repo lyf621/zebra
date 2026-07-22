@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5833458f6ad86394ea697a12cf869edf, type: 3}
+  m_Name: Outlaw2
+  m_EditorClassIdentifier: Assembly-CSharp::MissionSO
+  missionTitle: Buying
+  missionDescription: Call them scum if you wish, but we can't deny their rich combat
+    experience. That could be valuable to us.
+  missionTitleChinese: "\u6536\u4E70"
+  missionDescriptionChinese: "\u4F60\u5927\u53EF\u4EE5\u7BA1\u4ED6\u4EEC\u53EB\u4EBA\u6E23\uFF0C\u4F46\u4F60\u4E0D\u80FD\u5426\u8BA4\u4ED6\u4EEC\u4E30\u5BCC\u7684\u6218\u6597\u7ECF\u9A8C\u3002\u8FD9\u5BF9\u6211\u4EEC\u53EF\u80FD\u5F88\u6709\u4EF7\u503C\u3002"
+  possibleResolutions:
+  - buttonText: Accept
+    buttonTextChinese: "\u63A5\u53D7"
+    resolutionEffect:
+      gold: -2
+      po: 0
+      ms: 1
+      al: 1
+      kr: 0
+      cr: 0
+      ar: 0
+    isFailure: 0
+  - buttonText: Reject
+    buttonTextChinese: "\u62D2\u7EDD"
+    resolutionEffect:
+      gold: 0
+      po: -1
+      ms: 0
+      al: 0
+      kr: 0
+      cr: 0
+      ar: 0
+    isFailure: 1

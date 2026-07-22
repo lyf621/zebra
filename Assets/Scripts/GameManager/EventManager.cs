@@ -93,7 +93,7 @@ public class EventManager : MonoBehaviour
     private EventSO PickTurn4(List<EventSO> pool)  { return PickRandom(pool); }
     private EventSO PickTurn5(List<EventSO> pool)  { return PickByStat(stats != null ? stats.GetPO() : 5, 6, 4, pool); }
     private EventSO PickTurn6(List<EventSO> pool)  { return PickByStat(stats != null ? stats.GetMS() : 5, 6, 4, pool); }
-    private EventSO PickTurn7(List<EventSO> pool)  { return PickByStat(stats != null ? stats.GetPO() : 5, 6, 4, pool); }
+    private EventSO PickTurn7(List<EventSO> pool)  { return PickByStat(stats != null ? stats.GetAL() : 5, 6, 4, pool); }
     private EventSO PickTurn8(List<EventSO> pool)  { return PickByRelation(stats != null ? stats.AristocratRel() : 3, pool); }
     private EventSO PickTurn9(List<EventSO> pool)  { return PickByRelation(stats != null ? stats.ChurchRel() : 3, pool); }
     private EventSO PickTurn10(List<EventSO> pool) { return PickByRelation(stats != null ? stats.KingRel() : 3, pool); }
