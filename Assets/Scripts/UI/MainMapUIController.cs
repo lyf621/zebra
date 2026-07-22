@@ -336,7 +336,7 @@ public class MainMapUIController : MonoBehaviour
         rect.sizeDelta = size;
         text.alignment = alignment;
         text.overflowMode = TextOverflowModes.Ellipsis;
-        GameUITheme.StyleTmpText(text, fontSize, style, GameUITheme.Ink);
+        GameUITheme.StyleTmpText(text, fontSize, style);
     }
 
     // 在指定父节点的所有后代中按名称查找对象，也能找到当前未激活的面板。

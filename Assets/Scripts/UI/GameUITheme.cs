@@ -106,8 +106,8 @@ public static class GameUITheme
         }
     }
 
-    // 为 TMP 文本应用统一字体、颜色和字号，供事件与任务面板调用。
-    public static void StyleTmpText(TMP_Text text, float fontSize, FontStyles style, Color color)
+    // Applies the shared font and metrics while deliberately preserving the Inspector colour.
+    public static void StyleTmpText(TMP_Text text, float fontSize, FontStyles style)
     {
         if (text == null)
         {
@@ -116,7 +116,6 @@ public static class GameUITheme
         if (GetTmpFont() != null) text.font = sTmpFont;
         text.fontSize = fontSize;
         text.fontStyle = style;
-        text.color = color;
         text.textWrappingMode = TextWrappingModes.Normal;
     }
 }
