@@ -27,16 +27,13 @@ public class ClickOnLocation : MonoBehaviour, IPointerClickHandler
 
     private Collider2D collider2D;
     private SpriteRenderer spriteRenderer;
-    private SpriteRenderer statusRenderer;
     private bool hasBeenClicked = false;
-    private bool isHighlighted = false;
 
     private void Start()
     {
         // 获取必要组件
         collider2D = GetComponent<Collider2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
-        if (statusRenderer == null) statusRenderer = spriteRenderer;
         if (Cards == null) Cards = FindAnyObjectByType<ZebraGameController>();
 
         if (collider2D == null)
@@ -73,23 +70,23 @@ public class ClickOnLocation : MonoBehaviour, IPointerClickHandler
     {
         // 重置点击标记
         hasBeenClicked = false;
-        isHighlighted = false;
 
         // 恢复碰撞器
         if (collider2D != null)
             collider2D.enabled = true;
 
         // 恢复外观（如果有 SpriteRenderer）
-        ApplyStatusColor();
+        if (spriteRenderer != null)
+            spriteRenderer.color = defaultColor;
     }
 
     public void DisableObject()
     {
         hasBeenClicked = true;
-        isHighlighted = false;
 
         // 2. 视觉反馈：改变颜色以示不可交互
-        ApplyStatusColor();
+        if (spriteRenderer != null)
+            spriteRenderer.color = clickedColor;
 
         // 3. 保持碰撞器启用，使被占用的地点仍能被右键查看信息；
         //    再次出牌由 hasBeenClicked / IsAvailable() 拦截。
@@ -117,25 +114,8 @@ public class ClickOnLocation : MonoBehaviour, IPointerClickHandler
     // 高亮当前所选卡牌可以放置的地点（由卡牌系统调用）。
     public void SetHighlighted(bool highlighted)
     {
-        if (hasBeenClicked) return;
-        isHighlighted = highlighted;
-        ApplyStatusColor();
-    }
-
-    /// <summary>
-    /// Lets map presentation use a dedicated border for interaction feedback while the
-    /// artwork below it keeps its original colours.
-    /// </summary>
-    public void SetStatusRenderer(SpriteRenderer renderer)
-    {
-        statusRenderer = renderer != null ? renderer : spriteRenderer;
-        ApplyStatusColor();
-    }
-
-    private void ApplyStatusColor()
-    {
-        if (statusRenderer == null) return;
-        statusRenderer.color = hasBeenClicked ? clickedColor : isHighlighted ? highlightColor : defaultColor;
+        if (spriteRenderer == null || hasBeenClicked) return;
+        spriteRenderer.color = highlighted ? highlightColor : defaultColor;
     }
 
     public LocationType GetLocationType() { return locationType; }
