@@ -67,6 +67,7 @@ public class ZebraGameController : MonoBehaviour
     private string mStatusChinese;
     private CardView mSelectedCardView;
     private CardModel mPendingCard;
+    private ClickOnLocation mHoveredLocation;
     private GamePhase mPhase = GamePhase.WaitingToStart;
     private int mNextCardId = 1;
     private int mRoundNumber = 1;
@@ -122,6 +123,58 @@ public class ZebraGameController : MonoBehaviour
             // Standalone: original self-driven behaviour (useful for testing the card scene alone).
             mStartRoundButton.gameObject.SetActive(true);
             SetStatus("Press Start Round to draw five cards.", "点击开始回合并抽取五张牌。");
+        }
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+#else
+            Application.Quit();
+#endif
+        }
+
+        UpdateLocationPreview();
+    }
+
+    private void UpdateLocationPreview()
+    {
+        if (mPhase != GamePhase.ChoosingLocation || mPendingCard == null)
+        {
+            if (mHoveredLocation != null)
+            {
+                ClearLocationEffectPreview(mHoveredLocation);
+                mHoveredLocation = null;
+            }
+            return;
+        }
+
+        Camera mapCamera = Camera.main;
+        if (mapCamera == null)
+        {
+            return;
+        }
+
+        Vector3 worldPosition = mapCamera.ScreenToWorldPoint(Input.mousePosition);
+        Collider2D hit = Physics2D.OverlapPoint(worldPosition);
+        ClickOnLocation hoveredLocation = hit != null ? hit.GetComponent<ClickOnLocation>() : null;
+        if (hoveredLocation == mHoveredLocation)
+        {
+            return;
+        }
+
+        if (mHoveredLocation != null)
+        {
+            ClearLocationEffectPreview(mHoveredLocation);
+        }
+
+        mHoveredLocation = hoveredLocation;
+        if (mHoveredLocation != null)
+        {
+            PreviewLocationEffect(mHoveredLocation);
         }
     }
 
@@ -244,7 +297,9 @@ public class ZebraGameController : MonoBehaviour
     // 左键选中或打出卡牌，右键取消当前选中的卡牌。
     public void OnHandCardClicked(CardView cardView, PointerEventData.InputButton button)
     {
-        if (mDecisionReviewMode || MissionModalOpen() || mOverlay != null || mSettingsOverlay != null || mPhase != GamePhase.PlayerAction || (mIntegrated && !mCardPlayEnabled))
+        // A card may be cancelled both while raised and while choosing a location.
+        // Modal states still take priority so a background card cannot be changed accidentally.
+        if (mDecisionReviewMode || MissionModalOpen() || mOverlay != null || mSettingsOverlay != null)
         {
             return;
         }
@@ -253,8 +308,20 @@ public class ZebraGameController : MonoBehaviour
         {
             if (mSelectedCardView == cardView)
             {
-                ReturnSelectedCardToHand("Card selection cancelled.", "已取消选择卡牌。");
+                if (mPhase == GamePhase.ChoosingLocation)
+                {
+                    CancelPendingPlay();
+                }
+                else if (mPhase == GamePhase.PlayerAction)
+                {
+                    ReturnSelectedCardToHand("Card selection cancelled.", "已取消选择卡牌。");
+                }
             }
+            return;
+        }
+
+        if (mPhase != GamePhase.PlayerAction || (mIntegrated && !mCardPlayEnabled))
+        {
             return;
         }
 
@@ -309,6 +376,46 @@ public class ZebraGameController : MonoBehaviour
 
         StartCoroutine(ResolvePlayedCardRoutine());
         return true;
+    }
+
+    public void PreviewLocationEffect(ClickOnLocation location)
+    {
+        if (mPhase != GamePhase.ChoosingLocation || mPendingCard == null || !location.IsAvailable() ||
+            !CardCanUseLocation(mPendingCard, location.GetLocationType()))
+        {
+            ClearLocationEffectPreview(location);
+            return;
+        }
+
+        EntryCostCheck gate = location.GetComponent<EntryCostCheck>();
+        if (gate != null && !gate.CanEnter())
+        {
+            ClearLocationEffectPreview(location);
+            return;
+        }
+
+        if (location.TryGetPreviewEffect(out StatModifier effect))
+        {
+            MainMapUIController ui = FindAnyObjectByType<MainMapUIController>();
+            if (ui != null)
+            {
+                ui.SetLocationPreview(location, effect);
+            }
+        }
+    }
+
+    public void ClearLocationEffectPreview(ClickOnLocation location)
+    {
+        MainMapUIController ui = FindAnyObjectByType<MainMapUIController>();
+        if (ui != null)
+        {
+            ui.ClearLocationPreview(location);
+        }
+
+        if (location == null || location == mHoveredLocation)
+        {
+            mHoveredLocation = null;
+        }
     }
 
     // 创建响应式 Canvas 和游戏所需的全部运行时 UI。
@@ -578,6 +685,7 @@ public class ZebraGameController : MonoBehaviour
         CardView view = mHandViews[card];
         mPendingCard = null;
         mSelectedCardView = null;
+        ClearLocationEffectPreview(null);
         mHand.Remove(card);
         mHandViews.Remove(card);
         if (mLocations != null)
@@ -943,7 +1051,9 @@ public class ZebraGameController : MonoBehaviour
         {
             float centerOffset = i - (count - 1) * 0.5f;
             float normalizedOffset = count <= 1 ? 0f : centerOffset / ((count - 1) * 0.5f);
-            Vector2 position = new Vector2(-totalWidth * 0.5f + i * spacing, -210f - normalizedOffset * normalizedOffset * 46f);
+            // Keep the hand at the bottom edge, with only its upper half visible. This keeps
+            // the card titles accessible while reserving the map itself for location input.
+            Vector2 position = new Vector2(-totalWidth * 0.5f + i * spacing, -265f - normalizedOffset * normalizedOffset * 18f);
             float angle = -normalizedOffset * 15f;
             CardView view = mHandViews[mHand[i]];
             view.transform.SetSiblingIndex(i);
@@ -995,6 +1105,7 @@ public class ZebraGameController : MonoBehaviour
         }
         mSelectedCardView = null;
         mPendingCard = null;
+        ClearLocationEffectPreview(null);
     }
 
     // 打开设置页；语言切换是当前版本的第一个正式设置项。

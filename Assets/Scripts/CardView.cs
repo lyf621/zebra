@@ -31,7 +31,7 @@ public class CardView : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
         view.RectTransform.anchorMin = new Vector2(0.5f, 0.5f);
         view.RectTransform.anchorMax = new Vector2(0.5f, 0.5f);
         view.RectTransform.pivot = new Vector2(0.5f, 0.5f);
-        view.RectTransform.sizeDelta = new Vector2(130f, 182f);
+        view.RectTransform.sizeDelta = new Vector2(100f, 140f);
         view.mBorder = cardObject.GetComponent<Image>();
         view.mBorder.color = card.IsRoyal ? new Color(0.86f, 0.64f, 0.12f) : new Color(0.11f, 0.11f, 0.1f);
 
@@ -46,9 +46,9 @@ public class CardView : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
         view.mFace.color = card.IsRoyal ? new Color(1f, 0.95f, 0.7f) : new Color(0.96f, 0.95f, 0.9f);
         view.mFace.raycastTarget = false;
 
-        view.mTitle = CreateText("Title", cardObject.transform, font, 17, FontStyle.Bold, TextAnchor.UpperCenter, new Vector2(8f, 132f), new Vector2(114f, 40f));
-        view.mDescription = CreateText("Description", cardObject.transform, font, 13, FontStyle.Normal, TextAnchor.MiddleCenter, new Vector2(8f, 48f), new Vector2(114f, 82f));
-        view.mLocation = CreateText("Location", cardObject.transform, font, 12, FontStyle.Bold, TextAnchor.LowerCenter, new Vector2(8f, 10f), new Vector2(114f, 32f));
+        view.mTitle = CreateText("Title", cardObject.transform, font, 14, FontStyle.Bold, TextAnchor.UpperCenter, new Vector2(6f, 100f), new Vector2(88f, 32f));
+        view.mDescription = CreateText("Description", cardObject.transform, font, 10, FontStyle.Normal, TextAnchor.MiddleCenter, new Vector2(6f, 34f), new Vector2(88f, 64f));
+        view.mLocation = CreateText("Location", cardObject.transform, font, 10, FontStyle.Bold, TextAnchor.LowerCenter, new Vector2(6f, 7f), new Vector2(88f, 24f));
         view.mController = controller;
         view.Card = card;
         view.SetTexts(controller.UseChinese);

@@ -1,6 +1,6 @@
  using UnityEngine;
 
-public class ArsenalEffect : MonoBehaviour, EntryCostCheck
+public class ArsenalEffect : MonoBehaviour, EntryCostCheck, ILocationEffectPreview
 {
     private ClickOnLocation Clicks; 
     private StatManager Stats;
@@ -24,8 +24,8 @@ public class ArsenalEffect : MonoBehaviour, EntryCostCheck
     public void VisitTest()
     {
         Turns.AssignMinister();
-        Stats.UpdateGold(-4);
-        Stats.UpdateResource(0,3,0);
-        Stats.UpdateReputation(0,0,0);
+        GetPreviewEffect().ApplyTo(Stats);
     }
+
+    public StatModifier GetPreviewEffect() => new StatModifier { gold = -4, ms = 3 };
 }
