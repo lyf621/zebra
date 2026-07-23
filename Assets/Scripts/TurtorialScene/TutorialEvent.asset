@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f7837c2f07c3cd4b906c4ed98d0c167, type: 3}
+  m_Name: TutorialEvent
+  m_EditorClassIdentifier: Assembly-CSharp::EventSO
+  eventTitle: Too Good to be True?
+  eventDescription: The King, the Church and the Aristocrats, all of them are praising
+    my virtues in a chorus. Milk and honey flows through our realm, reflecting the
+    farmers' happy faces and the banners of our mighty army. Everything is just perfect...
+    Am I dreaming?
+  eventTitleChinese: "\u771F\u7684\u5047\u7684\uFF1F"
+  eventDescriptionChinese: "\u738B\u5BA4\u3001\u6559\u4F1A\u548C\u5927\u8D35\u65CF\uFF0C\u4ED6\u4EEC\u6240\u6709\u4EBA\u9F50\u58F0\u79F0\u9882\u6211\u7684\u7F8E\u5FB7\u3002\u5976\u4E0E\u871C\u5728\u9886\u5730\u5185\u6D41\u6DCC\uFF0C\u6620\u7167\u51FA\u519C\u6C11\u7684\u7B11\u8138\u548C\u6211\u4EEC\u90A3\u5F3A\u5927\u519B\u961F\u7684\u65D7\u5E1C\u3002\u4E00\u5207\u90FD\u592A\u5B8C\u7F8E\u4E86\u2026\u2026\u6211\u8FD9\u662F\u5728\u505A\u68A6\u5417\uFF1F"
+  availableOptions:
+  - buttonText: Of course not!
+    buttonTextChinese: "\u5F53\u7136\u4E0D\u662F\uFF01"
+    immediateEffect:
+      gold: 0
+      po: 0
+      ms: 0
+      al: 0
+      kr: 0
+      cr: 0
+      ar: 0
+    linkedMission: {fileID: 11400000, guid: 5b788d80ab44fd34bbd6e09cc6cf92ba, type: 2}
+  - buttonText: Maybe, but so what?
+    buttonTextChinese: "\u4E5F\u8BB8\u5427\uFF0C\u4F46\u90A3\u53C8\u600E\u6837\uFF1F"
+    immediateEffect:
+      gold: 0
+      po: 0
+      ms: 0
+      al: 0
+      kr: 0
+      cr: 0
+      ar: 0
+    linkedMission: {fileID: 11400000, guid: 6f76e6bdd637cd64abcdb48a8280856e, type: 2}

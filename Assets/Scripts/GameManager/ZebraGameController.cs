@@ -235,6 +235,23 @@ public class ZebraGameController : MonoBehaviour
 
     public bool CanAdvanceTurnPhase() { return !mDecisionReviewMode && !MissionModalOpen() && mPhase == GamePhase.PlayerAction && mOverlay == null && mSettingsOverlay == null; }
 
+    // ---- Tutorial support: read-only accessors used by TutorialDirector. Unused by normal gameplay. ----
+    public RectTransform BuyButtonRect => mBuyButton != null ? mBuyButton.GetComponent<RectTransform>() : null;
+    public RectTransform DeleteButtonRect => mDeleteButton != null ? mDeleteButton.GetComponent<RectTransform>() : null;
+    public CardSO GetStartingDeckCard(int index) => (startingDeck != null && index >= 0 && index < startingDeck.Length) ? startingDeck[index] : null;
+
+    // Finds the hand card matching a starting-deck CardSO (by name) and returns the rect to highlight.
+    public RectTransform GetHandCardRect(CardSO source)
+    {
+        if (source == null) return null;
+        foreach (KeyValuePair<CardModel, CardView> pair in mHandViews)
+        {
+            if (pair.Key == null || pair.Value == null) continue;
+            if (pair.Key.NameEnglish == source.NameEnglish) return pair.Value.VisualTransform;
+        }
+        return null;
+    }
+
     // Turn Phase 1: the event is resolved, so let the player play the hand already drawn.
     public void EnableCardPlay()
     {

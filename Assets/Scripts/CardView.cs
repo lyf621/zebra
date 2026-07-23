@@ -21,6 +21,8 @@ public class CardView : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
 
     public CardModel Card { get; private set; }
     public RectTransform RectTransform { get; private set; }
+    // The visual child (correctly sized 130x182); used by TutorialDirector to highlight this card.
+    public RectTransform VisualTransform => mVisualTransform != null ? mVisualTransform : RectTransform;
     public bool IsFollowingPointer => mFollowingPointer;
 
     // 创建一张运行时 UI 卡牌并绑定卡牌数据。

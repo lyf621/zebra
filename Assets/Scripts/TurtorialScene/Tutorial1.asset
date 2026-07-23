@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5833458f6ad86394ea697a12cf869edf, type: 3}
+  m_Name: Tutorial1
+  m_EditorClassIdentifier: Assembly-CSharp::MissionSO
+  missionTitle: Not a Dream at All
+  missionDescription: Our prosperous and powerful realm is not a dream, but a fact
+    that no one can deny. Nothing could have been truer.
+  missionTitleChinese: "\u7EDD\u975E\u68A6\u5883"
+  missionDescriptionChinese: "\u6211\u4EEC\u7E41\u8363\u5F3A\u5927\u7684\u9886\u5730\u4E0D\u662F\u4EC0\u4E48\u7F8E\u68A6\uFF0C\u800C\u662F\u4E00\u4E2A\u4E0D\u53EF\u5426\u8BA4\u7684\u4E8B\u5B9E\u3002\u6CA1\u6709\u4EC0\u4E48\u6BD4\u8FD9\u4E00\u70B9\u66F4\u771F\u5B9E\u3002"
+  possibleResolutions:
+  - buttonText: Accept
+    buttonTextChinese: "\u63A5\u53D7"
+    resolutionEffect:
+      gold: 3
+      po: 3
+      ms: 3
+      al: 3
+      kr: 3
+      cr: 3
+      ar: 3
+    isFailure: 0
