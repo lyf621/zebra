@@ -1137,15 +1137,39 @@ public class ZebraGameController : MonoBehaviour
 
         Image panel = CreatePanel("Settings Panel", mSettingsOverlay.transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(500f, 320f), new Color(0.88f, 0.84f, 0.72f, 1f));
         CreateText("Settings Title", panel.transform, mUseChinese ? "设置" : "Settings", 28, FontStyle.Bold, TextAnchor.MiddleCenter, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -52f), new Vector2(300f, 50f), new Color(0.12f, 0.11f, 0.09f));
-        CreateText("Language", panel.transform, mUseChinese ? "语言" : "Language", 20, FontStyle.Bold, TextAnchor.MiddleCenter, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, 46f), new Vector2(260f, 40f), new Color(0.12f, 0.11f, 0.09f));
-        Button englishButton = CreateButton("English", panel.transform, "English", new Vector2(0.5f, 0.5f), new Vector2(-92f, -10f), new Vector2(160f, 46f), !mUseChinese ? new Color(0.18f, 0.43f, 0.31f) : new Color(0.34f, 0.33f, 0.3f));
+        // Row 1: Quit (left) and Rules (right)
+        Button quitButton = CreateButton("Quit", panel.transform, mUseChinese ? "退出" : "Quit", new Vector2(0.5f, 0.5f), new Vector2(-92f, 56f), new Vector2(160f, 46f), new Color(0.42f, 0.22f, 0.20f));
+        quitButton.onClick.AddListener(QuitToMainMenu);
+        Button rulesButton = CreateButton("Rules", panel.transform, mUseChinese ? "规则" : "Rules", new Vector2(0.5f, 0.5f), new Vector2(92f, 56f), new Vector2(160f, 46f), new Color(0.20f, 0.34f, 0.42f));
+        rulesButton.onClick.AddListener(OpenRules);
+
+        // Row 2: "Language" title
+        CreateText("Language", panel.transform, mUseChinese ? "语言" : "Language", 20, FontStyle.Bold, TextAnchor.MiddleCenter, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, 8f), new Vector2(260f, 40f), new Color(0.12f, 0.11f, 0.09f));
+
+        // Row 3: language buttons
+        Button englishButton = CreateButton("English", panel.transform, "English", new Vector2(0.5f, 0.5f), new Vector2(-92f, -40f), new Vector2(160f, 46f), !mUseChinese ? new Color(0.18f, 0.43f, 0.31f) : new Color(0.34f, 0.33f, 0.3f));
         englishButton.onClick.AddListener(() => SetLanguage(false));
-        Button chineseButton = CreateButton("Chinese", panel.transform, "中文", new Vector2(0.5f, 0.5f), new Vector2(92f, -10f), new Vector2(160f, 46f), mUseChinese ? new Color(0.18f, 0.43f, 0.31f) : new Color(0.34f, 0.33f, 0.3f));
+        Button chineseButton = CreateButton("Chinese", panel.transform, "中文", new Vector2(0.5f, 0.5f), new Vector2(92f, -40f), new Vector2(160f, 46f), mUseChinese ? new Color(0.18f, 0.43f, 0.31f) : new Color(0.34f, 0.33f, 0.3f));
         chineseButton.onClick.AddListener(() => SetLanguage(true));
+
         Button closeButton = CreateButton("Close Settings", panel.transform, mUseChinese ? "关闭" : "Close", new Vector2(0.5f, 0f), new Vector2(0f, 38f), new Vector2(140f, 42f), new Color(0.32f, 0.3f, 0.27f));
         closeButton.onClick.AddListener(CloseSettings);
         mSettingsOverlay.transform.SetAsLastSibling();
         RefreshInterface();
+    }
+
+    // 点击"规则"按钮时打开规则网页（PDF/Word）。把下面的链接替换为实际地址即可。
+    private void OpenRules()
+    {
+        Application.OpenURL("https://example.com/rules.pdf");
+    }
+
+    // 点击"退出"按钮时用 LoadScene.LoadMainMenu() 返回主菜单场景。
+    private void QuitToMainMenu()
+    {
+        LoadScene loader = FindAnyObjectByType<LoadScene>();
+        if (loader == null) loader = new GameObject("LoadScene").AddComponent<LoadScene>();
+        loader.LoadMainMenu();
     }
 
     private void SetLanguage(bool useChinese)

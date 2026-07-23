@@ -303,7 +303,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: infoDescriptionChinese
-      value: "\u5916\u4EA4/\u6559\u4F1A\nGold-3; PO+1, CR+2"
+      value: "\u5916\u4EA4/\u6559\u4F1A\nGold-3; \u6C11\u610F+1, \u6559\u4F1A+2"
       objectReference: {fileID: 0}
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: onFirstClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -853,7 +853,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: infoDescriptionChinese
-      value: "\u7ECF\u6D4E\nPO-1, AL-1; Gold+6"
+      value: "\u7ECF\u6D4E\n\u6C11\u610F-1, \u6743\u5A01-1; Gold+6"
       objectReference: {fileID: 0}
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: onFirstClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -1000,7 +1000,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: infoDescriptionChinese
-      value: "\u884C\u653F\nPO-1, MS-1; AL+3"
+      value: "\u884C\u653F\n\u6C11\u610F-1, \u519B\u529B-1; \u6743\u5A01+3"
       objectReference: {fileID: 0}
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: onFirstClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -1699,7 +1699,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: infoDescriptionChinese
-      value: "\u7ECF\u6D4E\nGold-2, AL-1; PO+2, MS+1"
+      value: "\u7ECF\u6D4E\nGold-2, \u6743\u5A01-1; \u6C11\u610F+2, \u519B\u529B+1"
       objectReference: {fileID: 0}
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: onFirstClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -1979,7 +1979,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: infoDescriptionChinese
-      value: "\u519B\u4E8B\nGold-4; MS+3"
+      value: "\u519B\u4E8B\nGold-4; \u519B\u529B+3"
       objectReference: {fileID: 0}
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: onFirstClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -2857,7 +2857,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: infoDescriptionChinese
-      value: "\u884C\u653F\nGold-4; PO+1, AL+3"
+      value: "\u884C\u653F\nGold-4; \u6C11\u610F+1, \u6743\u5A01+3"
       objectReference: {fileID: 0}
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: onFirstClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -3254,7 +3254,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: infoDescriptionChinese
-      value: "\u5916\u4EA4/\u5927\u8D35\u65CF\nMS-2; Gold+2, AR+2"
+      value: "\u5916\u4EA4/\u5927\u8D35\u65CF\n\u519B\u529B-2; Gold+2, \u5927\u8D35\u65CF+2"
       objectReference: {fileID: 0}
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: onFirstClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -3937,7 +3937,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: infoDescriptionChinese
-      value: "\u5916\u4EA4/\u738B\u5BA4\nAL-1; Gold+1, KR+2"
+      value: "\u5916\u4EA4/\u738B\u5BA4\n\u6743\u5A01-1; Gold+1, \u738B\u5BA4+2"
       objectReference: {fileID: 0}
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: onFirstClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -4437,7 +4437,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: infoDescriptionChinese
-      value: "\u519B\u4E8B\nPO-1; MS+2"
+      value: "\u519B\u4E8B\n\u6C11\u610F-1; \u519B\u529B+2"
       objectReference: {fileID: 0}
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: onFirstClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -4640,7 +4640,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: infoDescriptionChinese
-      value: "\u884C\u653F\nGold-2; AL+2"
+      value: "\u884C\u653F\nGold-2; \u6743\u5A01+2"
       objectReference: {fileID: 0}
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: onFirstClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -4787,7 +4787,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: infoDescriptionChinese
-      value: "\u519B\u4E8B\nAL-1; MS+2"
+      value: "\u519B\u4E8B\n\u6743\u5A01-1; \u519B\u529B+2"
       objectReference: {fileID: 0}
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: onFirstClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -5013,7 +5013,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: infoDescriptionChinese
-      value: "\u7ECF\u6D4E\nAL-1; Gold+2, PO+1"
+      value: "\u7ECF\u6D4E\n\u6743\u5A01-1; Gold+2, \u6C11\u610F+1"
       objectReference: {fileID: 0}
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: onFirstClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
