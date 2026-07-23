@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5833458f6ad86394ea697a12cf869edf, type: 3}
+  m_Name: Suspicion1
+  m_EditorClassIdentifier: Assembly-CSharp::MissionSO
+  missionTitle: Appease
+  missionDescription: Moving the army away from the borders would cost us some stratgic
+    advantage, but it's an easy way to restore the Aristocrats' trust in us. Good
+    deal, perhaps?
+  missionTitleChinese: "\u5B89\u629A"
+  missionDescriptionChinese: "\u628A\u519B\u961F\u4ECE\u8FB9\u5883\u4E0A\u8C03\u8D70\u4F1A\u524A\u5F31\u6211\u4EEC\u7684\u6218\u7565\u4F18\u52BF\uFF0C\u4F46\u8FD9\u662F\u6062\u590D\u5927\u8D35\u65CF\u5BF9\u6211\u4EEC\u7684\u4FE1\u4EFB\u7684\u7B80\u5355\u65B9\u5F0F\u3002\u4E5F\u8BB8\u8FD9\u662F\u4E00\u7B14\u597D\u4E70\u5356\uFF1F"
+  possibleResolutions:
+  - buttonText: Accept
+    buttonTextChinese: "\u63A5\u53D7"
+    resolutionEffect:
+      gold: 0
+      po: 0
+      ms: -1
+      al: 0
+      kr: 0
+      cr: 0
+      ar: 2
+    isFailure: 0
+  - buttonText: Reject
+    buttonTextChinese: "\u62D2\u7EDD"
+    resolutionEffect:
+      gold: 0
+      po: 0
+      ms: 1
+      al: 0
+      kr: 0
+      cr: 0
+      ar: -2
+    isFailure: 1
