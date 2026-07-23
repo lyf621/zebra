@@ -162,6 +162,7 @@ public class LoadScene : MonoBehaviour
         colors.pressedColor = new Color(0.78f, 0.78f, 0.78f, 1f);
         button.colors = colors;
         CreateText("Label", image.transform, label, font, 19, FontStyle.Bold, Vector2.zero, size - new Vector2(16f, 8f));
+        GameUITheme.StyleButton(button);
         return button;
     }
 }

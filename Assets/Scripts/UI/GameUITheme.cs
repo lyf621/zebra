@@ -14,6 +14,10 @@ public static class GameUITheme
     private static Font sLegacyFont;
     private static TMP_FontAsset sTmpFont;
     private static Sprite sPaperSprite;
+    private static Sprite sBurgundyButtonSprite;
+    private static Sprite sCardFrameSprite;
+    private static Sprite sCardBackSprite;
+    private static Sprite sCountBadgeSprite;
 
     // 返回支持中英文的 Noto Sans SC 字体，供运行时创建的旧版 UI Text 使用。
     public static Font GetLegacyFont()
@@ -49,6 +53,75 @@ public static class GameUITheme
         return sPaperSprite;
     }
 
+    public static Sprite GetCardFrameSprite()
+    {
+        if (sCardFrameSprite == null)
+        {
+            Texture2D texture = Resources.Load<Texture2D>("Art/CardUI/GoldCardFrame");
+            if (texture != null)
+            {
+                sCardFrameSprite = Sprite.Create(texture, new Rect(0f, 0f, texture.width, texture.height), new Vector2(0.5f, 0.5f), 100f);
+            }
+        }
+        return sCardFrameSprite;
+    }
+
+    public static Sprite GetCardBackSprite()
+    {
+        if (sCardBackSprite == null)
+        {
+            Texture2D texture = Resources.Load<Texture2D>("Art/CardUI/BlackGoldCardBack");
+            if (texture != null)
+            {
+                sCardBackSprite = Sprite.Create(texture, new Rect(0f, 0f, texture.width, texture.height), new Vector2(0.5f, 0.5f), 100f);
+            }
+        }
+        return sCardBackSprite;
+    }
+
+    private static Sprite GetBurgundyButtonSprite()
+    {
+        if (sBurgundyButtonSprite == null)
+        {
+            Texture2D texture = Resources.Load<Texture2D>("Art/CardUI/BurgundyButtonStrip");
+            if (texture != null)
+            {
+                float rowHeight = texture.height / 3f;
+                sBurgundyButtonSprite = Sprite.Create(
+                    texture,
+                    new Rect(0f, rowHeight * 2f, texture.width, rowHeight),
+                    new Vector2(0.5f, 0.5f),
+                    100f,
+                    0u,
+                    SpriteMeshType.FullRect,
+                    new Vector4(24f, 12f, 24f, 12f));
+            }
+        }
+        return sBurgundyButtonSprite;
+    }
+
+    public static void StyleCardBack(Image image)
+    {
+        if (image == null) return;
+        image.sprite = GetCardBackSprite();
+        image.type = Image.Type.Simple;
+        image.preserveAspect = true;
+        image.color = Color.white;
+    }
+
+    public static Sprite GetCountBadgeSprite()
+    {
+        if (sCountBadgeSprite == null)
+        {
+            Texture2D texture = Resources.Load<Texture2D>("Art/CardUI/CountBadge");
+            if (texture != null)
+            {
+                sCountBadgeSprite = Sprite.Create(texture, new Rect(0f, 0f, texture.width, texture.height), new Vector2(0.5f, 0.5f), 100f);
+            }
+        }
+        return sCountBadgeSprite;
+    }
+
     // 为场景按钮和运行时生成的选项按钮应用相同的颜色、边框、字体和高度。
     public static void StyleButton(Button button)
     {
@@ -60,7 +133,10 @@ public static class GameUITheme
         Image image = button.GetComponent<Image>();
         if (image != null)
         {
-            image.color = ForestGreen;
+            image.sprite = GetBurgundyButtonSprite();
+            image.type = Image.Type.Sliced;
+            image.preserveAspect = false;
+            image.color = Color.white;
         }
 
         ColorBlock colors = button.colors;
@@ -68,16 +144,12 @@ public static class GameUITheme
         colors.highlightedColor = new Color(1.16f, 1.12f, 0.94f, 1f);
         colors.pressedColor = new Color(0.72f, 0.72f, 0.66f, 1f);
         colors.selectedColor = colors.highlightedColor;
-        colors.disabledColor = new Color(0.38f, 0.39f, 0.36f, 0.65f);
+        // Keep disabled commands visibly present as darkened lacquer, not faded away.
+        colors.disabledColor = new Color(0.42f, 0.42f, 0.42f, 1f);
         button.colors = colors;
 
         Outline outline = button.GetComponent<Outline>();
-        if (outline == null)
-        {
-            outline = button.gameObject.AddComponent<Outline>();
-        }
-        outline.effectColor = Gold;
-        outline.effectDistance = new Vector2(2f, -2f);
+        if (outline != null) outline.enabled = false;
 
         LayoutElement layout = button.GetComponent<LayoutElement>();
         if (layout == null)
@@ -91,7 +163,7 @@ public static class GameUITheme
         if (tmpText != null)
         {
             if (GetTmpFont() != null) tmpText.font = sTmpFont;
-            tmpText.color = Color.white;
+            tmpText.color = new Color(0.95f, 0.79f, 0.37f);
             tmpText.fontSize = 17f;
             tmpText.fontStyle = FontStyles.Bold;
         }
@@ -100,7 +172,7 @@ public static class GameUITheme
         if (legacyText != null)
         {
             if (GetLegacyFont() != null) legacyText.font = sLegacyFont;
-            legacyText.color = Color.white;
+            legacyText.color = new Color(0.95f, 0.79f, 0.37f);
             legacyText.fontSize = 17;
             legacyText.fontStyle = FontStyle.Bold;
         }

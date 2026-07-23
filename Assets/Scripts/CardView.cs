@@ -47,19 +47,15 @@ public class CardView : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
         view.mVisualTransform.anchoredPosition = Vector2.zero;
         view.mVisualTransform.sizeDelta = new Vector2(130f, 182f);
         view.mBorder = visualObject.GetComponent<Image>();
-        view.mBorder.color = card.IsRoyal ? new Color(0.86f, 0.64f, 0.12f) : new Color(0.11f, 0.11f, 0.1f);
+        view.mBorder.sprite = GameUITheme.GetCardFrameSprite();
+        view.mBorder.type = Image.Type.Simple;
+        view.mBorder.preserveAspect = false;
+        view.mBorder.color = Color.white;
         view.mBorder.raycastTarget = false;
 
-        GameObject faceObject = new GameObject("Face", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
-        faceObject.transform.SetParent(visualObject.transform, false);
-        RectTransform faceRect = faceObject.GetComponent<RectTransform>();
-        faceRect.anchorMin = Vector2.zero;
-        faceRect.anchorMax = Vector2.one;
-        faceRect.offsetMin = new Vector2(4f, 4f);
-        faceRect.offsetMax = new Vector2(-4f, -4f);
-        view.mFace = faceObject.GetComponent<Image>();
-        view.mFace.color = card.IsRoyal ? new Color(1f, 0.95f, 0.7f) : new Color(0.96f, 0.95f, 0.9f);
-        view.mFace.raycastTarget = false;
+        // GoldCardFrame already contains the complete white face and gold border.
+        // Do not overlay a separate face image or it will cover the decoration.
+        view.mFace = view.mBorder;
 
         // The actual hit area moves with the visible card. Its raised size overlaps
         // the resting position, so lifting a side card cannot cause hover flicker.
@@ -77,6 +73,9 @@ public class CardView : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
         view.mTitle = CreateText("Title", visualObject.transform, font, 17, FontStyle.Bold, TextAnchor.UpperCenter, new Vector2(8f, 132f), new Vector2(114f, 40f));
         view.mDescription = CreateText("Description", visualObject.transform, font, 13, FontStyle.Normal, TextAnchor.MiddleCenter, new Vector2(8f, 48f), new Vector2(114f, 82f));
         view.mLocation = CreateText("Location", visualObject.transform, font, 12, FontStyle.Bold, TextAnchor.LowerCenter, new Vector2(8f, 10f), new Vector2(114f, 32f));
+        view.mTitle.color = new Color(0.12f, 0.11f, 0.09f);
+        view.mDescription.color = new Color(0.12f, 0.11f, 0.09f);
+        view.mLocation.color = new Color(0.12f, 0.11f, 0.09f);
         view.mController = controller;
         view.Card = card;
         view.SetTexts(controller.UseChinese);

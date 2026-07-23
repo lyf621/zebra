@@ -481,8 +481,12 @@ public class ZebraGameController : MonoBehaviour
             Image settingsIcon = CreatePanel("Settings Icon", mSettingsButton.transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(24f, 24f), Color.white);
             settingsIcon.sprite = Sprite.Create(settingsTexture, new Rect(0f, 0f, settingsTexture.width, settingsTexture.height), new Vector2(0.5f, 0.5f), 100f);
             settingsIcon.preserveAspect = true;
-            settingsIcon.raycastTarget = false;
+            settingsIcon.raycastTarget = true;
+            mSettingsButton.targetGraphic = settingsIcon;
         }
+        Image settingsBackground = mSettingsButton.GetComponent<Image>();
+        settingsBackground.sprite = null;
+        settingsBackground.color = new Color(1f, 1f, 1f, 0f);
         mSettingsButton.onClick.AddListener(OpenSettings);
 
         // Locations are now scene-fixed 2D GameObjects (ClickOnLocation), not built here.
@@ -1098,13 +1102,14 @@ public class ZebraGameController : MonoBehaviour
 
     private Button CreateOverlayCard(Transform parent, CardModel card, bool selected)
     {
-        Color border = selected ? new Color(0.77f, 0.18f, 0.14f) : card.IsRoyal ? new Color(0.86f, 0.64f, 0.12f) : new Color(0.1f, 0.1f, 0.09f);
-        Button button = CreateButton("Overlay Card " + card.InstanceId, parent, "", new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(140f, 182f), border);
-        Image face = CreatePanel("Face", button.transform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero, card.IsRoyal ? new Color(1f, 0.95f, 0.7f) : new Color(0.96f, 0.95f, 0.9f));
-        RectTransform faceRect = face.GetComponent<RectTransform>();
-        faceRect.offsetMin = new Vector2(5f, 5f);
-        faceRect.offsetMax = new Vector2(-5f, -5f);
-        face.raycastTarget = false;
+        Button button = CreateButton("Overlay Card " + card.InstanceId, parent, "", new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(140f, 182f), Color.white);
+        Image border = button.GetComponent<Image>();
+        border.sprite = GameUITheme.GetCardFrameSprite();
+        border.type = Image.Type.Simple;
+        border.preserveAspect = false;
+        border.color = Color.white;
+        // The card texture is a complete white face with its gold frame, so no
+        // separate face panel is created over it.
         CreateText("Title", button.transform, mUseChinese ? card.NameChinese : card.NameEnglish, 16, FontStyle.Bold, TextAnchor.UpperCenter, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -34f), new Vector2(122f, 48f), new Color(0.12f, 0.11f, 0.09f));
         if (card.MajestyCost > 0)
         {
@@ -1619,6 +1624,7 @@ public class ZebraGameController : MonoBehaviour
         colors.disabledColor = new Color(0.38f, 0.38f, 0.38f, 0.7f);
         button.colors = colors;
         CreateText("Label", buttonObject.transform, label, 16, FontStyle.Bold, TextAnchor.MiddleCenter, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero, Color.white);
+        GameUITheme.StyleButton(button);
         return button;
     }
 
@@ -1634,8 +1640,16 @@ public class ZebraGameController : MonoBehaviour
     private Button CreatePileButton(string name, Transform parent, string label, Vector2 position, out Text countText, out Text nameText)
     {
         Button button = CreateButton(name, parent, label, new Vector2(0.5f, 0.5f), position, new Vector2(92f, 128f), new Color(0.28f, 0.29f, 0.28f));
+        GameUITheme.StyleCardBack(button.GetComponent<Image>());
+        Transform pileLabel = button.transform.Find("Label");
+        if (pileLabel != null) pileLabel.gameObject.SetActive(false);
         nameText = CreateText("Pile Name", parent, name.ToUpperInvariant(), 14, FontStyle.Bold, TextAnchor.MiddleCenter, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), position + new Vector2(0f, 84f), new Vector2(170f, 28f), Color.white);
-        countText = CreateText("Count", parent, "0", 18, FontStyle.Bold, TextAnchor.MiddleCenter, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), position + new Vector2(0f, -82f), new Vector2(92f, 28f), Color.white);
+        nameText.enabled = false;
+        Image countBadge = CreatePanel("Count Badge", button.transform, new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(-2f, 4f), new Vector2(34f, 34f), Color.white);
+        countBadge.sprite = GameUITheme.GetCountBadgeSprite();
+        countBadge.preserveAspect = true;
+        countBadge.raycastTarget = false;
+        countText = CreateText("Count", countBadge.transform, "0", 16, FontStyle.Bold, TextAnchor.MiddleCenter, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(32f, 32f), Color.white);
         return button;
     }
 
