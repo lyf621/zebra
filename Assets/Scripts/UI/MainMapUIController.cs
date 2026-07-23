@@ -12,7 +12,6 @@ public class MainMapUIController : MonoBehaviour
     private Text mHudSummaryText;
     private StatBar[] mStatBars;
     private Button mShowMissionButton;
-    private TMP_Text mShowMissionLabel;
     private bool mHasLocationPreview;
     private ClickOnLocation mPreviewLocation;
     private StatModifier mLocationPreview;
@@ -86,7 +85,6 @@ public class MainMapUIController : MonoBehaviour
         // 只要存在任务就允许开关任务面板（含处理阶段），这样模态锁定时玩家仍能显示/隐藏面板。
         if (mShowMissionButton != null) mShowMissionButton.interactable = mMissions != null && mMissions.HasMission() && (mCards == null || !mCards.IsDecisionReviewMode) && !mTurns.IsGameOver();
         bool chinese = mCards != null && mCards.UseChinese;
-        if (mShowMissionLabel != null) mShowMissionLabel.text = chinese ? "任务" : "Mission";
         mHudSummaryText.text = chinese
             ? "回合 " + mTurns.GetTurnCount() + "/" + mTurns.GetMaxTurnCount() + "    大臣 " + mTurns.GetMinistersLeft() + "/" + mTurns.GetMaxMinisters() + "    金币 " + mStats.GetGold() + FormatPreviewDelta(mHasLocationPreview ? mLocationPreview.gold : 0) + "    威严 " + mStats.GetMajesty() + "    战斗力 " + mStats.GetFight()
             : "TURN " + mTurns.GetTurnCount() + "/" + mTurns.GetMaxTurnCount() + "    MINISTERS " + mTurns.GetMinistersLeft() + "/" + mTurns.GetMaxMinisters() + "    GOLD " + mStats.GetGold() + FormatPreviewDelta(mHasLocationPreview ? mLocationPreview.gold : 0) + "    MAJESTY " + mStats.GetMajesty() + "    FIGHT " + mStats.GetFight();
@@ -286,11 +284,7 @@ public class MainMapUIController : MonoBehaviour
     {
         Transform nextPhase = FindDescendant(canvasTransform, "NextPhaseButton");
         Transform showMission = FindDescendant(canvasTransform, "ShowMissionButton");
-        if (showMission != null)
-        {
-            mShowMissionButton = showMission.GetComponent<Button>();
-            mShowMissionLabel = showMission.GetComponentInChildren<TMP_Text>(true);
-        }
+        if (showMission != null) mShowMissionButton = showMission.GetComponent<Button>();
         ConfigureMainButton(nextPhase, new Vector2(-22f, -106f));
         ConfigureMainButton(showMission, new Vector2(-22f, -160f));   // 右上角，位于阶段按钮下方
     }
@@ -381,9 +375,7 @@ public class MainMapUIController : MonoBehaviour
         if (missionPanel)
         {
             TMP_Text result = GetNamedText(panelTransform, "Result");
-            // Keep the resolution result beneath the stat-change preview instead of
-            // sharing its baseline after a mission has been resolved.
-            ConfigurePanelText(result, new Vector2(0f, -360f), new Vector2(560f, 42f), 18f, FontStyles.Bold, TextAlignmentOptions.Center);
+            ConfigurePanelText(result, new Vector2(0f, -290f), new Vector2(560f, 42f), 18f, FontStyles.Bold, TextAlignmentOptions.Center);
         }
     }
 

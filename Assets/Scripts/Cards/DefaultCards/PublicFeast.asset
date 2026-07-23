@@ -18,7 +18,8 @@ MonoBehaviour:
   DescriptionChinese: "\u4FDD\u7559\u65F6\uFF1A\u6C11\u610F +1\u3002"
   Location: 0
   RetainEffect: 1
+  PermanentEffect: 0
   IsRoyal: 0
   MajestyCost: 0
-  MajestyGain: 0
-  FightGain: 1
+  MajestyGain: 2
+  FightGain: 0

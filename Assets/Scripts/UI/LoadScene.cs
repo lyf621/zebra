@@ -42,6 +42,25 @@ public static class GameSessionSettings
         Difficulty = GameDifficulty.Normal;
         HasSelectedDifficulty = false;
     }
+
+    // Language persists across scenes and sessions so the MainMenu choice carries into the game.
+    private const string kLanguageKey = "ZebraUseChinese";
+    private static bool sLanguageLoaded;
+    private static bool sUseChinese;
+    public static bool UseChinese
+    {
+        get
+        {
+            if (!sLanguageLoaded) { sUseChinese = PlayerPrefs.GetInt(kLanguageKey, 0) == 1; sLanguageLoaded = true; }
+            return sUseChinese;
+        }
+        set
+        {
+            sUseChinese = value;
+            sLanguageLoaded = true;
+            PlayerPrefs.SetInt(kLanguageKey, value ? 1 : 0);
+        }
+    }
 }
 
 public class LoadScene : MonoBehaviour
@@ -71,32 +90,33 @@ public class LoadScene : MonoBehaviour
     public void ShowDifficultySelection(bool loadGameAfterSelection)
     {
         loadMainMapAfterSelection = loadGameAfterSelection;
-        Canvas canvas = GetComponentInParent<Canvas>();
-        if (canvas == null) canvas = FindAnyObjectByType<Canvas>();
-        if (canvas == null)
-        {
-            GameSessionSettings.SelectDifficulty(GameDifficulty.Normal);
-            if (loadMainMapAfterSelection) SceneManager.LoadScene("MainMap");
-            return;
-        }
-
         Font font = Resources.Load<Font>("Fonts/NotoSansSC");
         if (font == null) font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-        difficultyPanel = new GameObject("Difficulty Selection", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
-        difficultyPanel.transform.SetParent(canvas.transform, false);
-        RectTransform overlayRect = difficultyPanel.GetComponent<RectTransform>();
-        overlayRect.anchorMin = Vector2.zero;
-        overlayRect.anchorMax = Vector2.one;
-        overlayRect.offsetMin = Vector2.zero;
-        overlayRect.offsetMax = Vector2.zero;
-        difficultyPanel.GetComponent<Image>().color = new Color(0.025f, 0.02f, 0.015f, 0.82f);
 
+        // Build on a dedicated overlay canvas so the panel renders completely and identically
+        // whether it is opened from the MainMenu or directly in MainMap, independent of any
+        // scene canvas's CanvasScaler. Matches the gameplay canvas (1280x720) the layout was
+        // designed for, so the fixed-pixel content is never clipped or mis-scaled.
+        difficultyPanel = new GameObject("Difficulty Selection", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
+        Canvas canvas = difficultyPanel.GetComponent<Canvas>();
+        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        canvas.sortingOrder = 900;
+        CanvasScaler scaler = difficultyPanel.GetComponent<CanvasScaler>();
+        scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+        scaler.referenceResolution = new Vector2(1280f, 720f);
+        scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
+        scaler.matchWidthOrHeight = 0.5f;
+        Image dim = difficultyPanel.AddComponent<Image>();
+        dim.color = new Color(0.025f, 0.02f, 0.015f, 0.82f);
+
+        bool chinese = GameSessionSettings.UseChinese;
         Image panel = CreateImage("Panel", difficultyPanel.transform, new Vector2(0.5f, 0.5f), new Vector2(510f, 390f), new Color(0.18f, 0.13f, 0.08f, 1f));
-        CreateText("Title", panel.transform, "选择难度", font, 30, FontStyle.Bold, new Vector2(0f, 142f), new Vector2(420f, 44f));
-        CreateDifficultyButton(panel.transform, font, "简单", "低于 5 时 +1；高于 7 时 -1", GameDifficulty.Easy, 62f, new Color(0.2f, 0.43f, 0.28f));
-        CreateDifficultyButton(panel.transform, font, "普通", "低于 5 时 +1；高于 5 时 -1", GameDifficulty.Normal, -12f, new Color(0.32f, 0.28f, 0.17f));
-        CreateDifficultyButton(panel.transform, font, "困难", "低于 3 时 +1；高于 5 时 -1", GameDifficulty.Hard, -86f, new Color(0.48f, 0.2f, 0.16f));
-        CreateButton("Cancel", panel.transform, "返回", font, new Vector2(0f, -142f), new Vector2(116f, 36f), new Color(0.26f, 0.23f, 0.19f)).onClick.AddListener(() => Destroy(difficultyPanel));
+        CreateText("Title", panel.transform, chinese ? "选择难度" : "Select Difficulty", font, 30, FontStyle.Bold, new Vector2(0f, 142f), new Vector2(420f, 44f));
+        CreateText("Description", panel.transform, chinese ? "属性初始均为 5。难度会影响每回合的属性回归区间。" : "All stats start at 5. Difficulty sets the range each stat drifts back toward every turn.", font, 16, FontStyle.Normal, new Vector2(0f, 101f), new Vector2(440f, 34f));
+        CreateDifficultyButton(panel.transform, font, chinese ? "简单" : "Easy", chinese ? "低于 5 时 +1；高于 7 时 -1" : "+1 below 5;  -1 above 7", GameDifficulty.Easy, 42f, new Color(0.2f, 0.43f, 0.28f));
+        CreateDifficultyButton(panel.transform, font, chinese ? "普通" : "Normal", chinese ? "低于 5 时 +1；高于 5 时 -1" : "+1 below 5;  -1 above 5", GameDifficulty.Normal, -33f, new Color(0.32f, 0.28f, 0.17f));
+        CreateDifficultyButton(panel.transform, font, chinese ? "困难" : "Hard", chinese ? "低于 3 时 +1；高于 5 时 -1" : "+1 below 3;  -1 above 5", GameDifficulty.Hard, -108f, new Color(0.48f, 0.2f, 0.16f));
+        CreateButton("Cancel", panel.transform, chinese ? "返回" : "Back", font, new Vector2(0f, -157f), new Vector2(116f, 36f), new Color(0.26f, 0.23f, 0.19f)).onClick.AddListener(() => Destroy(difficultyPanel));
     }
 
     private void StartGame(GameDifficulty difficulty)
@@ -162,7 +182,7 @@ public class LoadScene : MonoBehaviour
         colors.pressedColor = new Color(0.78f, 0.78f, 0.78f, 1f);
         button.colors = colors;
         CreateText("Label", image.transform, label, font, 19, FontStyle.Bold, Vector2.zero, size - new Vector2(16f, 8f));
-        GameUITheme.StyleButton(button);
+        GameUITheme.StyleButton(button);   // same burgundy lacquer strip as MainMap buttons
         return button;
     }
 }

@@ -21,6 +21,8 @@ public class CardView : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
 
     public CardModel Card { get; private set; }
     public RectTransform RectTransform { get; private set; }
+    // The visual child (correctly sized 130x182); used by TutorialDirector to highlight this card.
+    public RectTransform VisualTransform => mVisualTransform != null ? mVisualTransform : RectTransform;
     public bool IsFollowingPointer => mFollowingPointer;
 
     // 创建一张运行时 UI 卡牌并绑定卡牌数据。
@@ -34,9 +36,9 @@ public class CardView : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
         view.RectTransform.anchorMax = new Vector2(0.5f, 0.5f);
         view.RectTransform.pivot = new Vector2(0.5f, 0.5f);
         view.RectTransform.sizeDelta = new Vector2(130f, 182f);
-        Image rootHitArea = cardObject.GetComponent<Image>();
-        rootHitArea.color = new Color(0f, 0f, 0f, 0f);
-        rootHitArea.raycastTarget = false;
+        Image rootImage = cardObject.GetComponent<Image>();
+        rootImage.color = new Color(0f, 0f, 0f, 0f);
+        rootImage.raycastTarget = false;   // clicks are received by the tracking hit area created below
 
         GameObject visualObject = new GameObject("Visual", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
         visualObject.transform.SetParent(cardObject.transform, false);
@@ -53,13 +55,14 @@ public class CardView : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
         view.mBorder.color = Color.white;
         view.mBorder.raycastTarget = false;
 
-        // GoldCardFrame already contains the complete white face and gold border.
-        // Do not overlay a separate face image or it will cover the decoration.
+        // GoldCardFrame already contains the complete white face and gold border,
+        // so no separate face image is overlaid (it would cover the decoration).
         view.mFace = view.mBorder;
 
-        // The actual hit area moves with the visible card. Its raised size overlaps
-        // the resting position, so lifting a side card cannot cause hover flicker.
-        GameObject hitAreaObject = new GameObject("Visual Hit Area", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+        // Clickable hit area that follows the visible card (a child of the visual) and grows
+        // taller when the card is raised, so the whole visible card is clickable — not just the
+        // small on-screen sliver of the resting card.
+        GameObject hitAreaObject = new GameObject("Hit Area", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
         hitAreaObject.transform.SetParent(visualObject.transform, false);
         RectTransform hitAreaRect = hitAreaObject.GetComponent<RectTransform>();
         hitAreaRect.anchorMin = new Vector2(0.5f, 0.5f);
@@ -71,11 +74,8 @@ public class CardView : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
         view.mHitArea.color = new Color(0f, 0f, 0f, 0f);
 
         view.mTitle = CreateText("Title", visualObject.transform, font, 17, FontStyle.Bold, TextAnchor.UpperCenter, new Vector2(8f, 132f), new Vector2(114f, 40f));
-        view.mDescription = CreateText("Description", visualObject.transform, font, 13, FontStyle.Normal, TextAnchor.MiddleCenter, new Vector2(8f, 48f), new Vector2(114f, 82f));
-        view.mLocation = CreateText("Location", visualObject.transform, font, 12, FontStyle.Bold, TextAnchor.LowerCenter, new Vector2(8f, 10f), new Vector2(114f, 32f));
-        view.mTitle.color = new Color(0.12f, 0.11f, 0.09f);
-        view.mDescription.color = new Color(0.12f, 0.11f, 0.09f);
-        view.mLocation.color = new Color(0.12f, 0.11f, 0.09f);
+        view.mDescription = CreateText("Description", visualObject.transform, font, 13, FontStyle.Normal, TextAnchor.MiddleCenter, new Vector2(8f, 58f), new Vector2(114f, 72f));
+        view.mLocation = CreateText("Location", visualObject.transform, font, 12, FontStyle.Bold, TextAnchor.LowerCenter, new Vector2(8f, 30f), new Vector2(114f, 28f));
         view.mController = controller;
         view.Card = card;
         view.SetTexts(controller.UseChinese);
@@ -96,7 +96,7 @@ public class CardView : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
         mTitle.text = useChinese ? Card.NameChinese : Card.NameEnglish;
         mDescription.text = useChinese ? Card.DescriptionChinese : Card.DescriptionEnglish;
         string locationLabel;
-        if (Card.IsRoyal && Card.Location == LocationType.Any)
+        if (Card.IsRoyal)
         {
             locationLabel = useChinese ? "皇家牌" : "ROYAL";
         }
@@ -168,6 +168,7 @@ public class CardView : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
         mVisualTransform.anchoredPosition = Vector2.zero;
         mVisualTransform.localScale = Vector3.one;
         mVisualTransform.localRotation = Quaternion.identity;
+        SetHitAreaHeight(182f);
     }
 
     public void OnPointerClick(PointerEventData eventData)
@@ -237,6 +238,8 @@ public class CardView : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
         mVisualTransform.anchoredPosition = GetVisibleVisualOffset(visualRaiseAmount, scale);
         mVisualTransform.localRotation = Quaternion.Euler(0f, 0f, raised ? -mLayoutAngle : 0f);
         mVisualTransform.localScale = Vector3.one * scale;
+        // A raised card lifts away from the cursor; a taller hit area bridges back down to it,
+        // so the whole visible card stays clickable and hover does not flicker.
         SetHitAreaHeight(mSelected ? 290f : mHovered ? 210f : 182f);
     }
 

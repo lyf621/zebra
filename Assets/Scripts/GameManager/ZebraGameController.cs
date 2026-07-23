@@ -31,8 +31,7 @@ public class ZebraGameController : MonoBehaviour
     private readonly List<CardModel> mHand = new List<CardModel>();
     private readonly List<CardModel> mMarketCards = new List<CardModel>();
     private readonly Dictionary<CardModel, CardView> mHandViews = new Dictionary<CardModel, CardView>();
-    // Enacted policies belong to the exact district they were played on, not to every
-    // district of the same category.
+    // Tracks permanent (royal delegation) policies enacted at each location, by effect type and count.
     private readonly Dictionary<ClickOnLocation, Dictionary<PermanentCardEffectType, int>> mPermanentEffectsByLocation = new Dictionary<ClickOnLocation, Dictionary<PermanentCardEffectType, int>>();
     // Scene-fixed 2D locations (ClickOnLocation). Assign in the Inspector, or they are
     // auto-found at start. Card play places ministers on these; effects live in LocationEffects.
@@ -60,11 +59,6 @@ public class ZebraGameController : MonoBehaviour
     private Button mStartRoundButton;
     private Button mSettingsButton;
     private GameObject mOverlay;
-    private ScrollRect mOverlayScrollRect;
-    private RectTransform mOverlayContent;
-    private GridLayoutGroup mOverlayGrid;
-    private Button mOverlayActionButton;
-    private readonly Dictionary<CardModel, Button> mOverlayCardButtons = new Dictionary<CardModel, Button>();
     private GameObject mSettingsOverlay;
     private List<CardModel> mOverlayCards;
     private CardModel mOverlaySelectedCard;
@@ -109,6 +103,7 @@ public class ZebraGameController : MonoBehaviour
     private void Start()
     {
         ResolveBaseReferences();
+        mUseChinese = GameSessionSettings.UseChinese;   // honor the language chosen in the main menu
         mIntegrated = mTurns != null;
         mFont = Resources.Load<Font>("Fonts/NotoSansSC");
         if (mFont == null)
@@ -242,6 +237,23 @@ public class ZebraGameController : MonoBehaviour
     private bool MissionModalOpen() { return mMissions != null && mMissions.IsPanelOpen(); }
 
     public bool CanAdvanceTurnPhase() { return !mDecisionReviewMode && !MissionModalOpen() && mPhase == GamePhase.PlayerAction && mOverlay == null && mSettingsOverlay == null; }
+
+    // ---- Tutorial support: read-only accessors used by TutorialDirector. Unused by normal gameplay. ----
+    public RectTransform BuyButtonRect => mBuyButton != null ? mBuyButton.GetComponent<RectTransform>() : null;
+    public RectTransform DeleteButtonRect => mDeleteButton != null ? mDeleteButton.GetComponent<RectTransform>() : null;
+    public CardSO GetStartingDeckCard(int index) => (startingDeck != null && index >= 0 && index < startingDeck.Length) ? startingDeck[index] : null;
+
+    // Finds the hand card matching a starting-deck CardSO (by name) and returns the rect to highlight.
+    public RectTransform GetHandCardRect(CardSO source)
+    {
+        if (source == null) return null;
+        foreach (KeyValuePair<CardModel, CardView> pair in mHandViews)
+        {
+            if (pair.Key == null || pair.Value == null) continue;
+            if (pair.Key.NameEnglish == source.NameEnglish) return pair.Value.VisualTransform;
+        }
+        return null;
+    }
 
     // Turn Phase 1: the event is resolved, so let the player play the hand already drawn.
     public void EnableCardPlay()
@@ -481,12 +493,8 @@ public class ZebraGameController : MonoBehaviour
             Image settingsIcon = CreatePanel("Settings Icon", mSettingsButton.transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(24f, 24f), Color.white);
             settingsIcon.sprite = Sprite.Create(settingsTexture, new Rect(0f, 0f, settingsTexture.width, settingsTexture.height), new Vector2(0.5f, 0.5f), 100f);
             settingsIcon.preserveAspect = true;
-            settingsIcon.raycastTarget = true;
-            mSettingsButton.targetGraphic = settingsIcon;
+            settingsIcon.raycastTarget = false;
         }
-        Image settingsBackground = mSettingsButton.GetComponent<Image>();
-        settingsBackground.sprite = null;
-        settingsBackground.color = new Color(1f, 1f, 1f, 0f);
         mSettingsButton.onClick.AddListener(OpenSettings);
 
         // Locations are now scene-fixed 2D GameObjects (ClickOnLocation), not built here.
@@ -545,8 +553,27 @@ public class ZebraGameController : MonoBehaviour
                           source.MajestyCost, source.MajestyGain, source.FightGain);
     }
 
-    // Called after a location's own UnityEvent effect, so enacted policies add to the
-    // same visit and all future matching location visits during this game.
+    private CardModel CreateCard(string nameEnglish, string nameChinese, string descriptionEnglish, string descriptionChinese, LocationType location, RetainEffectType retainEffect, PermanentCardEffectType permanentEffect, bool isRoyal, int majestyCost, int majestyGain, int fightGain)
+    {
+        if (IntegrationPlaceholderMode.Enabled)
+        {
+            nameEnglish = "";
+            nameChinese = "";
+            descriptionEnglish = "";
+            descriptionChinese = "";
+            location = LocationType.Any;
+            retainEffect = RetainEffectType.None;
+            permanentEffect = PermanentCardEffectType.None;
+            isRoyal = false;
+            majestyCost = 0;
+            majestyGain = 0;
+            fightGain = 0;
+        }
+        return new CardModel { InstanceId = mNextCardId++, NameEnglish = nameEnglish, NameChinese = nameChinese, DescriptionEnglish = descriptionEnglish, DescriptionChinese = descriptionChinese, Location = location, RetainEffect = retainEffect, PermanentEffect = permanentEffect, IsRoyal = isRoyal, MajestyCost = majestyCost, MajestyGain = majestyGain, FightGain = fightGain };
+    }
+
+    // Called after a location's own effect fires, so enacted policies add to the same
+    // visit and all future matching location visits during this game.
     public void ApplyPermanentLocationBonus(ClickOnLocation location)
     {
         if (mStats == null || location == null)
@@ -633,25 +660,6 @@ public class ZebraGameController : MonoBehaviour
             cr = modifier.cr * multiplier,
             ar = modifier.ar * multiplier
         };
-    }
-
-    private CardModel CreateCard(string nameEnglish, string nameChinese, string descriptionEnglish, string descriptionChinese, LocationType location, RetainEffectType retainEffect, PermanentCardEffectType permanentEffect, bool isRoyal, int majestyCost, int majestyGain, int fightGain)
-    {
-        if (IntegrationPlaceholderMode.Enabled)
-        {
-            nameEnglish = "";
-            nameChinese = "";
-            descriptionEnglish = "";
-            descriptionChinese = "";
-            location = LocationType.Any;
-            retainEffect = RetainEffectType.None;
-            permanentEffect = PermanentCardEffectType.None;
-            isRoyal = false;
-            majestyCost = 0;
-            majestyGain = 0;
-            fightGain = 0;
-        }
-        return new CardModel { InstanceId = mNextCardId++, NameEnglish = nameEnglish, NameChinese = nameChinese, DescriptionEnglish = descriptionEnglish, DescriptionChinese = descriptionChinese, Location = location, RetainEffect = retainEffect, PermanentEffect = permanentEffect, IsRoyal = isRoyal, MajestyCost = majestyCost, MajestyGain = majestyGain, FightGain = fightGain };
     }
 
     private void BeginFirstRound()
@@ -825,6 +833,8 @@ public class ZebraGameController : MonoBehaviour
         LayoutHand();
 
         PrepareCardForCanvasAnimation(view);
+        // Cards carrying a permanent policy are consumed (removed from the deck) instead of
+        // going to the discard pile, since their effect is now stationed at the location.
         bool consumed = card.PermanentEffect != PermanentCardEffectType.None;
         Vector2 target = consumed ? new Vector2(0f, 84f) : GetCanvasPosition(mDiscardPileButton.GetComponent<RectTransform>());
         yield return MoveRectRoutine(view.RectTransform, target, 0.2f, 30f);
@@ -1062,22 +1072,12 @@ public class ZebraGameController : MonoBehaviour
         scrollRect.horizontal = false;
         scrollRect.vertical = true;
         scrollRect.movementType = ScrollRect.MovementType.Clamped;
-        // A fixed distance makes wheel movement consistent regardless of where the
-        // player clicked a card. The scrollbar is kept in sync by ScrollRect.
-        scrollRect.scrollSensitivity = 48f;
-        scrollRect.verticalScrollbar = CreateOverlayScrollbar(scrollObject.transform);
-        scrollRect.verticalScrollbarVisibility = ScrollRect.ScrollbarVisibility.AutoHideAndExpandViewport;
-        scrollRect.verticalScrollbarSpacing = 8f;
-        mOverlayScrollRect = scrollRect;
-        mOverlayContent = contentRect;
-        mOverlayGrid = grid;
-        mOverlayCardButtons.Clear();
+        scrollRect.scrollSensitivity = 38f;
 
         foreach (CardModel card in mOverlayCards)
         {
             CardModel listedCard = card;
             Button cardButton = CreateOverlayCard(contentObject.transform, listedCard, listedCard == mOverlaySelectedCard);
-            mOverlayCardButtons.Add(listedCard, cardButton);
             if (mOverlayMode != OverlayMode.View)
             {
                 cardButton.onClick.AddListener(() => SelectOverlayCard(listedCard));
@@ -1091,11 +1091,10 @@ public class ZebraGameController : MonoBehaviour
         if (mOverlayMode == OverlayMode.Delete || mOverlayMode == OverlayMode.Market)
         {
             string actionText = mOverlayMode == OverlayMode.Delete ? (mUseChinese ? "删除" : "Delete") : (mUseChinese ? "购买" : "Buy");
-            mOverlayActionButton = CreateButton("Confirm", panel.transform, actionText, new Vector2(0.5f, 0f), new Vector2(0f, 32f), new Vector2(150f, 42f), mOverlayMode == OverlayMode.Delete ? new Color(0.48f, 0.2f, 0.18f) : new Color(0.58f, 0.45f, 0.14f));
-            mOverlayActionButton.onClick.AddListener(ConfirmOverlayAction);
+            Button actionButton = CreateButton("Confirm", panel.transform, actionText, new Vector2(0.5f, 0f), new Vector2(0f, 32f), new Vector2(150f, 42f), mOverlayMode == OverlayMode.Delete ? new Color(0.48f, 0.2f, 0.18f) : new Color(0.58f, 0.45f, 0.14f));
+            actionButton.interactable = mOverlaySelectedCard != null;
+            actionButton.onClick.AddListener(ConfirmOverlayAction);
         }
-
-        RefreshOverlaySelection();
 
         panelRect.SetAsLastSibling();
     }
@@ -1107,27 +1106,29 @@ public class ZebraGameController : MonoBehaviour
         border.sprite = GameUITheme.GetCardFrameSprite();
         border.type = Image.Type.Simple;
         border.preserveAspect = false;
-        border.color = Color.white;
-        // The card texture is a complete white face with its gold frame, so no
-        // separate face panel is created over it.
+        // GoldCardFrame already contains the white face + gold border, so no separate face panel.
+        // Tint the frame red while selected so the chosen card stays obvious.
+        border.color = selected ? new Color(1f, 0.55f, 0.5f) : Color.white;
+        // Deck / Discard / All Cards list cards non-interactable; keep them full-colour instead
+        // of the button's dark disabled tint (the frame is now the button's own graphic).
+        ColorBlock cardColors = button.colors;
+        cardColors.disabledColor = Color.white;
+        button.colors = cardColors;
         CreateText("Title", button.transform, mUseChinese ? card.NameChinese : card.NameEnglish, 16, FontStyle.Bold, TextAnchor.UpperCenter, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -34f), new Vector2(122f, 48f), new Color(0.12f, 0.11f, 0.09f));
         if (card.MajestyCost > 0)
         {
-            // Keep purchase price below the card body so it is separate from the
-            // retained-resource line (for example, the old +1/+0 label).
-            CreateText("Cost", button.transform, card.MajestyCost + (mUseChinese ? " 威严" : " Majesty"), 12, FontStyle.Bold, TextAnchor.LowerCenter, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0f, 42f), new Vector2(122f, 18f), new Color(0.5f, 0.36f, 0.08f));
+            // 购买该卡所需的威严花费，显示在标题下方。
+            CreateText("Cost", button.transform, (mUseChinese ? "花费 " : "Cost ") + card.MajestyCost, 12, FontStyle.Bold, TextAnchor.UpperCenter, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -52f), new Vector2(122f, 16f), new Color(0.5f, 0.36f, 0.08f));
         }
         CreateText("Description", button.transform, mUseChinese ? card.DescriptionChinese : card.DescriptionEnglish, 12, FontStyle.Normal, TextAnchor.MiddleCenter, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, -2f), new Vector2(120f, 76f), new Color(0.12f, 0.11f, 0.09f));
-        CreateText("Type", button.transform, GetCardTypeText(card), 11, FontStyle.Bold, TextAnchor.LowerCenter, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0f, 18f), new Vector2(122f, 28f), new Color(0.12f, 0.11f, 0.09f));
+        CreateText("Type", button.transform, GetCardTypeText(card), 11, FontStyle.Bold, TextAnchor.LowerCenter, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0f, 36f), new Vector2(122f, 28f), new Color(0.12f, 0.11f, 0.09f));
         return button;
     }
 
     private void SelectOverlayCard(CardModel card)
     {
         mOverlaySelectedCard = card;
-        // Do not rebuild the overlay here: rebuilding reset the scroll position and
-        // made lower cards jump back to the first row after selection.
-        RefreshOverlaySelection();
+        BuildOverlay();
     }
 
     private void ConfirmOverlayAction()
@@ -1161,22 +1162,10 @@ public class ZebraGameController : MonoBehaviour
             mOwnedCards.Add(purchased);
             mDiscardPile.Add(purchased);
             mMarketCards.Remove(mOverlaySelectedCard);
-            mOverlayCards.Remove(mOverlaySelectedCard);
-            if (mOverlayCardButtons.TryGetValue(mOverlaySelectedCard, out Button purchasedButton))
-            {
-                Destroy(purchasedButton.gameObject);
-                mOverlayCardButtons.Remove(mOverlaySelectedCard);
-            }
-            mOverlaySelectedCard = null;
-            UpdateOverlayContentHeight();
-            RefreshOverlaySelection();
             SetStatus("Royal card purchased and added to the discard pile.", "皇家牌已购买并加入弃牌堆。");
         }
 
-        if (mOverlayMode == OverlayMode.Delete)
-        {
-            CloseOverlay();
-        }
+        CloseOverlay();
         RefreshInterface();
     }
 
@@ -1205,83 +1194,8 @@ public class ZebraGameController : MonoBehaviour
             Destroy(mOverlay);
         }
         mOverlay = null;
-        mOverlayScrollRect = null;
-        mOverlayContent = null;
-        mOverlayGrid = null;
-        mOverlayActionButton = null;
-        mOverlayCardButtons.Clear();
         mOverlayCards = null;
         mOverlaySelectedCard = null;
-    }
-
-    private Scrollbar CreateOverlayScrollbar(Transform parent)
-    {
-        GameObject scrollbarObject = new GameObject("Scrollbar", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(Scrollbar));
-        scrollbarObject.transform.SetParent(parent, false);
-        RectTransform scrollbarRect = scrollbarObject.GetComponent<RectTransform>();
-        scrollbarRect.anchorMin = new Vector2(1f, 0f);
-        scrollbarRect.anchorMax = new Vector2(1f, 1f);
-        scrollbarRect.pivot = new Vector2(1f, 0.5f);
-        scrollbarRect.anchoredPosition = new Vector2(-5f, 0f);
-        scrollbarRect.sizeDelta = new Vector2(16f, 0f);
-        scrollbarObject.GetComponent<Image>().color = new Color(0.18f, 0.16f, 0.12f, 0.8f);
-
-        GameObject handleObject = new GameObject("Handle", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
-        handleObject.transform.SetParent(scrollbarObject.transform, false);
-        RectTransform handleRect = handleObject.GetComponent<RectTransform>();
-        handleRect.anchorMin = new Vector2(0f, 0f);
-        handleRect.anchorMax = new Vector2(1f, 1f);
-        handleRect.offsetMin = new Vector2(2f, 2f);
-        handleRect.offsetMax = new Vector2(-2f, -2f);
-        Image handleImage = handleObject.GetComponent<Image>();
-        handleImage.color = new Color(0.75f, 0.56f, 0.16f, 1f);
-
-        Scrollbar scrollbar = scrollbarObject.GetComponent<Scrollbar>();
-        scrollbar.direction = Scrollbar.Direction.BottomToTop;
-        scrollbar.handleRect = handleRect;
-        scrollbar.targetGraphic = handleImage;
-        return scrollbar;
-    }
-
-    private void RefreshOverlaySelection()
-    {
-        foreach (KeyValuePair<CardModel, Button> entry in mOverlayCardButtons)
-        {
-            if (entry.Value == null)
-            {
-                continue;
-            }
-            Image image = entry.Value.GetComponent<Image>();
-            if (image != null)
-            {
-                image.color = entry.Key == mOverlaySelectedCard
-                    ? new Color(0.77f, 0.18f, 0.14f)
-                    : (entry.Key.IsRoyal ? new Color(0.86f, 0.64f, 0.12f) : new Color(0.1f, 0.1f, 0.09f));
-            }
-        }
-
-        if (mOverlayActionButton != null)
-        {
-            bool canAfford = mOverlayMode == OverlayMode.Delete
-                ? mStats != null && mStats.GetMajesty() >= deleteMajestyCost
-                : mStats != null && mOverlaySelectedCard != null && mStats.GetMajesty() >= mOverlaySelectedCard.MajestyCost;
-            mOverlayActionButton.interactable = mOverlaySelectedCard != null && canAfford;
-        }
-    }
-
-    private void UpdateOverlayContentHeight()
-    {
-        if (mOverlayContent == null || mOverlayGrid == null || mOverlayCards == null)
-        {
-            return;
-        }
-        int rowCount = Mathf.Max(1, Mathf.CeilToInt(mOverlayCards.Count / 5f));
-        mOverlayContent.sizeDelta = new Vector2(0f, rowCount * (mOverlayGrid.cellSize.y + mOverlayGrid.spacing.y) + mOverlayGrid.padding.top + mOverlayGrid.padding.bottom);
-        Canvas.ForceUpdateCanvases();
-        if (mOverlayScrollRect != null)
-        {
-            mOverlayScrollRect.verticalNormalizedPosition = Mathf.Clamp01(mOverlayScrollRect.verticalNormalizedPosition);
-        }
     }
 
     // 将手牌排成中心较高、两侧平滑下落的扇形，最多容纳十张。
@@ -1296,8 +1210,6 @@ public class ZebraGameController : MonoBehaviour
             float normalizedOffset = count <= 1 ? 0f : centerOffset / ((count - 1) * 0.5f);
             // Keep resting cards below the illustrated map. Selected cards are raised by
             // CardView so their complete face remains readable before placement.
-            // Keep resting cards mostly below the illustrated map. CardView raises a
-            // selected card back into the readable area and clamps it to the canvas.
             Vector2 position = new Vector2(-totalWidth * 0.5f + i * spacing, -345f - normalizedOffset * normalizedOffset * 32f);
             float angle = -normalizedOffset * 15f;
             CardView view = mHandViews[mHand[i]];
@@ -1406,7 +1318,7 @@ public class ZebraGameController : MonoBehaviour
     // 点击"规则"按钮时打开规则网页（PDF/Word）。把下面的链接替换为实际地址即可。
     private void OpenRules()
     {
-        Application.OpenURL("https://example.com/rules.pdf");
+        Application.OpenURL("https://raw.githubusercontent.com/HenryRao525/RuleSetPublic/main/TheRuleSet.pdf");
     }
 
     // 点击"退出"按钮时用 LoadScene.LoadMainMenu() 返回主菜单场景。
@@ -1420,6 +1332,7 @@ public class ZebraGameController : MonoBehaviour
     private void SetLanguage(bool useChinese)
     {
         mUseChinese = useChinese;
+        GameSessionSettings.UseChinese = useChinese;   // persist so the menu and next game stay in sync
         CloseSettings();
         RefreshLocalizedInterface();
         RefreshInterface();
@@ -1503,7 +1416,7 @@ public class ZebraGameController : MonoBehaviour
             return "";
         }
 
-        string typeLabel = card.IsRoyal && card.Location == LocationType.Any
+        string typeLabel = card.IsRoyal
             ? (mUseChinese ? "皇家牌" : "ROYAL")
             : (mUseChinese ? GetLocationChinese(card.Location) : card.Location.ToString().ToUpperInvariant());
         // 与手牌一致：地点类型后附上揭示阶段的威严/战斗力收益，例如 "Economy +1/+0"。
@@ -1624,7 +1537,7 @@ public class ZebraGameController : MonoBehaviour
         colors.disabledColor = new Color(0.38f, 0.38f, 0.38f, 0.7f);
         button.colors = colors;
         CreateText("Label", buttonObject.transform, label, 16, FontStyle.Bold, TextAnchor.MiddleCenter, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero, Color.white);
-        GameUITheme.StyleButton(button);
+        GameUITheme.StyleButton(button);   // burgundy lacquer strip texture (9-sliced)
         return button;
     }
 
@@ -1640,7 +1553,7 @@ public class ZebraGameController : MonoBehaviour
     private Button CreatePileButton(string name, Transform parent, string label, Vector2 position, out Text countText, out Text nameText)
     {
         Button button = CreateButton(name, parent, label, new Vector2(0.5f, 0.5f), position, new Vector2(92f, 128f), new Color(0.28f, 0.29f, 0.28f));
-        GameUITheme.StyleCardBack(button.GetComponent<Image>());
+        GameUITheme.StyleCardBack(button.GetComponent<Image>());   // BlackGold card-back texture for the pile
         Transform pileLabel = button.transform.Find("Label");
         if (pileLabel != null) pileLabel.gameObject.SetActive(false);
         nameText = CreateText("Pile Name", parent, name.ToUpperInvariant(), 14, FontStyle.Bold, TextAnchor.MiddleCenter, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), position + new Vector2(0f, 84f), new Vector2(170f, 28f), Color.white);
