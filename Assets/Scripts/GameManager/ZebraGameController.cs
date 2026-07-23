@@ -101,6 +101,7 @@ public class ZebraGameController : MonoBehaviour
     private void Start()
     {
         ResolveBaseReferences();
+        mUseChinese = GameSessionSettings.UseChinese;   // honor the language chosen in the main menu
         mIntegrated = mTurns != null;
         mFont = Resources.Load<Font>("Fonts/NotoSansSC");
         if (mFont == null)
@@ -1192,6 +1193,7 @@ public class ZebraGameController : MonoBehaviour
     private void SetLanguage(bool useChinese)
     {
         mUseChinese = useChinese;
+        GameSessionSettings.UseChinese = useChinese;   // persist so the menu and next game stay in sync
         CloseSettings();
         RefreshLocalizedInterface();
         RefreshInterface();

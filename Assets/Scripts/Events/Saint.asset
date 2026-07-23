@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f7837c2f07c3cd4b906c4ed98d0c167, type: 3}
+  m_Name: Saint
+  m_EditorClassIdentifier: Assembly-CSharp::EventSO
+  eventTitle: Saint?
+  eventDescription: Farmers claim that they found a "saint" living in the woods.
+    We could request the church to confirm this claim, but the result might upset
+    those farmers. On the other hand,  acknowledging his sacred identity by ourselves
+    will please the peasants for sure.
+  eventTitleChinese: "\u5723\u4EBA\uFF1F"
+  eventDescriptionChinese: "\u519C\u6C11\u5BA3\u79F0\u4ED6\u4EEC\u53D1\u73B0\u4E86\u4E00\u4F4D\u9690\u5C45\u5728\u6811\u6797\u4E2D\u7684\u5723\u5F92\u3002
+    \u6211\u4EEC\u53EF\u4EE5\u8BF7\u6C42\u6559\u4F1A\u786E\u8BA4\u8FD9\u4EFD\u5BA3\u79F0\uFF0C\u4F46\u7ED3\u679C\u6050\u6015\u8981\u626B\u519C\u6C11\u7684\u5174\u3002\u53E6\u4E00\u65B9\u9762\uFF0C\u6211\u4EEC\u53EF\u4EE5\u81EA\u884C\u627F\u8BA4\u4ED6\u7684\u795E\u5723\u8EAB\u4EFD\uFF0C\u8FD9\u65E0\u7591\u4F1A\u9F13\u821E\u5E73\u6C11\u4EEC\u3002 "
+  availableOptions:
+  - buttonText: Report to the Church
+    buttonTextChinese: "\u62A5\u544A\u6559\u4F1A"
+    immediateEffect:
+      gold: 0
+      po: 0
+      ms: 0
+      al: 0
+      kr: 0
+      cr: 0
+      ar: 0
+    linkedMission: {fileID: 11400000, guid: 69bf23c13c27ba743aeda7cd26920212, type: 2}
+  - buttonText: Acknowledge the Saint
+    buttonTextChinese: "\u627F\u8BA4\u5723\u5F92"
+    immediateEffect:
+      gold: 0
+      po: 0
+      ms: 0
+      al: 0
+      kr: 0
+      cr: 0
+      ar: 0
+    linkedMission: {fileID: 11400000, guid: e1c021cd1de765b42a85ef53b5ff62fa, type: 2}

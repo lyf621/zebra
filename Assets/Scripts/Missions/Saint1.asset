@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5833458f6ad86394ea697a12cf869edf, type: 3}
+  m_Name: Saint1
+  m_EditorClassIdentifier: Assembly-CSharp::MissionSO
+  missionTitle: Confirmation Procedure
+  missionDescription: The Church is the supreme authority of theological debates.
+    They have every right to decide on the so-called saint's true identity and we
+    should respect their judgement.
+  missionTitleChinese: "\u8BA4\u8BC1\u7A0B\u5E8F"
+  missionDescriptionChinese: "\u6559\u4F1A\u662F\u4E00\u5207\u795E\u5B66\u4E89\u7AEF\u7684\u6700\u9AD8\u6743\u5A01\u3002\u4ED6\u4EEC\u62E5\u6709\u51B3\u5B9A\u8FD9\u4E2A\u6240\u8C13\u7684\u5723\u4EBA\u771F\u5B9E\u8EAB\u4EFD\u7684\u4E00\u5207\u6743\u5229\uFF0C\u800C\u6211\u4EEC\u5E94\u5F53\u5C0A\u91CD\u4ED6\u4EEC\u7684\u5224\u65AD\u3002"
+  possibleResolutions:
+  - buttonText: Accept
+    buttonTextChinese: "\u63A5\u53D7"
+    resolutionEffect:
+      gold: 0
+      po: -1
+      ms: 0
+      al: 1
+      kr: 0
+      cr: 1
+      ar: 0
+    isFailure: 0
+  - buttonText: Reject
+    buttonTextChinese: "\u62D2\u7EDD"
+    resolutionEffect:
+      gold: 0
+      po: 0
+      ms: 0
+      al: -1
+      kr: 0
+      cr: 0
+      ar: 0
+    isFailure: 1
