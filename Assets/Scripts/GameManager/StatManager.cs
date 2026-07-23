@@ -78,21 +78,37 @@ public class StatManager : MonoBehaviour
     public int GetCR() {return TheChurch;}
     public int GetAR() {return TheAristocrats;}
 
-    public void ReturnToBalance() 
+    public void ReturnToBalance()
     {
-        if(PublicOpinion > Balance) PublicOpinion --;
-        if(PublicOpinion < Balance) PublicOpinion ++;
-        if(MilitaryStrength > Balance) MilitaryStrength --;
-        if(MilitaryStrength <Balance) MilitaryStrength ++;
-        if(AuthorityLevel > Balance) AuthorityLevel --;
-        if(AuthorityLevel < Balance) AuthorityLevel ++;
+        ReturnToBalance(Balance, Balance);
+    }
 
-        if(TheKing > Balance) TheKing --;
-        if(TheKing < Balance) TheKing ++;
-        if(TheChurch > Balance) TheChurch --;
-        if(TheChurch < Balance) TheChurch ++;
-        if(TheAristocrats > Balance) TheAristocrats --;
-        if(TheAristocrats < Balance) TheAristocrats ++;
+    /// <summary>
+    /// Moves each non-gold stat one point toward a permitted balance range.
+    /// A stat already inside the range is left unchanged.
+    /// </summary>
+    public void ReturnToBalance(int lowerBound, int upperBound)
+    {
+        if (lowerBound > upperBound)
+        {
+            int temporary = lowerBound;
+            lowerBound = upperBound;
+            upperBound = temporary;
+        }
+
+        PublicOpinion = MoveTowardBalanceRange(PublicOpinion, lowerBound, upperBound);
+        MilitaryStrength = MoveTowardBalanceRange(MilitaryStrength, lowerBound, upperBound);
+        AuthorityLevel = MoveTowardBalanceRange(AuthorityLevel, lowerBound, upperBound);
+        TheKing = MoveTowardBalanceRange(TheKing, lowerBound, upperBound);
+        TheChurch = MoveTowardBalanceRange(TheChurch, lowerBound, upperBound);
+        TheAristocrats = MoveTowardBalanceRange(TheAristocrats, lowerBound, upperBound);
+    }
+
+    private static int MoveTowardBalanceRange(int value, int lowerBound, int upperBound)
+    {
+        if (value < lowerBound) return value + 1;
+        if (value > upperBound) return value - 1;
+        return value;
     }
 
     public int KingRel() 

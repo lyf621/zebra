@@ -31,6 +31,10 @@ public class TurnController : MonoBehaviour
         DecisionReviewController.EnsureExists();
         Cards = FindAnyObjectByType<ZebraGameController>();
         RegisterSceneLocations();
+        if (!GameSessionSettings.HasSelectedDifficulty && UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "MainMap")
+        {
+            gameObject.AddComponent<DifficultySelectionBootstrap>();
+        }
         TurnCount = 1;
         MinistersLeft = MaxMinisters;
         // LocationArtController.EnsureExists();   // 已停用地点美术功能
@@ -85,7 +89,7 @@ public class TurnController : MonoBehaviour
             return;
         }
 
-        Stats.ReturnToBalance();
+        Stats.ReturnToBalance(GameSessionSettings.BalanceLowerBound, GameSessionSettings.BalanceUpperBound);
         Stats.ClearTurnStat();
         RestoreMinister();
         TurnCount++;

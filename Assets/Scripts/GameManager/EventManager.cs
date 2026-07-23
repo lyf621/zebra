@@ -17,6 +17,7 @@ public class EventManager : MonoBehaviour
     [SerializeField] private TurnController turns;
 
     private EventSO currentActiveEvent;
+    private readonly HashSet<EventSO> usedEvents = new HashSet<EventSO>();
 
     // 每回合一个取事件方法；用 turns.GetTurnCount() 作为下标调用（在 Awake 中构建——委托无法在 Inspector 赋值）。
     private System.Func<List<EventSO>, EventSO>[] eventPickers;
@@ -53,18 +54,62 @@ public class EventManager : MonoBehaviour
         }
 
         awaitingChoice = true;
+        usedEvents.Add(currentActiveEvent);
         if (eventPanel != null) eventPanel.Show(currentActiveEvent, this);
     }
 
     // 按当前回合选择对应的取事件方法；下标与 eventPoolsByTurn 对齐，超范围时用最后一个方法。
     private EventSO PickEventForCurrentTurn(List<EventSO> pool)
     {
-        if (eventPickers == null || eventPickers.Length == 0) return PickRandom(pool);
-        int turn = turns != null ? turns.GetTurnCount() : 1;
-        int index = Mathf.Clamp(turn - 1, 0, eventPickers.Length - 1);
-        var picker = eventPickers[index];
-        return picker != null ? picker(pool) : PickRandom(pool);
+        EventSO preferred;
+        if (eventPickers == null || eventPickers.Length == 0)
+        {
+            preferred = PickRandom(pool);
+        }
+        else
+        {
+            int turn = turns != null ? turns.GetTurnCount() : 1;
+            int index = Mathf.Clamp(turn - 1, 0, eventPickers.Length - 1);
+            var picker = eventPickers[index];
+            preferred = picker != null ? picker(pool) : PickRandom(pool);
+        }
+
+        if (preferred != null && !usedEvents.Contains(preferred)) return preferred;
+
+        EventSO replacement = PickRandomUnused(pool);
+        if (replacement != null) return replacement;
+
+        // The same event can exist in more than one turn pool. If this pool is exhausted,
+        // preserve the no-repeat rule by borrowing any unseen event from another pool.
+        return PickRandomUnused(GetAllEvents());
     }
+
+    private EventSO PickRandomUnused(List<EventSO> pool)
+    {
+        if (pool == null || pool.Count == 0) return null;
+        List<EventSO> candidates = new List<EventSO>();
+        foreach (EventSO eventData in pool)
+        {
+            if (eventData != null && !usedEvents.Contains(eventData)) candidates.Add(eventData);
+        }
+        return PickRandom(candidates);
+    }
+
+    private List<EventSO> GetAllEvents()
+    {
+        List<EventSO> allEvents = new List<EventSO>();
+        if (eventPoolsByTurn == null) return allEvents;
+        foreach (TurnEventPool eventPool in eventPoolsByTurn)
+        {
+            if (eventPool == null || eventPool.events == null) continue;
+            foreach (EventSO eventData in eventPool.events)
+            {
+                if (eventData != null && !allEvents.Contains(eventData)) allEvents.Add(eventData);
+            }
+        }
+        return allEvents;
+    }
+
 
     // 取当前回合对应的事件池：第 1 回合用元素 0，以此类推；回合超出数组范围时沿用最后一个池。
     private List<EventSO> GetPoolForCurrentTurn()

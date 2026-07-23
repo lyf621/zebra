@@ -5,6 +5,7 @@ using UnityEngine.UI;
 public class CardView : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
 {
     private ZebraGameController mController;
+    private Image mHitArea;
     private Image mBorder;
     private Image mFace;
     private Text mTitle;
@@ -16,6 +17,7 @@ public class CardView : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
     private bool mHovered;
     private bool mFollowingPointer;
     private int mLayoutSiblingIndex;
+    private RectTransform mVisualTransform;
 
     public CardModel Card { get; private set; }
     public RectTransform RectTransform { get; private set; }
@@ -32,11 +34,23 @@ public class CardView : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
         view.RectTransform.anchorMax = new Vector2(0.5f, 0.5f);
         view.RectTransform.pivot = new Vector2(0.5f, 0.5f);
         view.RectTransform.sizeDelta = new Vector2(130f, 182f);
-        view.mBorder = cardObject.GetComponent<Image>();
+        view.mHitArea = cardObject.GetComponent<Image>();
+        view.mHitArea.color = new Color(0f, 0f, 0f, 0f);
+
+        GameObject visualObject = new GameObject("Visual", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+        visualObject.transform.SetParent(cardObject.transform, false);
+        view.mVisualTransform = visualObject.GetComponent<RectTransform>();
+        view.mVisualTransform.anchorMin = new Vector2(0.5f, 0.5f);
+        view.mVisualTransform.anchorMax = new Vector2(0.5f, 0.5f);
+        view.mVisualTransform.pivot = new Vector2(0.5f, 0.5f);
+        view.mVisualTransform.anchoredPosition = Vector2.zero;
+        view.mVisualTransform.sizeDelta = new Vector2(130f, 182f);
+        view.mBorder = visualObject.GetComponent<Image>();
         view.mBorder.color = card.IsRoyal ? new Color(0.86f, 0.64f, 0.12f) : new Color(0.11f, 0.11f, 0.1f);
+        view.mBorder.raycastTarget = false;
 
         GameObject faceObject = new GameObject("Face", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
-        faceObject.transform.SetParent(cardObject.transform, false);
+        faceObject.transform.SetParent(visualObject.transform, false);
         RectTransform faceRect = faceObject.GetComponent<RectTransform>();
         faceRect.anchorMin = Vector2.zero;
         faceRect.anchorMax = Vector2.one;
@@ -46,9 +60,9 @@ public class CardView : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
         view.mFace.color = card.IsRoyal ? new Color(1f, 0.95f, 0.7f) : new Color(0.96f, 0.95f, 0.9f);
         view.mFace.raycastTarget = false;
 
-        view.mTitle = CreateText("Title", cardObject.transform, font, 17, FontStyle.Bold, TextAnchor.UpperCenter, new Vector2(8f, 132f), new Vector2(114f, 40f));
-        view.mDescription = CreateText("Description", cardObject.transform, font, 13, FontStyle.Normal, TextAnchor.MiddleCenter, new Vector2(8f, 48f), new Vector2(114f, 82f));
-        view.mLocation = CreateText("Location", cardObject.transform, font, 12, FontStyle.Bold, TextAnchor.LowerCenter, new Vector2(8f, 10f), new Vector2(114f, 32f));
+        view.mTitle = CreateText("Title", visualObject.transform, font, 17, FontStyle.Bold, TextAnchor.UpperCenter, new Vector2(8f, 132f), new Vector2(114f, 40f));
+        view.mDescription = CreateText("Description", visualObject.transform, font, 13, FontStyle.Normal, TextAnchor.MiddleCenter, new Vector2(8f, 48f), new Vector2(114f, 82f));
+        view.mLocation = CreateText("Location", visualObject.transform, font, 12, FontStyle.Bold, TextAnchor.LowerCenter, new Vector2(8f, 10f), new Vector2(114f, 32f));
         view.mController = controller;
         view.Card = card;
         view.SetTexts(controller.UseChinese);
@@ -127,7 +141,7 @@ public class CardView : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
     // 动画期间关闭卡牌点击检测。
     public void SetInteractable(bool interactable)
     {
-        mBorder.raycastTarget = interactable;
+        mHitArea.raycastTarget = interactable;
     }
 
     // 将卡牌恢复为可由动画直接控制的状态。
@@ -138,6 +152,9 @@ public class CardView : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
         mFollowingPointer = false;
         RectTransform.localScale = Vector3.one;
         RectTransform.localRotation = Quaternion.identity;
+        mVisualTransform.anchoredPosition = Vector2.zero;
+        mVisualTransform.localScale = Vector3.one;
+        mVisualTransform.localRotation = Quaternion.identity;
     }
 
     public void OnPointerClick(PointerEventData eventData)
@@ -180,7 +197,10 @@ public class CardView : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
         {
             RectTransform.anchoredPosition = localPoint + new Vector2(0f, 24f);
             RectTransform.localRotation = Quaternion.identity;
-            RectTransform.localScale = Vector3.one * 1.14f;
+            RectTransform.localScale = Vector3.one;
+            mVisualTransform.anchoredPosition = Vector2.zero;
+            mVisualTransform.localRotation = Quaternion.identity;
+            mVisualTransform.localScale = Vector3.one * 1.14f;
             transform.SetAsLastSibling();
         }
     }
@@ -193,13 +213,35 @@ public class CardView : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
         }
 
         bool raised = mSelected || mHovered;
-        // The resting fan sits below the map. A selected card rises fully into view;
-        // a hover only lifts enough to indicate focus without obscuring a district.
-        float raiseAmount = mSelected ? 65f : mHovered ? 20f : 0f;
+        // The root remains at its resting fan position and receives pointer events. Only the
+        // visual child lifts, enlarges and straightens, so edge cards keep a stable hit area.
         float scale = mSelected ? 1.1f : mHovered ? 1.07f : 1f;
-        RectTransform.anchoredPosition = mLayoutPosition + new Vector2(0f, raiseAmount);
-        RectTransform.localRotation = Quaternion.Euler(0f, 0f, raised ? 0f : mLayoutAngle);
-        RectTransform.localScale = Vector3.one * scale;
+        float visualRaiseAmount = mSelected ? 65f : mHovered ? 20f : 0f;
+        RectTransform.anchoredPosition = mLayoutPosition;
+        RectTransform.localRotation = Quaternion.Euler(0f, 0f, mLayoutAngle);
+        RectTransform.localScale = Vector3.one;
+        mVisualTransform.anchoredPosition = GetVisibleVisualOffset(visualRaiseAmount, scale);
+        mVisualTransform.localRotation = Quaternion.Euler(0f, 0f, raised ? -mLayoutAngle : 0f);
+        mVisualTransform.localScale = Vector3.one * scale;
+    }
+
+    private Vector2 GetVisibleVisualOffset(float requestedRaise, float scale)
+    {
+        RectTransform handRect = RectTransform.parent as RectTransform;
+        if (handRect == null || (!mHovered && !mSelected))
+        {
+            return new Vector2(0f, requestedRaise);
+        }
+
+        // The visual card is upright while hovered. Clamp its centre within the hand canvas
+        // rather than relying on a fixed lift, so side cards and larger hands stay readable.
+        const float margin = 12f;
+        float halfWidth = mVisualTransform.sizeDelta.x * scale * 0.5f;
+        float halfHeight = mVisualTransform.sizeDelta.y * scale * 0.5f;
+        Rect bounds = handRect.rect;
+        float targetX = Mathf.Clamp(mLayoutPosition.x, bounds.xMin + halfWidth + margin, bounds.xMax - halfWidth - margin);
+        float targetY = Mathf.Clamp(mLayoutPosition.y + requestedRaise, bounds.yMin + halfHeight + margin, bounds.yMax - halfHeight - margin);
+        return new Vector2(targetX - mLayoutPosition.x, targetY - mLayoutPosition.y);
     }
 
     private static Text CreateText(string name, Transform parent, Font font, int fontSize, FontStyle style, TextAnchor alignment, Vector2 position, Vector2 size)
