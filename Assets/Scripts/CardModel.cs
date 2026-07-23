@@ -16,6 +16,18 @@ public enum RetainEffectType
     MilitaryStrengthDown
 }
 
+// One-shot policies activated only when the card is played on a matching district.
+public enum PermanentCardEffectType
+{
+    None,
+    EconomyPublicOpinion,
+    MilitaryStrength,
+    AdministrationAuthority,
+    DiplomacyKingReputation,
+    DiplomacyChurchReputation,
+    DiplomacyAristocratReputation
+}
+
 [Serializable]
 public class CardModel
 {
@@ -26,6 +38,7 @@ public class CardModel
     public string DescriptionChinese;
     public LocationType Location;
     public RetainEffectType RetainEffect;
+    public PermanentCardEffectType PermanentEffect;
     public bool IsRoyal;
 
     // Temporary reveal-phase economy (copied from CardSO).

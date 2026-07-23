@@ -93,11 +93,10 @@ public class LoadScene : MonoBehaviour
 
         Image panel = CreateImage("Panel", difficultyPanel.transform, new Vector2(0.5f, 0.5f), new Vector2(510f, 390f), new Color(0.18f, 0.13f, 0.08f, 1f));
         CreateText("Title", panel.transform, "选择难度", font, 30, FontStyle.Bold, new Vector2(0f, 142f), new Vector2(420f, 44f));
-        CreateText("Description", panel.transform, "属性初始均为 5。难度会影响每回合的属性回归区间。", font, 16, FontStyle.Normal, new Vector2(0f, 101f), new Vector2(440f, 34f));
-        CreateDifficultyButton(panel.transform, font, "简单", "低于 5 时 +1；高于 7 时 -1", GameDifficulty.Easy, 42f, new Color(0.2f, 0.43f, 0.28f));
-        CreateDifficultyButton(panel.transform, font, "普通", "低于 5 时 +1；高于 5 时 -1", GameDifficulty.Normal, -33f, new Color(0.32f, 0.28f, 0.17f));
-        CreateDifficultyButton(panel.transform, font, "困难", "低于 3 时 +1；高于 5 时 -1", GameDifficulty.Hard, -108f, new Color(0.48f, 0.2f, 0.16f));
-        CreateButton("Cancel", panel.transform, "返回", font, new Vector2(0f, -157f), new Vector2(116f, 36f), new Color(0.26f, 0.23f, 0.19f)).onClick.AddListener(() => Destroy(difficultyPanel));
+        CreateDifficultyButton(panel.transform, font, "简单", "低于 5 时 +1；高于 7 时 -1", GameDifficulty.Easy, 62f, new Color(0.2f, 0.43f, 0.28f));
+        CreateDifficultyButton(panel.transform, font, "普通", "低于 5 时 +1；高于 5 时 -1", GameDifficulty.Normal, -12f, new Color(0.32f, 0.28f, 0.17f));
+        CreateDifficultyButton(panel.transform, font, "困难", "低于 3 时 +1；高于 5 时 -1", GameDifficulty.Hard, -86f, new Color(0.48f, 0.2f, 0.16f));
+        CreateButton("Cancel", panel.transform, "返回", font, new Vector2(0f, -142f), new Vector2(116f, 36f), new Color(0.26f, 0.23f, 0.19f)).onClick.AddListener(() => Destroy(difficultyPanel));
     }
 
     private void StartGame(GameDifficulty difficulty)

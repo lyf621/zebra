@@ -710,6 +710,12 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 68ba948febec0284ab61f2297d6f74c2, type: 2}
   - {fileID: 11400000, guid: 68ba948febec0284ab61f2297d6f74c2, type: 2}
   - {fileID: 11400000, guid: 68ba948febec0284ab61f2297d6f74c2, type: 2}
+  - {fileID: 11400000, guid: 1dc2dd64372bba7409ec7075c5a99ad8, type: 2}
+  - {fileID: 11400000, guid: e4f11dedcb6437f4eb5e67d77da72361, type: 2}
+  - {fileID: 11400000, guid: 597294e12e6573b45a80cb9b38bf14c6, type: 2}
+  - {fileID: 11400000, guid: 55885016b410c934ea12cfee5df33429, type: 2}
+  - {fileID: 11400000, guid: 0e60255b3174a78438147d4ea646cc7a, type: 2}
+  - {fileID: 11400000, guid: 866a9fff79fd3b34f99292c2a194d178, type: 2}
   deleteMajestyCost: 3
   mStats: {fileID: 307285969}
   mTurns: {fileID: 639306590}

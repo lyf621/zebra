@@ -5,6 +5,8 @@ using UnityEngine.UI;
 // 负责第十回合结束后的胜负判断、结局遮罩和返回下一局。
 public class GameEndingController : MonoBehaviour
 {
+    // Change this constant to tune the victory threshold. StatManager still caps all stats at 10.
+    public const int VictoryStatThreshold = 9;
     private bool mIsShowing;
 
     // 确保场景中只有一个结局控制器；由 TurnController 启动时调用。
@@ -37,12 +39,12 @@ public class GameEndingController : MonoBehaviour
             return false;
         }
 
-        int maximum = stats.GetMaxStat();
-        bool allReputations = stats.GetKR() >= maximum && stats.GetCR() >= maximum && stats.GetAR() >= maximum;
-        bool allResources = stats.GetPO() >= maximum && stats.GetMS() >= maximum && stats.GetAL() >= maximum;
-        bool loyalty = stats.GetAL() >= maximum && stats.GetKR() >= maximum;
-        bool devout = stats.GetPO() >= maximum && stats.GetCR() >= maximum;
-        bool power = stats.GetMS() >= maximum && stats.GetAR() >= maximum;
+        int threshold = Mathf.Min(VictoryStatThreshold, stats.GetMaxStat());
+        bool allReputations = stats.GetKR() >= threshold && stats.GetCR() >= threshold && stats.GetAR() >= threshold;
+        bool allResources = stats.GetPO() >= threshold && stats.GetMS() >= threshold && stats.GetAL() >= threshold;
+        bool loyalty = stats.GetAL() >= threshold && stats.GetKR() >= threshold;
+        bool devout = stats.GetPO() >= threshold && stats.GetCR() >= threshold;
+        bool power = stats.GetMS() >= threshold && stats.GetAR() >= threshold;
         return allReputations || allResources || loyalty || devout || power;
     }
 

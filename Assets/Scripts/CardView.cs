@@ -34,8 +34,9 @@ public class CardView : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
         view.RectTransform.anchorMax = new Vector2(0.5f, 0.5f);
         view.RectTransform.pivot = new Vector2(0.5f, 0.5f);
         view.RectTransform.sizeDelta = new Vector2(130f, 182f);
-        view.mHitArea = cardObject.GetComponent<Image>();
-        view.mHitArea.color = new Color(0f, 0f, 0f, 0f);
+        Image rootHitArea = cardObject.GetComponent<Image>();
+        rootHitArea.color = new Color(0f, 0f, 0f, 0f);
+        rootHitArea.raycastTarget = false;
 
         GameObject visualObject = new GameObject("Visual", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
         visualObject.transform.SetParent(cardObject.transform, false);
@@ -60,6 +61,19 @@ public class CardView : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
         view.mFace.color = card.IsRoyal ? new Color(1f, 0.95f, 0.7f) : new Color(0.96f, 0.95f, 0.9f);
         view.mFace.raycastTarget = false;
 
+        // The actual hit area moves with the visible card. Its raised size overlaps
+        // the resting position, so lifting a side card cannot cause hover flicker.
+        GameObject hitAreaObject = new GameObject("Visual Hit Area", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+        hitAreaObject.transform.SetParent(visualObject.transform, false);
+        RectTransform hitAreaRect = hitAreaObject.GetComponent<RectTransform>();
+        hitAreaRect.anchorMin = new Vector2(0.5f, 0.5f);
+        hitAreaRect.anchorMax = new Vector2(0.5f, 0.5f);
+        hitAreaRect.pivot = new Vector2(0.5f, 0.5f);
+        hitAreaRect.anchoredPosition = Vector2.zero;
+        hitAreaRect.sizeDelta = new Vector2(130f, 182f);
+        view.mHitArea = hitAreaObject.GetComponent<Image>();
+        view.mHitArea.color = new Color(0f, 0f, 0f, 0f);
+
         view.mTitle = CreateText("Title", visualObject.transform, font, 17, FontStyle.Bold, TextAnchor.UpperCenter, new Vector2(8f, 132f), new Vector2(114f, 40f));
         view.mDescription = CreateText("Description", visualObject.transform, font, 13, FontStyle.Normal, TextAnchor.MiddleCenter, new Vector2(8f, 48f), new Vector2(114f, 82f));
         view.mLocation = CreateText("Location", visualObject.transform, font, 12, FontStyle.Bold, TextAnchor.LowerCenter, new Vector2(8f, 10f), new Vector2(114f, 32f));
@@ -83,7 +97,7 @@ public class CardView : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
         mTitle.text = useChinese ? Card.NameChinese : Card.NameEnglish;
         mDescription.text = useChinese ? Card.DescriptionChinese : Card.DescriptionEnglish;
         string locationLabel;
-        if (Card.IsRoyal)
+        if (Card.IsRoyal && Card.Location == LocationType.Any)
         {
             locationLabel = useChinese ? "皇家牌" : "ROYAL";
         }
@@ -201,6 +215,7 @@ public class CardView : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
             mVisualTransform.anchoredPosition = Vector2.zero;
             mVisualTransform.localRotation = Quaternion.identity;
             mVisualTransform.localScale = Vector3.one * 1.14f;
+            SetHitAreaHeight(260f);
             transform.SetAsLastSibling();
         }
     }
@@ -223,6 +238,18 @@ public class CardView : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
         mVisualTransform.anchoredPosition = GetVisibleVisualOffset(visualRaiseAmount, scale);
         mVisualTransform.localRotation = Quaternion.Euler(0f, 0f, raised ? -mLayoutAngle : 0f);
         mVisualTransform.localScale = Vector3.one * scale;
+        SetHitAreaHeight(mSelected ? 290f : mHovered ? 210f : 182f);
+    }
+
+    private void SetHitAreaHeight(float height)
+    {
+        if (mHitArea == null)
+        {
+            return;
+        }
+        RectTransform hitRect = mHitArea.rectTransform;
+        hitRect.sizeDelta = new Vector2(130f, height);
+        hitRect.anchoredPosition = Vector2.zero;
     }
 
     private Vector2 GetVisibleVisualOffset(float requestedRaise, float scale)
