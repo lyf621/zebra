@@ -26,7 +26,7 @@ public class MainMenuSettings : MonoBehaviour
     {
         if (mPanelRoot != null) return;
 
-        mFont = Resources.Load<Font>("Fonts/NotoSansSC");
+        mFont = GameUITheme.GetLegacyFont();
         if (mFont == null) mFont = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
 
         // Dedicated overlay canvas (matches the 1280x720 scaler the game UI is designed for).

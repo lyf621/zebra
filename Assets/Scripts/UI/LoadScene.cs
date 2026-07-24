@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 public enum GameDifficulty
 {
@@ -68,6 +69,17 @@ public class LoadScene : MonoBehaviour
     private GameObject difficultyPanel;
     private bool loadMainMapAfterSelection;
 
+    private void Awake()
+    {
+        if (SceneManager.GetActiveScene().name != "MainMenu") return;
+        Font font = GameUITheme.GetLegacyFont();
+        TMP_FontAsset tmpFont = GameUITheme.GetTmpFont();
+        foreach (Text text in FindObjectsByType<Text>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+            if (font != null) text.font = font;
+        foreach (TMP_Text text in FindObjectsByType<TMP_Text>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+            if (tmpFont != null) text.font = tmpFont;
+    }
+
     public void LoadMainMap()
     {
         if (difficultyPanel == null)
@@ -90,7 +102,7 @@ public class LoadScene : MonoBehaviour
     public void ShowDifficultySelection(bool loadGameAfterSelection)
     {
         loadMainMapAfterSelection = loadGameAfterSelection;
-        Font font = Resources.Load<Font>("Fonts/NotoSansSC");
+        Font font = GameUITheme.GetLegacyFont();
         if (font == null) font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
 
         // Build on a dedicated overlay canvas so the panel renders completely and identically
@@ -112,7 +124,6 @@ public class LoadScene : MonoBehaviour
         bool chinese = GameSessionSettings.UseChinese;
         Image panel = CreateImage("Panel", difficultyPanel.transform, new Vector2(0.5f, 0.5f), new Vector2(510f, 390f), new Color(0.18f, 0.13f, 0.08f, 1f));
         CreateText("Title", panel.transform, chinese ? "选择难度" : "Select Difficulty", font, 30, FontStyle.Bold, new Vector2(0f, 142f), new Vector2(420f, 44f));
-        CreateText("Description", panel.transform, chinese ? "属性初始均为 5。难度会影响每回合的属性回归区间。" : "All stats start at 5. Difficulty sets the range each stat drifts back toward every turn.", font, 16, FontStyle.Normal, new Vector2(0f, 101f), new Vector2(440f, 34f));
         CreateDifficultyButton(panel.transform, font, chinese ? "简单" : "Easy", chinese ? "低于 5 时 +1；高于 7 时 -1" : "+1 below 5;  -1 above 7", GameDifficulty.Easy, 42f, new Color(0.2f, 0.43f, 0.28f));
         CreateDifficultyButton(panel.transform, font, chinese ? "普通" : "Normal", chinese ? "低于 5 时 +1；高于 5 时 -1" : "+1 below 5;  -1 above 5", GameDifficulty.Normal, -33f, new Color(0.32f, 0.28f, 0.17f));
         CreateDifficultyButton(panel.transform, font, chinese ? "困难" : "Hard", chinese ? "低于 3 时 +1；高于 5 时 -1" : "+1 below 3;  -1 above 5", GameDifficulty.Hard, -108f, new Color(0.48f, 0.2f, 0.16f));
@@ -134,7 +145,7 @@ public class LoadScene : MonoBehaviour
 
     private void CreateDifficultyButton(Transform parent, Font font, string title, string detail, GameDifficulty difficulty, float y, Color color)
     {
-        Button button = CreateButton(title, parent, title + "\n<size=13>" + detail + "</size>", font, new Vector2(0f, y), new Vector2(420f, 62f), color);
+        Button button = CreateButton(title, parent, title, font, new Vector2(0f, y), new Vector2(420f, 62f), color);
         button.onClick.AddListener(() => StartGame(difficulty));
     }
 

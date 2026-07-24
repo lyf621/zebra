@@ -92,7 +92,7 @@ public static class GameUITheme
         {
             if (sRoyalCardFaceSprite == null)
             {
-                Texture2D royalTexture = Resources.Load<Texture2D>("Art/CardUI/RoyalParchmentCardFace");
+                Texture2D royalTexture = Resources.Load<Texture2D>("Art/CardUI/royal card");
                 if (royalTexture != null)
                 {
                     sRoyalCardFaceSprite = Sprite.Create(royalTexture, new Rect(0f, 0f, royalTexture.width, royalTexture.height), new Vector2(0.5f, 0.5f), 100f);
@@ -103,7 +103,7 @@ public static class GameUITheme
 
         if (sCardFaceSprite == null)
         {
-            Texture2D texture = Resources.Load<Texture2D>("Art/CardUI/ParchmentCardFace");
+            Texture2D texture = Resources.Load<Texture2D>("Art/CardUI/normal card");
             if (texture != null)
             {
                 sCardFaceSprite = Sprite.Create(texture, new Rect(0f, 0f, texture.width, texture.height), new Vector2(0.5f, 0.5f), 100f);

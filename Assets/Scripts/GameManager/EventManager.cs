@@ -17,6 +17,7 @@ public class EventManager : MonoBehaviour
     [SerializeField] private TurnController turns;
 
     private EventSO currentActiveEvent;
+    private EventOption pendingOption;
     private readonly HashSet<EventSO> usedEvents = new HashSet<EventSO>();
 
     // 每回合一个取事件方法；用 turns.GetTurnCount() 作为下标调用（在 Awake 中构建——委托无法在 Inspector 赋值）。
@@ -170,26 +171,60 @@ public class EventManager : MonoBehaviour
     public void OnOptionSelected(int optionIndex)
     {
         if (currentActiveEvent == null) return;
+        if (pendingOption != null) return;
         if (optionIndex < 0 || optionIndex >= currentActiveEvent.availableOptions.Count) return;
 
         EventOption option = currentActiveEvent.availableOptions[optionIndex];
 
-        // 1. Apply the immediate stat change.
+        // Apply the event effect once, then keep the original event panel open until the
+        // player acknowledges the selected option.
         if (stats != null) option.immediateEffect.ApplyTo(stats);
+        pendingOption = option;
 
-        // 2. Close the event panel.
+        // The acknowledgement is intentionally shown on the linked mission panel, not on a
+        // second event panel. This preserves the familiar Task-button presentation and only
+        // adds one Confirm action to return to card play.
+        if (option.linkedMission != null && missionManager != null)
+        {
+            missionManager.SetCurrentMission(option.linkedMission);
+            if (eventPanel != null) eventPanel.Hide();
+            bool useChinese = cards != null && cards.UseChinese;
+            missionManager.ShowEventConfirmation(useChinese ? "确认" : "Confirm", ConfirmSelectedOption);
+            return;
+        }
+
+        if (eventPanel == null)
+        {
+            ConfirmSelectedOption();
+            return;
+        }
+
+        bool chinese = cards != null && cards.UseChinese;
+        eventPanel.ShowSelectedOptionConfirmation(
+            optionIndex,
+            chinese ? "确认" : "Confirm",
+            ConfirmSelectedOption);
+    }
+
+    private void ConfirmSelectedOption()
+    {
+        if (pendingOption == null) return;
+        EventOption selectedOption = pendingOption;
+        pendingOption = null;
+
         awaitingChoice = false;
         if (eventPanel != null) eventPanel.Hide();
 
-        // 3. Hand the linked mission (if any) to the MissionManager, which opens the mission panel.
-        if (option.linkedMission != null && missionManager != null)
-            missionManager.SetCurrentMission(option.linkedMission);
+        if (selectedOption.linkedMission != null && missionManager != null)
+        {
+            missionManager.SetCurrentMission(selectedOption.linkedMission);
+            missionManager.HideEventConfirmation();
+        }
 
         currentActiveEvent = null;
-
-        // 4. The event is resolved (Turn Phase 1): let the player play the hand drawn at turn start.
         if (cards != null) cards.EnableCardPlay();
     }
+
 }
 
 // 每回合一个事件池。Unity 无法在 Inspector 中直接序列化二维数组（EventSO[,] 或 EventSO[][]），

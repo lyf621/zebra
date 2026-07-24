@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public enum VictoryKind
 {
     None,
+    Bankruptcy,
     RiseToThrone,   // Major: KR, CR, AR all > 8
     EternalRule,    // Major: PO, MS, AL all > 8
     Loyalty,        // Minor: AL & KR > 8
@@ -41,6 +42,18 @@ public class GameEndingController : MonoBehaviour
         BuildEndingInterface(EvaluateVictory(stats));
     }
 
+    // An immediate loss triggered when a mission requires gold that the player cannot pay.
+    public void ShowBankruptcyEnding()
+    {
+        if (mIsShowing)
+        {
+            return;
+        }
+
+        mIsShowing = true;
+        BuildEndingInterface(VictoryKind.Bankruptcy);
+    }
+
     // Judge the five victory conditions in priority order and return the first that holds.
     // Thresholds are 8 or above. Two majors are checked first, then the three minors.
     // None => defeat.
@@ -67,6 +80,13 @@ public class GameEndingController : MonoBehaviour
     {
         switch (kind)
         {
+            case VictoryKind.Bankruptcy:
+                title = chinese ? "破产" : "Bankruptcy";
+                category = string.Empty;
+                description = chinese
+                    ? "你花光了国库所有资产，为此负债累累。你为了还债，只能将你的领地拱手让人。"
+                    : "You exhausted the treasury and fell deeply into debt. To repay it, you had to surrender your lands.";
+                return;
             case VictoryKind.RiseToThrone:
                 title = chinese ? "擢升为王" : "Rise to the Throne";
                 category = chinese ? "全面胜利" : "Major Victory";
@@ -113,7 +133,7 @@ public class GameEndingController : MonoBehaviour
         bool major = kind == VictoryKind.RiseToThrone || kind == VictoryKind.EternalRule;
         GetEndingContent(kind, chinese, out string title, out string category, out string description);
 
-        Color titleColor = kind == VictoryKind.None ? new Color(0.45f, 0.12f, 0.10f, 1f)
+        Color titleColor = kind == VictoryKind.None || kind == VictoryKind.Bankruptcy ? new Color(0.45f, 0.12f, 0.10f, 1f)
                           : major ? new Color(0.60f, 0.40f, 0.08f, 1f)
                           : new Color(0.50f, 0.34f, 0.12f, 1f);
 

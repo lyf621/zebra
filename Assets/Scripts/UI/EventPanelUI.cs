@@ -28,6 +28,10 @@ public class EventPanelUI : MonoBehaviour
     private EventSO currentEvent;
     private EventManager currentManager;
     private ZebraGameController cards;
+    private bool showingConfirmation;
+    private Button confirmationButton;
+    private int selectedOptionIndex = -1;
+    private System.Action confirmationAction;
 
     private void Awake()
     {
@@ -53,6 +57,10 @@ public class EventPanelUI : MonoBehaviour
 
         currentEvent = ev;
         currentManager = manager;
+        showingConfirmation = false;
+        confirmationButton = null;
+        selectedOptionIndex = -1;
+        confirmationAction = null;
         ApplyTexts();
 
         BuildOptions(ev, manager);
@@ -67,6 +75,54 @@ public class EventPanelUI : MonoBehaviour
         if (panelRoot != null) panelRoot.SetActive(false);
         currentEvent = null;
         currentManager = null;
+        showingConfirmation = false;
+        confirmationButton = null;
+        selectedOptionIndex = -1;
+        confirmationAction = null;
+    }
+
+    /// <summary>
+    /// Replace the clicked choices with the linked mission's possible results and one confirm button.
+    /// </summary>
+    public void ShowSelectedOptionConfirmation(int selectedOptionIndex, string confirmLabel, System.Action onConfirm)
+    {
+        showingConfirmation = true;
+        this.selectedOptionIndex = selectedOptionIndex;
+        confirmationAction = onConfirm;
+        BuildConfirmationLayout(confirmLabel);
+    }
+
+    private void BuildConfirmationLayout(string confirmLabel)
+    {
+        ClearButtons();
+        if (currentEvent == null || optionContainer == null || optionButtonPrefab == null) return;
+
+        bool chinese = cards != null && cards.UseChinese;
+        if (descriptionText != null)
+        {
+            string description = currentEvent.GetDescription(chinese);
+            EventOption option = currentEvent.availableOptions != null && selectedOptionIndex >= 0 && selectedOptionIndex < currentEvent.availableOptions.Count
+                ? currentEvent.availableOptions[selectedOptionIndex] : null;
+            string results = option != null && option.linkedMission != null
+                ? BuildMissionPreview(option.linkedMission, chinese)
+                : option != null ? option.GetButtonText(chinese) : string.Empty;
+            descriptionText.text = string.IsNullOrEmpty(results) ? description : description + "\n\n" + results;
+            // The confirmation view intentionally keeps the entire selected mission outcome
+            // list readable.  Do not collapse the second result to an ellipsis.
+            descriptionText.overflowMode = TextOverflowModes.Overflow;
+        }
+
+        GameObject confirm = Instantiate(optionButtonPrefab, optionContainer);
+        spawnedButtons.Add(confirm);
+        TMP_Text confirmText = confirm.GetComponentInChildren<TMP_Text>();
+        if (confirmText != null) confirmText.text = confirmLabel;
+        confirmationButton = confirm.GetComponentInChildren<Button>();
+        if (confirmationButton != null)
+        {
+            GameUITheme.StyleButton(confirmationButton);
+            confirmationButton.onClick.RemoveAllListeners();
+            confirmationButton.onClick.AddListener(() => confirmationAction?.Invoke());
+        }
     }
 
     private void BuildOptions(EventSO ev, EventManager manager)
@@ -137,13 +193,7 @@ public class EventPanelUI : MonoBehaviour
             StatModifier e = res.resolutionEffect;
             if (sb.Length > 0) sb.Append('\n');
             sb.Append(res.GetButtonText(chinese)).Append('\n');
-            sb.Append("  Gold ").Append(Sign(e.gold))
-              .Append("   PO ").Append(Sign(e.po))
-              .Append("   MS ").Append(Sign(e.ms))
-              .Append("   AL ").Append(Sign(e.al))
-              .Append("   KR ").Append(Sign(e.kr))
-              .Append("   CR ").Append(Sign(e.cr))
-              .Append("   AR ").Append(Sign(e.ar));
+            sb.Append(GameLocalization.FormatStatChanges(e, chinese, "  "));
         }
         return sb.ToString();
     }
@@ -155,6 +205,11 @@ public class EventPanelUI : MonoBehaviour
     {
         if (currentEvent == null || currentManager == null) return;
         ApplyTexts();
+        if (showingConfirmation)
+        {
+            BuildConfirmationLayout(chinese ? "确认" : "Confirm");
+            return;
+        }
         BuildOptions(currentEvent, currentManager);
     }
 

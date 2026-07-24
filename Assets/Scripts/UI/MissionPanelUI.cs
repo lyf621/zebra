@@ -99,6 +99,86 @@ public class MissionPanelUI : MonoBehaviour
         ApplyResultText();
     }
 
+    /// <summary>
+    /// Keep the mission content visible after a resolution is selected, then require a final
+    /// confirmation before the round is advanced.
+    /// </summary>
+    public void ShowSelectedResolutionConfirmation(MissionResolution resolution, string confirmLabel, System.Action onConfirm)
+    {
+        currentManager = null;
+        currentResult = null;
+        ClearButtons();
+        // Preserve the original title, description and complete resolution list.  The player
+        // should still be able to compare both outcomes while confirming their choice.
+        ApplyTexts();
+        if (resultText != null) resultText.text = string.Empty;
+        if (resolutionContainer == null || resolutionButtonPrefab == null || resolution == null) return;
+
+        // The selected accept/reject button is intentionally not recreated here.  The original
+        // outcome text remains visible and this is the single final action in the panel.
+        GameObject confirm = Instantiate(resolutionButtonPrefab, resolutionContainer);
+        spawnedButtons.Add(confirm);
+        TMP_Text confirmText = confirm.GetComponentInChildren<TMP_Text>();
+        if (confirmText != null) confirmText.text = confirmLabel;
+        Button confirmButton = confirm.GetComponentInChildren<Button>();
+        if (confirmButton != null)
+        {
+            GameUITheme.StyleButton(confirmButton);
+            confirmButton.onClick.RemoveAllListeners();
+            confirmButton.onClick.AddListener(() => onConfirm?.Invoke());
+        }
+    }
+
+    /// <summary>
+    /// Event acknowledgement uses the exact same presentation as the mission button: the
+    /// linked mission title, description, and both possible outcomes remain visible, with one
+    /// final confirmation action to return to card play.
+    /// </summary>
+    public void ShowEventConfirmation(MissionSO mission, string confirmLabel, System.Action onConfirm)
+    {
+        if (mission == null) return;
+
+        currentMission = mission;
+        currentManager = null;
+        currentResult = null;
+        ClearButtons();
+        ApplyTexts();
+        if (resultText != null) resultText.text = string.Empty;
+        if (panelRoot != null) panelRoot.SetActive(true);
+        AddSingleAction(confirmLabel, onConfirm);
+    }
+
+    /// <summary>Shows a terminal bankruptcy action while retaining the normal settlement text.</summary>
+    public void ShowBankruptcyResolution(MissionSO mission, string label, System.Action onBankruptcy)
+    {
+        if (mission == null) return;
+
+        currentMission = mission;
+        currentManager = null;
+        currentResult = null;
+        ClearButtons();
+        ApplyTexts();
+        if (resultText != null) resultText.text = string.Empty;
+        if (panelRoot != null) panelRoot.SetActive(true);
+        AddSingleAction(label, onBankruptcy);
+    }
+
+    private void AddSingleAction(string label, System.Action onClick)
+    {
+        if (resolutionContainer == null || resolutionButtonPrefab == null) return;
+
+        GameObject buttonObject = Instantiate(resolutionButtonPrefab, resolutionContainer);
+        spawnedButtons.Add(buttonObject);
+        TMP_Text buttonText = buttonObject.GetComponentInChildren<TMP_Text>();
+        if (buttonText != null) buttonText.text = label;
+        Button button = buttonObject.GetComponentInChildren<Button>();
+        if (button == null) return;
+
+        GameUITheme.StyleButton(button);
+        button.onClick.RemoveAllListeners();
+        button.onClick.AddListener(() => onClick?.Invoke());
+    }
+
     /// <summary>Hide and reset the panel (called at end of turn).</summary>
     public void Hide()
     {
@@ -113,7 +193,18 @@ public class MissionPanelUI : MonoBehaviour
     /// <summary>Player-facing show / hide toggle (bind a UI button to this).</summary>
     public void ToggleWindow()
     {
-        if (panelRoot != null) panelRoot.SetActive(!panelRoot.activeSelf);
+        if (panelRoot == null) return;
+
+        if (!panelRoot.activeSelf && currentMission == null)
+        {
+            MissionManager manager = FindAnyObjectByType<MissionManager>();
+            MissionSO pendingMission = manager != null ? manager.GetCurrentMission() : null;
+            if (pendingMission == null) return;
+            Show(pendingMission);
+            return;
+        }
+
+        panelRoot.SetActive(!panelRoot.activeSelf);
     }
 
     /// <summary>True while the mission panel is visible (used to make it modal).</summary>
@@ -159,13 +250,7 @@ public class MissionPanelUI : MonoBehaviour
             StatModifier e = res.resolutionEffect;
             if (sb.Length > 0) sb.Append('\n');
             sb.Append(res.GetButtonText(chinese)).Append('\n');
-            sb.Append("  Gold ").Append(Sign(e.gold))
-              .Append("   PO ").Append(Sign(e.po))
-              .Append("   MS ").Append(Sign(e.ms))
-              .Append("   AL ").Append(Sign(e.al))
-              .Append("   KR ").Append(Sign(e.kr))
-              .Append("   CR ").Append(Sign(e.cr))
-              .Append("   AR ").Append(Sign(e.ar));
+            sb.Append(GameLocalization.FormatStatChanges(e, chinese, "  "));
         }
         return sb.ToString();
     }
@@ -222,8 +307,7 @@ public class MissionPanelUI : MonoBehaviour
         if (res == null) return;
         bool chinese = cards != null && cards.UseChinese;
         StatModifier e = res.resolutionEffect;
-        string body = "Gold " + Sign(e.gold) + "   PO " + Sign(e.po) + "   MS " + Sign(e.ms) + "   AL " + Sign(e.al) +
-                      "   KR " + Sign(e.kr) + "   CR " + Sign(e.cr) + "   AR " + Sign(e.ar);
+        string body = GameLocalization.FormatStatChanges(e, chinese);
         // 金币不足以支付时，提示无法选择。
         if (currentManager != null && !currentManager.CanAffordResolution(res))
             body += chinese ? "\n金币不足，无法选择" : "\nNot enough gold";

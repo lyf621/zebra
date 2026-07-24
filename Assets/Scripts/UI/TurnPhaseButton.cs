@@ -19,6 +19,14 @@ public class TurnPhaseButton : MonoBehaviour
     [SerializeField] private ZebraGameController Cards;
     private Button PhaseButton;
 
+    private void Start()
+    {
+        // A game entered from the main menu already has a selected difficulty. When MainMap is
+        // opened directly, wait until the bootstrap difficulty dialog has been answered. In both
+        // cases the first event is opened without asking the player to press a separate button.
+        StartCoroutine(BeginFirstEventAfterDifficultySelection());
+    }
+
     private void Awake()
     {
         if (Turns == null) Turns = FindAnyObjectByType<TurnController>();
@@ -49,12 +57,7 @@ public class TurnPhaseButton : MonoBehaviour
 
         if (phase == 0)                 // Event -> get a mission, then start card play
         {
-            if (Events != null) Events.TriggerRandomEvent();    // opens the event panel (awaiting the option)
-            Turns.NextTurnPhase();      // 0 -> 1
-            // If no event popped up (empty pool / no EventManager), start card play now;
-            // otherwise EventManager starts it after the player picks an option.
-            if (Cards != null && (Events == null || !Events.IsAwaitingChoice()))
-                Cards.EnableCardPlay();
+            BeginEventForCurrentTurn();
         }
         else if (phase == 1)            // Card play done -> reveal leftover cards
         {
@@ -66,12 +69,52 @@ public class TurnPhaseButton : MonoBehaviour
             if (Cards != null) Cards.EndCardTurn();             // hide the card board
             if (Missions != null) Missions.BeginResolution();   // opens resolution buttons if a mission exists
             Turns.NextTurnPhase();      // 2 -> 3  (now awaiting the resolution, if any)
+            if (Missions == null || !Missions.HasMission())
+                CompleteMissionAndBeginNextTurn();
         }
         else if (phase == 3)            // Mission handled -> end turn and draw the next hand
         {
-            if (Missions != null) Missions.EndMission();
-            Turns.EndTurn();            // resets phase to 0, refills ministers
-            if (!Turns.IsGameOver() && Cards != null) Cards.StartTurnHand();   // draw next turn's hand right away
+            CompleteMissionAndBeginNextTurn();
         }
+    }
+
+    public void BeginEventForCurrentTurn()
+    {
+        if (Turns == null || Turns.IsGameOver() || Turns.CheckTurnPhase() != 0) return;
+
+        if (Events != null) Events.TriggerRandomEvent();
+        Turns.NextTurnPhase();
+        if (Cards != null && (Events == null || !Events.IsAwaitingChoice()))
+            Cards.EnableCardPlay();
+    }
+
+    public void CompleteMissionAndBeginNextTurn()
+    {
+        if (Turns == null || Turns.IsGameOver() || Turns.CheckTurnPhase() != 3) return;
+
+        if (Missions != null) Missions.EndMission();
+        Turns.EndTurn();
+        if (!Turns.IsGameOver())
+        {
+            if (Cards != null) Cards.StartTurnHand();
+            StartCoroutine(BeginEventNextFrame());
+        }
+    }
+
+    private System.Collections.IEnumerator BeginFirstEventAfterDifficultySelection()
+    {
+        while (Turns != null && !Turns.IsGameOver() && !GameSessionSettings.HasSelectedDifficulty)
+            yield return null;
+
+        // All scene Start methods have run by this point, including ZebraGameController's initial
+        // hand setup, so the event panel and the card interface are ready together.
+        yield return null;
+        BeginEventForCurrentTurn();
+    }
+
+    private System.Collections.IEnumerator BeginEventNextFrame()
+    {
+        yield return null;
+        BeginEventForCurrentTurn();
     }
 }

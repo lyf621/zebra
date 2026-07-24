@@ -4,9 +4,10 @@ using UnityEngine.UI;
 
 public class CardView : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
 {
+    private static readonly Vector2 CardSize = new Vector2(130f, 198f);
+
     private ZebraGameController mController;
     private Image mHitArea;
-    private Image mBorder;
     private Image mFace;
     private Text mTitle;
     private Text mDescription;
@@ -35,29 +36,20 @@ public class CardView : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
         view.RectTransform.anchorMin = new Vector2(0.5f, 0.5f);
         view.RectTransform.anchorMax = new Vector2(0.5f, 0.5f);
         view.RectTransform.pivot = new Vector2(0.5f, 0.5f);
-        view.RectTransform.sizeDelta = new Vector2(130f, 182f);
+        view.RectTransform.sizeDelta = CardSize;
         Image rootImage = cardObject.GetComponent<Image>();
         rootImage.color = new Color(0f, 0f, 0f, 0f);
         rootImage.raycastTarget = false;   // clicks are received by the tracking hit area created below
 
-        GameObject visualObject = new GameObject("Visual", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+        GameObject visualObject = new GameObject("Visual", typeof(RectTransform));
         visualObject.transform.SetParent(cardObject.transform, false);
         view.mVisualTransform = visualObject.GetComponent<RectTransform>();
         view.mVisualTransform.anchorMin = new Vector2(0.5f, 0.5f);
         view.mVisualTransform.anchorMax = new Vector2(0.5f, 0.5f);
         view.mVisualTransform.pivot = new Vector2(0.5f, 0.5f);
         view.mVisualTransform.anchoredPosition = Vector2.zero;
-        view.mVisualTransform.sizeDelta = new Vector2(130f, 182f);
-        view.mBorder = visualObject.GetComponent<Image>();
-        view.mBorder.sprite = GameUITheme.GetCardFrameSprite();
-        view.mBorder.type = Image.Type.Simple;
-        view.mBorder.preserveAspect = false;
-        view.mBorder.color = Color.white;
-        view.mBorder.raycastTarget = false;
-
-        // GoldCardFrame already contains the complete white face and gold border,
-        // so no separate face image is overlaid (it would cover the decoration).
-        view.mFace = view.mBorder;
+        view.mVisualTransform.sizeDelta = CardSize;
+        view.mFace = CreateVisualImage("Card Face", visualObject.transform, GameUITheme.GetCardFaceSprite(card.IsRoyal));
 
         // Clickable hit area that follows the visible card (a child of the visual) and grows
         // taller when the card is raised, so the whole visible card is clickable — not just the
@@ -69,13 +61,17 @@ public class CardView : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
         hitAreaRect.anchorMax = new Vector2(0.5f, 0.5f);
         hitAreaRect.pivot = new Vector2(0.5f, 0.5f);
         hitAreaRect.anchoredPosition = Vector2.zero;
-        hitAreaRect.sizeDelta = new Vector2(130f, 182f);
+        hitAreaRect.sizeDelta = CardSize;
         view.mHitArea = hitAreaObject.GetComponent<Image>();
         view.mHitArea.color = new Color(0f, 0f, 0f, 0f);
 
-        view.mTitle = CreateText("Title", visualObject.transform, font, 17, FontStyle.Bold, TextAnchor.UpperCenter, new Vector2(8f, 132f), new Vector2(114f, 40f));
-        view.mDescription = CreateText("Description", visualObject.transform, font, 13, FontStyle.Normal, TextAnchor.MiddleCenter, new Vector2(8f, 58f), new Vector2(114f, 72f));
-        view.mLocation = CreateText("Location", visualObject.transform, font, 12, FontStyle.Bold, TextAnchor.LowerCenter, new Vector2(8f, 30f), new Vector2(114f, 28f));
+        // Keep all text inside the open centre of the supplied full-card templates.
+        view.mTitle = CreateText("Title", visualObject.transform, font, 16, FontStyle.Bold, TextAnchor.MiddleCenter, new Vector2(16f, 143f), new Vector2(98f, 28f));
+        view.mTitle.resizeTextForBestFit = true;
+        view.mTitle.resizeTextMinSize = 10;
+        view.mTitle.resizeTextMaxSize = 16;
+        view.mDescription = CreateText("Description", visualObject.transform, font, 13, FontStyle.Normal, TextAnchor.MiddleCenter, new Vector2(16f, 52f), new Vector2(96f, 82f));
+        view.mLocation = CreateText("Location", visualObject.transform, font, 11, FontStyle.Bold, TextAnchor.MiddleCenter, new Vector2(16f, 29f), new Vector2(98f, 20f));
         view.mController = controller;
         view.Card = card;
         view.SetTexts(controller.UseChinese);
@@ -96,11 +92,7 @@ public class CardView : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
         mTitle.text = useChinese ? Card.NameChinese : Card.NameEnglish;
         mDescription.text = useChinese ? Card.DescriptionChinese : Card.DescriptionEnglish;
         string locationLabel;
-        if (Card.IsRoyal)
-        {
-            locationLabel = useChinese ? "皇家牌" : "ROYAL";
-        }
-        else if (useChinese)
+        if (useChinese)
         {
             locationLabel = Card.Location == LocationType.Economy ? "经济" : Card.Location == LocationType.Military ? "军事" : Card.Location == LocationType.Administration ? "行政" : Card.Location == LocationType.Diplomacy ? "外交" : "任意";
         }
@@ -168,7 +160,7 @@ public class CardView : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
         mVisualTransform.anchoredPosition = Vector2.zero;
         mVisualTransform.localScale = Vector3.one;
         mVisualTransform.localRotation = Quaternion.identity;
-        SetHitAreaHeight(182f);
+        SetHitAreaHeight(CardSize.y);
     }
 
     public void OnPointerClick(PointerEventData eventData)
@@ -240,7 +232,7 @@ public class CardView : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
         mVisualTransform.localScale = Vector3.one * scale;
         // A raised card lifts away from the cursor; a taller hit area bridges back down to it,
         // so the whole visible card stays clickable and hover does not flicker.
-        SetHitAreaHeight(mSelected ? 290f : mHovered ? 210f : 182f);
+        SetHitAreaHeight(mSelected ? 306f : mHovered ? 226f : CardSize.y);
     }
 
     private void SetHitAreaHeight(float height)
@@ -250,7 +242,7 @@ public class CardView : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
             return;
         }
         RectTransform hitRect = mHitArea.rectTransform;
-        hitRect.sizeDelta = new Vector2(130f, height);
+        hitRect.sizeDelta = new Vector2(CardSize.x, height);
         hitRect.anchoredPosition = Vector2.zero;
     }
 
@@ -293,5 +285,23 @@ public class CardView : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
         text.verticalOverflow = VerticalWrapMode.Truncate;
         text.raycastTarget = false;
         return text;
+    }
+
+    private static Image CreateVisualImage(string name, Transform parent, Sprite sprite)
+    {
+        GameObject imageObject = new GameObject(name, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+        imageObject.transform.SetParent(parent, false);
+        RectTransform rect = imageObject.GetComponent<RectTransform>();
+        rect.anchorMin = Vector2.zero;
+        rect.anchorMax = Vector2.one;
+        rect.offsetMin = Vector2.zero;
+        rect.offsetMax = Vector2.zero;
+        Image image = imageObject.GetComponent<Image>();
+        image.sprite = sprite;
+        image.type = Image.Type.Simple;
+        image.preserveAspect = false;
+        image.color = Color.white;
+        image.raycastTarget = false;
+        return image;
     }
 }

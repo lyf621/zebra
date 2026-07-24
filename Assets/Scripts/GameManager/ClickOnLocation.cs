@@ -122,13 +122,13 @@ public class ClickOnLocation : MonoBehaviour, IPointerClickHandler, IPointerEnte
     public string GetInfoName(bool chinese)
     {
         if (chinese && !string.IsNullOrEmpty(infoNameChinese)) return infoNameChinese;
-        return infoName;
+        return chinese ? GameLocalization.GetLocationName(infoName) : infoName;
     }
 
     public string GetInfoDescription(bool chinese)
     {
         if (chinese && !string.IsNullOrEmpty(infoDescriptionChinese)) return infoDescriptionChinese;
-        return infoDescription;
+        return chinese ? GameLocalization.LocalizeStatTokens(infoDescription) : infoDescription;
     }
 
     // 高亮当前所选卡牌可以放置的地点（由卡牌系统调用）。

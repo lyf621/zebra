@@ -1,4 +1,5 @@
 using System.IO;
+using System.Collections.Generic;
 using UnityEditor;
 
 public static class WebGLBuilder
@@ -8,7 +9,7 @@ public static class WebGLBuilder
     {
         string outputPath = GetOutputPath("Build/WebGL");
         Directory.CreateDirectory(outputPath);
-        BuildPipeline.BuildPlayer(new BuildPlayerOptions { scenes = new[] { "Assets/Scenes/MainMap.unity" }, locationPathName = outputPath, target = BuildTarget.WebGL, options = BuildOptions.None });
+        BuildPipeline.BuildPlayer(new BuildPlayerOptions { scenes = GetEnabledScenes(), locationPathName = outputPath, target = BuildTarget.WebGL, options = BuildOptions.None });
     }
 
     public static void BuildWindows()
@@ -20,7 +21,7 @@ public static class WebGLBuilder
             Directory.CreateDirectory(outputDirectory);
         }
 
-        BuildPipeline.BuildPlayer(new BuildPlayerOptions { scenes = new[] { "Assets/Scenes/MainMap.unity" }, locationPathName = outputPath, target = BuildTarget.StandaloneWindows64, options = BuildOptions.None });
+        BuildPipeline.BuildPlayer(new BuildPlayerOptions { scenes = GetEnabledScenes(), locationPathName = outputPath, target = BuildTarget.StandaloneWindows64, options = BuildOptions.None });
     }
 
     private static string GetOutputPath(string defaultPath)
@@ -35,5 +36,17 @@ public static class WebGLBuilder
             }
         }
         return outputPath;
+    }
+
+    private static string[] GetEnabledScenes()
+    {
+        List<string> scenes = new List<string>();
+        foreach (EditorBuildSettingsScene scene in EditorBuildSettings.scenes)
+        {
+            if (scene.enabled && !string.IsNullOrEmpty(scene.path))
+                scenes.Add(scene.path);
+        }
+
+        return scenes.Count > 0 ? scenes.ToArray() : new[] { "Assets/Scenes/MainMap.unity" };
     }
 }

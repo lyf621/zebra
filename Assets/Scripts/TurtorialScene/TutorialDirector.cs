@@ -112,8 +112,8 @@ public class TutorialDirector : MonoBehaviour
             mPhaseButtonRect = tpb.GetComponent<RectTransform>();
         }
 
-        // Same CJK-capable font the difficulty panel uses, so Chinese never shows as boxes.
-        mFont = Resources.Load<Font>("Fonts/NotoSansSC");
+        // Use the shared game font so tutorial text follows the rest of the interface.
+        mFont = GameUITheme.GetLegacyFont();
         if (mFont == null) mFont = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
         mChinese = cards != null && cards.UseChinese;
         if (cards != null) cards.LanguageChanged += OnLanguageChanged;
@@ -147,18 +147,26 @@ public class TutorialDirector : MonoBehaviour
 
         mSteps.Add(new Step
         {
-            en = "Every turn starts with an event. Click the glowing turn-phase button to face it.",
-            cn = "每个回合都从一个事件开始。点击发光的回合阶段按钮来面对它。",
-            onEnter = () => HighlightUi(mPhaseButtonRect),
-            onExit = () => HighlightUi(),
+            en = "Every turn starts by opening an event automatically. Read it before making your choice.",
+            cn = "每个回合都会自动出现一个事件。阅读事件后作出选择。",
             isComplete = () => events != null && events.IsAwaitingChoice()
         });
 
         mSteps.Add(new Step
         {
-            en = "Read the event, then click one of its options. Your choice sets this turn's mission.",
-            cn = "阅读事件，然后点击其中一个选项。你的选择会决定本回合的任务。",
+            en = "Read the event, choose an option, then confirm it. Your choice sets this turn's mission.",
+            cn = "阅读事件，选择一个选项并确认。你的选择会决定本回合的任务。",
             isComplete = () => events == null || !events.IsAwaitingChoice()
+        });
+
+        mSteps.Add(new Step
+        {
+            en = "Cards show their name at the top, their effect in the centre, and their target type below. Click a card once to raise it, then click it again to choose where to play it.",
+            cn = "卡牌顶部显示名称，中部说明效果，底部显示目标类型。先点击一次卡牌将它拿起，再点击一次选择要打出的地点。",
+            showNext = true,
+            holdPhaseButton = true,
+            onEnter = () => HighlightUi(HandCardRect(taxLedgerDeckIndex)),
+            onExit = () => HighlightUi()
         });
 
         // Fixed order 1: TaxLedger -> Palace
@@ -241,21 +249,6 @@ public class TutorialDirector : MonoBehaviour
                 if (missions.IsAwaitingChoice()) { mSawMissionAwaiting = true; return false; }
                 return mSawMissionAwaiting; // was awaiting a choice, now resolved
             }
-        });
-
-        // After the mission is resolved, guide the player to end the turn (the phase
-        // button now reads "End Turn"). Don't jump to the menu yet.
-        mSteps.Add(new Step
-        {
-            en = "The mission is handled. Click the End Turn button to close out the turn.",
-            cn = "任务已处理。点击“结束回合”按钮来结束本回合。",
-            onEnter = () =>
-            {
-                mTurnBaseline = turns != null ? turns.GetTurnCount() : 0;
-                HighlightUi(mPhaseButtonRect);
-            },
-            onExit = () => HighlightUi(),
-            isComplete = () => turns != null && (turns.GetTurnCount() > mTurnBaseline || turns.IsGameOver())
         });
 
         mSteps.Add(new Step

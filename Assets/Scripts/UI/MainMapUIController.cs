@@ -67,6 +67,7 @@ public class MainMapUIController : MonoBehaviour
             Camera.main.backgroundColor = new Color(0.23f, 0.15f, 0.08f, 1f);
         }
 
+        ApplyRuntimeFonts(canvas.transform);
         BuildHud(canvas.transform);
         StyleMainButtons(canvas.transform);
         StylePopupPanel(FindDescendant(canvas.transform, "EventPanel"), false);
@@ -83,13 +84,17 @@ public class MainMapUIController : MonoBehaviour
 
         if (mCards == null) mCards = FindAnyObjectByType<ZebraGameController>();
         // 只要存在任务就允许开关任务面板（含处理阶段），这样模态锁定时玩家仍能显示/隐藏面板。
-        if (mShowMissionButton != null) mShowMissionButton.interactable = mMissions != null && mMissions.HasMission() && (mCards == null || !mCards.IsDecisionReviewMode) && !mTurns.IsGameOver();
         bool chinese = mCards != null && mCards.UseChinese;
+        if (mShowMissionButton != null)
+        {
+            mShowMissionButton.interactable = mMissions != null && mMissions.HasMission() && (mCards == null || !mCards.IsDecisionReviewMode) && !mTurns.IsGameOver();
+            SetButtonLabel(mShowMissionButton, chinese ? "任务" : "Mission");
+        }
         mHudSummaryText.text = chinese
             ? "回合 " + mTurns.GetTurnCount() + "/" + mTurns.GetMaxTurnCount() + "    大臣 " + mTurns.GetMinistersLeft() + "/" + mTurns.GetMaxMinisters() + "    金币 " + mStats.GetGold() + FormatPreviewDelta(mHasLocationPreview ? mLocationPreview.gold : 0) + "    威严 " + mStats.GetMajesty() + "    战斗力 " + mStats.GetFight()
             : "TURN " + mTurns.GetTurnCount() + "/" + mTurns.GetMaxTurnCount() + "    MINISTERS " + mTurns.GetMinistersLeft() + "/" + mTurns.GetMaxMinisters() + "    GOLD " + mStats.GetGold() + FormatPreviewDelta(mHasLocationPreview ? mLocationPreview.gold : 0) + "    MAJESTY " + mStats.GetMajesty() + "    FIGHT " + mStats.GetFight();
 
-        SetStatBar(0, chinese ? "民意" : "PUBLIC OPINION", mStats.GetPO(), mStats.GetMaxStat(), mHasLocationPreview ? mLocationPreview.po : 0);
+        SetStatBar(0, chinese ? "民意" : "PUBLIC OP.", mStats.GetPO(), mStats.GetMaxStat(), mHasLocationPreview ? mLocationPreview.po : 0);
         SetStatBar(1, chinese ? "军力" : "MILITARY", mStats.GetMS(), mStats.GetMaxStat(), mHasLocationPreview ? mLocationPreview.ms : 0);
         SetStatBar(2, chinese ? "权威" : "AUTHORITY", mStats.GetAL(), mStats.GetMaxStat(), mHasLocationPreview ? mLocationPreview.al : 0);
         SetStatBar(3, chinese ? "王室" : "KING", mStats.GetKR(), mStats.GetMaxStat(), mHasLocationPreview ? mLocationPreview.kr : 0);
@@ -142,6 +147,8 @@ public class MainMapUIController : MonoBehaviour
         panelRect.offsetMin = new Vector2(12f, -96f);
         panelRect.offsetMax = new Vector2(-220f, -10f);
         Image panelImage = panelObject.GetComponent<Image>();
+        // Keep this surface deliberately restrained: the stat cells carry the state colours,
+        // while the HUD itself remains a deep neutral frame.
         panelImage.color = GameUITheme.DeepGreen;
         panelImage.raycastTarget = false;
         Outline outline = panelObject.AddComponent<Outline>();
@@ -289,6 +296,25 @@ public class MainMapUIController : MonoBehaviour
         ConfigureMainButton(showMission, new Vector2(-22f, -160f));   // 右上角，位于阶段按钮下方
     }
 
+    private static void ApplyRuntimeFonts(Transform root)
+    {
+        Font font = GameUITheme.GetLegacyFont();
+        TMP_FontAsset tmpFont = GameUITheme.GetTmpFont();
+        foreach (Text text in root.GetComponentsInChildren<Text>(true))
+            if (font != null) text.font = font;
+        foreach (TMP_Text text in root.GetComponentsInChildren<TMP_Text>(true))
+            if (tmpFont != null) text.font = tmpFont;
+    }
+
+    private static void SetButtonLabel(Button button, string value)
+    {
+        if (button == null) return;
+        TMP_Text tmp = button.GetComponentInChildren<TMP_Text>(true);
+        if (tmp != null) { tmp.text = value; return; }
+        Text legacy = button.GetComponentInChildren<Text>(true);
+        if (legacy != null) legacy.text = value;
+    }
+
     // 设置单个主操作按钮的右上角锚点、稳定尺寸与视觉状态。
     private void ConfigureMainButton(Transform buttonTransform, Vector2 position)
     {
@@ -360,12 +386,14 @@ public class MainMapUIController : MonoBehaviour
             containerRect.anchorMin = new Vector2(0.5f, 0f);
             containerRect.anchorMax = new Vector2(0.5f, 0f);
             containerRect.pivot = new Vector2(0.5f, 0f);
-            containerRect.anchoredPosition = new Vector2(0f, 28f);
-            containerRect.sizeDelta = new Vector2(560f, 168f);
+            // Only the mission panel has persistent effect/result text. Keep its action buttons
+            // below that text; event options retain their original roomier layout.
+            containerRect.anchoredPosition = new Vector2(0f, missionPanel ? 8f : 28f);
+            containerRect.sizeDelta = new Vector2(560f, missionPanel ? 96f : 168f);
             VerticalLayoutGroup layout = container.GetComponent<VerticalLayoutGroup>();
             if (layout != null)
             {
-                layout.spacing = 10f;
+                layout.spacing = missionPanel ? 6f : 10f;
                 layout.childControlHeight = true;
                 layout.childForceExpandHeight = false;
                 layout.childControlWidth = true;
@@ -375,8 +403,11 @@ public class MainMapUIController : MonoBehaviour
 
         if (missionPanel)
         {
+            TMP_Text effectPreview = GetNamedText(panelTransform, "EffectPreview");
+            ConfigurePanelText(effectPreview, new Vector2(0f, -280f), new Vector2(560f, 72f), 14f, FontStyles.Normal, TextAlignmentOptions.Center);
+
             TMP_Text result = GetNamedText(panelTransform, "Result");
-            ConfigurePanelText(result, new Vector2(0f, -290f), new Vector2(560f, 42f), 18f, FontStyles.Bold, TextAlignmentOptions.Center);
+            ConfigurePanelText(result, new Vector2(0f, -365f), new Vector2(560f, 42f), 18f, FontStyles.Bold, TextAlignmentOptions.Center);
         }
     }
 
