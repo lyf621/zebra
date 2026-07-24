@@ -338,7 +338,8 @@ public class MainMapUIController : MonoBehaviour
             if (background != null)
             {
                 background.sprite = GameUITheme.GetPaperSprite();
-                background.color = GameUITheme.Parchment;
+                background.type = Image.Type.Simple;
+                background.color = new Color(0.30f, 0.21f, 0.14f, 1f);
                 background.raycastTarget = true;
                 Outline outline = background.GetComponent<Outline>();
                 if (outline == null) outline = background.gameObject.AddComponent<Outline>();
@@ -394,6 +395,7 @@ public class MainMapUIController : MonoBehaviour
         rect.sizeDelta = size;
         text.alignment = alignment;
         text.overflowMode = TextOverflowModes.Ellipsis;
+        text.color = Color.white;
         GameUITheme.StyleTmpText(text, fontSize, style);
     }
 

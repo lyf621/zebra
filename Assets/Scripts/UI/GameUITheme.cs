@@ -16,6 +16,9 @@ public static class GameUITheme
     private static Sprite sPaperSprite;
     private static Sprite sBurgundyButtonSprite;
     private static Sprite sCardFrameSprite;
+    private static Sprite sCardFrameOverlaySprite;
+    private static Sprite sCardFaceSprite;
+    private static Sprite sRoyalCardFaceSprite;
     private static Sprite sCardBackSprite;
     private static Sprite sCountBadgeSprite;
 
@@ -24,7 +27,11 @@ public static class GameUITheme
     {
         if (sLegacyFont == null)
         {
-            sLegacyFont = Resources.Load<Font>("Fonts/NotoSansSC");
+            sLegacyFont = Resources.Load<Font>("Fonts/LXGWWenKai-Regular");
+            if (sLegacyFont == null)
+            {
+                sLegacyFont = Resources.Load<Font>("Fonts/NotoSansSC");
+            }
         }
         return sLegacyFont;
     }
@@ -44,7 +51,7 @@ public static class GameUITheme
     {
         if (sPaperSprite == null)
         {
-            Texture2D texture = Resources.Load<Texture2D>("Art/PaperBackground");
+            Texture2D texture = Resources.Load<Texture2D>("Art/OldPaperBackground");
             if (texture != null)
             {
                 sPaperSprite = Sprite.Create(texture, new Rect(0f, 0f, texture.width, texture.height), new Vector2(0.5f, 0.5f), 100f);
@@ -64,6 +71,45 @@ public static class GameUITheme
             }
         }
         return sCardFrameSprite;
+    }
+
+    public static Sprite GetCardFrameOverlaySprite()
+    {
+        if (sCardFrameOverlaySprite == null)
+        {
+            Texture2D texture = Resources.Load<Texture2D>("Art/CardUI/GoldCardFrameOverlay");
+            if (texture != null)
+            {
+                sCardFrameOverlaySprite = Sprite.Create(texture, new Rect(0f, 0f, texture.width, texture.height), new Vector2(0.5f, 0.5f), 100f);
+            }
+        }
+        return sCardFrameOverlaySprite;
+    }
+
+    public static Sprite GetCardFaceSprite(bool royal)
+    {
+        if (royal)
+        {
+            if (sRoyalCardFaceSprite == null)
+            {
+                Texture2D royalTexture = Resources.Load<Texture2D>("Art/CardUI/RoyalParchmentCardFace");
+                if (royalTexture != null)
+                {
+                    sRoyalCardFaceSprite = Sprite.Create(royalTexture, new Rect(0f, 0f, royalTexture.width, royalTexture.height), new Vector2(0.5f, 0.5f), 100f);
+                }
+            }
+            return sRoyalCardFaceSprite;
+        }
+
+        if (sCardFaceSprite == null)
+        {
+            Texture2D texture = Resources.Load<Texture2D>("Art/CardUI/ParchmentCardFace");
+            if (texture != null)
+            {
+                sCardFaceSprite = Sprite.Create(texture, new Rect(0f, 0f, texture.width, texture.height), new Vector2(0.5f, 0.5f), 100f);
+            }
+        }
+        return sCardFaceSprite;
     }
 
     public static Sprite GetCardBackSprite()
