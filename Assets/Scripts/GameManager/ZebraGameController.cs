@@ -633,6 +633,21 @@ public class ZebraGameController : MonoBehaviour
         return total;
     }
 
+    /// <summary>
+    /// Returns the effect currently shown for a district: its base location effect plus
+    /// every permanent policy that has been attached to it this game.
+    /// </summary>
+    public StatModifier GetCurrentLocationEffect(ClickOnLocation location)
+    {
+        StatModifier baseEffect = default;
+        if (location != null)
+        {
+            location.TryGetPreviewEffect(out baseEffect);
+        }
+
+        return AddModifiers(baseEffect, GetPermanentLocationBonus(location));
+    }
+
     private static StatModifier GetPermanentEffectModifier(PermanentCardEffectType effect)
     {
         switch (effect)

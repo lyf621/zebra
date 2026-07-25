@@ -116,7 +116,46 @@ public class ClickOnLocation : MonoBehaviour, IPointerClickHandler, IPointerEnte
     private void ShowInfoPopup(Vector2 screenPos)
     {
         bool chinese = Cards != null && Cards.UseChinese;
-        LocationInfoPopup.EnsureExists().Show(GetInfoName(chinese), GetInfoDescription(chinese), screenPos);
+        string description = GetInfoDescription(chinese);
+        StatModifier currentEffect = Cards != null
+            ? Cards.GetCurrentLocationEffect(this)
+            : GetBaseLocationEffect();
+        string effectText = FormatEffect(currentEffect, chinese);
+        if (!string.IsNullOrEmpty(effectText))
+        {
+            string heading = chinese ? "当前效果：" : "Current effect: ";
+            description = string.IsNullOrEmpty(description)
+                ? heading + effectText
+                : description + "\n\n" + heading + effectText;
+        }
+
+        LocationInfoPopup.EnsureExists().Show(GetInfoName(chinese), description, screenPos);
+    }
+
+    private StatModifier GetBaseLocationEffect()
+    {
+        TryGetPreviewEffect(out StatModifier effect);
+        return effect;
+    }
+
+    private static string FormatEffect(StatModifier effect, bool chinese)
+    {
+        System.Text.StringBuilder text = new System.Text.StringBuilder();
+        AppendEffect(text, chinese ? "金币" : "Gold", effect.gold);
+        AppendEffect(text, chinese ? "民意" : "Public Opinion", effect.po);
+        AppendEffect(text, chinese ? "军力" : "Military", effect.ms);
+        AppendEffect(text, chinese ? "权威" : "Authority", effect.al);
+        AppendEffect(text, chinese ? "王室" : "King", effect.kr);
+        AppendEffect(text, chinese ? "教会" : "Church", effect.cr);
+        AppendEffect(text, chinese ? "大贵族" : "Aristocrats", effect.ar);
+        return text.ToString();
+    }
+
+    private static void AppendEffect(System.Text.StringBuilder text, string label, int value)
+    {
+        if (value == 0) return;
+        if (text.Length > 0) text.Append("  ");
+        text.Append(label).Append(' ').Append(value > 0 ? "+" : string.Empty).Append(value);
     }
 
     public string GetInfoName(bool chinese)

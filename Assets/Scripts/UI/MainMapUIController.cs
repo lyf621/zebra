@@ -94,9 +94,11 @@ public class MainMapUIController : MonoBehaviour
             ? "回合 " + mTurns.GetTurnCount() + "/" + mTurns.GetMaxTurnCount() + "    大臣 " + mTurns.GetMinistersLeft() + "/" + mTurns.GetMaxMinisters() + "    金币 " + mStats.GetGold() + FormatPreviewDelta(mHasLocationPreview ? mLocationPreview.gold : 0) + "    威严 " + mStats.GetMajesty() + "    战斗力 " + mStats.GetFight()
             : "TURN " + mTurns.GetTurnCount() + "/" + mTurns.GetMaxTurnCount() + "    MINISTERS " + mTurns.GetMinistersLeft() + "/" + mTurns.GetMaxMinisters() + "    GOLD " + mStats.GetGold() + FormatPreviewDelta(mHasLocationPreview ? mLocationPreview.gold : 0) + "    MAJESTY " + mStats.GetMajesty() + "    FIGHT " + mStats.GetFight();
 
-        SetStatBar(0, chinese ? "民意" : "PUBLIC OP.", mStats.GetPO(), mStats.GetMaxStat(), mHasLocationPreview ? mLocationPreview.po : 0);
-        SetStatBar(1, chinese ? "军力" : "MILITARY", mStats.GetMS(), mStats.GetMaxStat(), mHasLocationPreview ? mLocationPreview.ms : 0);
-        SetStatBar(2, chinese ? "权威" : "AUTHORITY", mStats.GetAL(), mStats.GetMaxStat(), mHasLocationPreview ? mLocationPreview.al : 0);
+        // Rows mirror the three paired victory conditions: Authority/King,
+        // Public Opinion/Church, and Military/Aristocrats.
+        SetStatBar(0, chinese ? "权威" : "AUTHORITY", mStats.GetAL(), mStats.GetMaxStat(), mHasLocationPreview ? mLocationPreview.al : 0);
+        SetStatBar(1, chinese ? "民意" : "PUBLIC OP.", mStats.GetPO(), mStats.GetMaxStat(), mHasLocationPreview ? mLocationPreview.po : 0);
+        SetStatBar(2, chinese ? "军力" : "MILITARY", mStats.GetMS(), mStats.GetMaxStat(), mHasLocationPreview ? mLocationPreview.ms : 0);
         SetStatBar(3, chinese ? "王室" : "KING", mStats.GetKR(), mStats.GetMaxStat(), mHasLocationPreview ? mLocationPreview.kr : 0);
         SetStatBar(4, chinese ? "教会" : "CHURCH", mStats.GetCR(), mStats.GetMaxStat(), mHasLocationPreview ? mLocationPreview.cr : 0);
         SetStatBar(5, chinese ? "大贵族" : "ARISTOCRATS", mStats.GetAR(), mStats.GetMaxStat(), mHasLocationPreview ? mLocationPreview.ar : 0);
@@ -174,7 +176,7 @@ public class MainMapUIController : MonoBehaviour
         mHudSummaryText.raycastTarget = false;
 
         mStatBars = new StatBar[6];
-        string[] keys = { "PO", "MS", "AL", "KING", "CHURCH", "ARISTOCRATS" };
+        string[] keys = { "AUTHORITY", "PO", "MS", "KING", "CHURCH", "ARISTOCRATS" };
         for (int i = 0; i < mStatBars.Length; i++)
         {
             int column = i / 3;
