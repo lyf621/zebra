@@ -116,20 +116,25 @@ public class ClickOnLocation : MonoBehaviour, IPointerClickHandler, IPointerEnte
     private void ShowInfoPopup(Vector2 screenPos)
     {
         bool chinese = Cards != null && Cards.UseChinese;
-        string description = GetInfoDescription(chinese);
         StatModifier currentEffect = Cards != null
             ? Cards.GetCurrentLocationEffect(this)
             : GetBaseLocationEffect();
         string effectText = FormatEffect(currentEffect, chinese);
-        if (!string.IsNullOrEmpty(effectText))
-        {
-            string heading = chinese ? "当前效果：" : "Current effect: ";
-            description = string.IsNullOrEmpty(description)
-                ? heading + effectText
-                : description + "\n\n" + heading + effectText;
-        }
-
+        string description = GetLocationTypeText(chinese);
+        if (!string.IsNullOrEmpty(effectText)) description += "\n" + effectText;
         LocationInfoPopup.EnsureExists().Show(GetInfoName(chinese), description, screenPos);
+    }
+
+    private string GetLocationTypeText(bool chinese)
+    {
+        switch (locationType)
+        {
+            case LocationType.Economy: return chinese ? "经济" : "Economy";
+            case LocationType.Military: return chinese ? "军事" : "Military";
+            case LocationType.Administration: return chinese ? "行政" : "Administration";
+            case LocationType.Diplomacy: return chinese ? "外交" : "Diplomacy";
+            default: return chinese ? "通用" : "Any";
+        }
     }
 
     private StatModifier GetBaseLocationEffect()
@@ -141,20 +146,20 @@ public class ClickOnLocation : MonoBehaviour, IPointerClickHandler, IPointerEnte
     private static string FormatEffect(StatModifier effect, bool chinese)
     {
         System.Text.StringBuilder text = new System.Text.StringBuilder();
-        AppendEffect(text, chinese ? "金币" : "Gold", effect.gold);
-        AppendEffect(text, chinese ? "民意" : "Public Opinion", effect.po);
-        AppendEffect(text, chinese ? "军力" : "Military", effect.ms);
-        AppendEffect(text, chinese ? "权威" : "Authority", effect.al);
-        AppendEffect(text, chinese ? "王室" : "King", effect.kr);
-        AppendEffect(text, chinese ? "教会" : "Church", effect.cr);
-        AppendEffect(text, chinese ? "大贵族" : "Aristocrats", effect.ar);
+        AppendEffect(text, chinese ? "金币" : "Gold", effect.gold, chinese);
+        AppendEffect(text, chinese ? "民意" : "Public Opinion", effect.po, chinese);
+        AppendEffect(text, chinese ? "军力" : "Military", effect.ms, chinese);
+        AppendEffect(text, chinese ? "权威" : "Authority", effect.al, chinese);
+        AppendEffect(text, chinese ? "王室" : "King", effect.kr, chinese);
+        AppendEffect(text, chinese ? "教会" : "Church", effect.cr, chinese);
+        AppendEffect(text, chinese ? "大贵族" : "Aristocrats", effect.ar, chinese);
         return text.ToString();
     }
 
-    private static void AppendEffect(System.Text.StringBuilder text, string label, int value)
+    private static void AppendEffect(System.Text.StringBuilder text, string label, int value, bool chinese)
     {
         if (value == 0) return;
-        if (text.Length > 0) text.Append("  ");
+        if (text.Length > 0) text.Append(chinese ? "，" : "  ");
         text.Append(label).Append(' ').Append(value > 0 ? "+" : string.Empty).Append(value);
     }
 

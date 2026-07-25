@@ -37,6 +37,7 @@ public class MissionPanelUI : MonoBehaviour
     private MissionManager currentManager;   // non-null only while resolution buttons are shown
     private MissionResolution currentResult;  // set once a resolution has been chosen
     private ZebraGameController cards;
+    private Button eventConfirmationButton;
 
     private void Awake()
     {
@@ -145,7 +146,19 @@ public class MissionPanelUI : MonoBehaviour
         ApplyTexts();
         if (resultText != null) resultText.text = string.Empty;
         if (panelRoot != null) panelRoot.SetActive(true);
-        AddSingleAction(confirmLabel, onConfirm);
+        eventConfirmationButton = AddSingleAction(confirmLabel, onConfirm);
+    }
+
+    /// <summary>
+    /// Once the event decision has been acknowledged, the same visible Confirm button
+    /// remains available when the player later reviews the pending mission.  At that point
+    /// it must behave exactly like the Mission button: close or reopen this panel only.
+    /// </summary>
+    public void ConvertEventConfirmationToReviewToggle()
+    {
+        if (eventConfirmationButton == null) return;
+        eventConfirmationButton.onClick.RemoveAllListeners();
+        eventConfirmationButton.onClick.AddListener(ToggleWindow);
     }
 
     /// <summary>Shows a terminal bankruptcy action while retaining the normal settlement text.</summary>
@@ -163,20 +176,21 @@ public class MissionPanelUI : MonoBehaviour
         AddSingleAction(label, onBankruptcy);
     }
 
-    private void AddSingleAction(string label, System.Action onClick)
+    private Button AddSingleAction(string label, System.Action onClick)
     {
-        if (resolutionContainer == null || resolutionButtonPrefab == null) return;
+        if (resolutionContainer == null || resolutionButtonPrefab == null) return null;
 
         GameObject buttonObject = Instantiate(resolutionButtonPrefab, resolutionContainer);
         spawnedButtons.Add(buttonObject);
         TMP_Text buttonText = buttonObject.GetComponentInChildren<TMP_Text>();
         if (buttonText != null) buttonText.text = label;
         Button button = buttonObject.GetComponentInChildren<Button>();
-        if (button == null) return;
+        if (button == null) return null;
 
         GameUITheme.StyleButton(button);
         button.onClick.RemoveAllListeners();
         button.onClick.AddListener(() => onClick?.Invoke());
+        return button;
     }
 
     /// <summary>Hide and reset the panel (called at end of turn).</summary>
@@ -188,6 +202,7 @@ public class MissionPanelUI : MonoBehaviour
         currentMission = null;
         currentManager = null;
         currentResult = null;
+        eventConfirmationButton = null;
     }
 
     /// <summary>Player-facing show / hide toggle (bind a UI button to this).</summary>

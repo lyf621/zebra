@@ -83,7 +83,9 @@ public class MissionManager : MonoBehaviour
 
     public void HideEventConfirmation()
     {
-        if (missionPanel != null) missionPanel.SetVisibleForReview(false);
+        if (missionPanel == null) return;
+        missionPanel.ConvertEventConfirmationToReviewToggle();
+        missionPanel.SetVisibleForReview(false);
     }
 
     private void ConfirmBankruptcy()
