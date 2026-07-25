@@ -12,6 +12,25 @@ public static class WebGLBuilder
         BuildPipeline.BuildPlayer(new BuildPlayerOptions { scenes = GetEnabledScenes(), locationPathName = outputPath, target = BuildTarget.WebGL, options = BuildOptions.None });
     }
 
+    // GitHub Pages does not reliably emit Content-Encoding for Unity's .br files. Build an
+    // uncompressed variant so the published site works without server-specific headers.
+    public static void BuildPages()
+    {
+        string outputPath = GetOutputPath("Build/WebGLPages");
+        Directory.CreateDirectory(outputPath);
+
+        WebGLCompressionFormat originalCompression = PlayerSettings.WebGL.compressionFormat;
+        try
+        {
+            PlayerSettings.WebGL.compressionFormat = WebGLCompressionFormat.Disabled;
+            BuildPipeline.BuildPlayer(new BuildPlayerOptions { scenes = GetEnabledScenes(), locationPathName = outputPath, target = BuildTarget.WebGL, options = BuildOptions.None });
+        }
+        finally
+        {
+            PlayerSettings.WebGL.compressionFormat = originalCompression;
+        }
+    }
+
     public static void BuildWindows()
     {
         string outputPath = GetOutputPath("Build/Windows/MapAndEvents.exe");
