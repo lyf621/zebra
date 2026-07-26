@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5833458f6ad86394ea697a12cf869edf, type: 3}
+  m_Name: Banquet2
+  m_EditorClassIdentifier: Assembly-CSharp::MissionSO
+  missionTitle: Farmers' Feast
+  missionDescription: A public dinner, crowded with drunk farmers, floors shaking
+    in noisy folk songs...  For us mortals, this exactly the essence of life, don't
+    you agree?
+  missionTitleChinese: "\u519C\u5BB6\u5BB4\u5E2D "
+  missionDescriptionChinese: "\u4E00\u573A\u516C\u4F17\u5BB4\u4F1A\uFF0C\u6324\u6EE1\u4E86\u9189\u9152\u7684\u519C\u6C11\uFF0C\u5730\u677F\u5728\u5435\u95F9\u7684\u6C11\u6B4C\u58F0\u91CC\u9707\u52A8\u2026\u2026
+    \u5BF9\u6211\u4EEC\u51E1\u4EBA\u6765\u8BF4\uFF0C\u8FD9\u5C31\u662F\u751F\u547D\u7684\u771F\u8C1B\u554A\uFF0C\u4F60\u8BF4\u5462\uFF1F"
+  possibleResolutions:
+  - buttonText: Accept
+    buttonTextChinese: "\u63A5\u53D7"
+    resolutionEffect:
+      gold: -2
+      po: 3
+      ms: 0
+      al: -1
+      kr: 0
+      cr: 0
+      ar: 0
+    isFailure: 0
+  - buttonText: Reject
+    buttonTextChinese: "\u62D2\u7EDD"
+    resolutionEffect:
+      gold: 0
+      po: -1
+      ms: 0
+      al: 0
+      kr: 0
+      cr: 0
+      ar: 0
+    isFailure: 1
