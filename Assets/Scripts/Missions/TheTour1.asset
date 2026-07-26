@@ -24,8 +24,8 @@ MonoBehaviour:
       gold: -4
       po: 0
       ms: 0
-      al: 2
-      kr: 2
+      al: 1
+      kr: 3
       cr: 0
       ar: 0
     isFailure: 0

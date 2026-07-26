@@ -22,7 +22,7 @@ MonoBehaviour:
   - buttonText: Accept
     buttonTextChinese: "\u63A5\u53D7"
     resolutionEffect:
-      gold: -5
+      gold: -3
       po: 0
       ms: 2
       al: 1

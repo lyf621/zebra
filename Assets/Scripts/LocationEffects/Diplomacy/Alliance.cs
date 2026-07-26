@@ -27,5 +27,5 @@ public class Alliance : MonoBehaviour, EntryCostCheck, ILocationEffectPreview
         GetPreviewEffect().ApplyTo(Stats);
     }
 
-    public StatModifier GetPreviewEffect() => new StatModifier { gold = 2, ms = -2, ar = 2 };
+    public StatModifier GetPreviewEffect() => new StatModifier { gold = 1, ms = -2, ar = 3 };
 }

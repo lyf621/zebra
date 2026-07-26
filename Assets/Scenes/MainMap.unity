@@ -315,7 +315,7 @@ PrefabInstance:
       propertyPath: infoDescription
       value: 'Diplomacy/The Church
 
-        Gold-3; PO+1, CR+2'
+        Gold-5; PO+1, CR+3'
       objectReference: {fileID: 0}
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: infoNameChinese
@@ -323,7 +323,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: infoDescriptionChinese
-      value: "\u5916\u4EA4/\u6559\u4F1A\nGold-3; \u6C11\u610F+1, \u6559\u4F1A+2"
+      value: "\u5916\u4EA4/\u6559\u4F1A\nGold-5; \u6C11\u610F+1, \u6559\u4F1A+3"
       objectReference: {fileID: 0}
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: onFirstClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -3948,7 +3948,7 @@ PrefabInstance:
       propertyPath: infoDescription
       value: 'Diplomacy/The Aristocrats
 
-        MS-2; Gold+2, AR+2'
+        MS>=0, MS-2; Gold+1, AR+3'
       objectReference: {fileID: 0}
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: infoNameChinese
@@ -3956,7 +3956,8 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: infoDescriptionChinese
-      value: "\u5916\u4EA4/\u5927\u8D35\u65CF\n\u519B\u529B-2; Gold+2, \u5927\u8D35\u65CF+2"
+      value: "\u5916\u4EA4/\u5927\u8D35\u65CF\n\u519B\u529B>=0, \u519B\u529B-2; Gold+1,
+        \u5927\u8D35\u65CF+3"
       objectReference: {fileID: 0}
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: onFirstClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -4907,7 +4908,7 @@ PrefabInstance:
       propertyPath: infoDescription
       value: 'Diplomacy/The King
 
-        AL-1; Gold+1, KR+2'
+        AL-1, AR-1; KR+3'
       objectReference: {fileID: 0}
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: infoNameChinese
@@ -4915,7 +4916,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: infoDescriptionChinese
-      value: "\u5916\u4EA4/\u738B\u5BA4\n\u6743\u5A01-1; Gold+1, \u738B\u5BA4+2"
+      value: "\u5916\u4EA4/\u738B\u5BA4\n\u6743\u5A01-1, \u5927\u8D35\u65CF-1; \u738B\u5BA4+3"
       objectReference: {fileID: 0}
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: onFirstClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
