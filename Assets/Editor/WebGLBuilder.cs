@@ -19,6 +19,11 @@ public static class WebGLBuilder
         string outputPath = GetOutputPath("Build/WebGLPages");
         Directory.CreateDirectory(outputPath);
 
+        // Batch builds can inherit development flags from the last Editor session.
+        EditorUserBuildSettings.development = false;
+        EditorUserBuildSettings.connectProfiler = false;
+        EditorUserBuildSettings.buildWithDeepProfilingSupport = false;
+
         WebGLCompressionFormat originalCompression = PlayerSettings.WebGL.compressionFormat;
         try
         {

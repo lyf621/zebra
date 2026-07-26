@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EventSO
   eventTitle: Suspicion!
   eventDescription: Some noble houses accuse us of planning an invasion. These are
-    rootless rumors, of course, but it is true that most of our soldiers are deoloyed
+    rootless rumors, of course, but it is true that most of our soldiers are deployed
     very close to the borders. Should we do something?
   eventTitleChinese: "\u6000\u7591\uFF01"
   eventDescriptionChinese: "\u51E0\u4E2A\u8D35\u65CF\u5BB6\u65CF\u6307\u63A7\u6211\u4EEC\u5BC6\u8C0B\u5165\u4FB5\u90BB\u8FD1\u9886\u5730\u3002\u8FD9\u4E9B\u5F53\u7136\u662F\u6BEB\u65E0\u6839\u636E\u7684\u8C23\u8A00\uFF0C\u7136\u800C\u6211\u4EEC\u786E\u5B9E\u628A\u5927\u90E8\u5206\u90E8\u961F\u90E8\u7F72\u5728\u4E86\u975E\u5E38\u9760\u8FD1\u8FB9\u5883\u7684\u5730\u65B9\u3002\u6211\u4EEC\u5E94\u8BE5\u505A\u4E9B\u4EC0\u4E48\u5417\uFF1F"

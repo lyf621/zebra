@@ -369,6 +369,14 @@ public class ZebraGameController : MonoBehaviour
     // 只有玩家行动阶段的未锁定手牌可以响应悬停效果。
     public bool CanHoverCard(CardView cardView)
     {
+        // Review mode is read-only: hand cards still rise so their full text can be inspected,
+        // while OnHandCardClicked rejects every click before a card can be selected or played.
+        if (mDecisionReviewMode)
+        {
+            return mOverlay == null && mSettingsOverlay == null &&
+                   (mSelectedCardView == null || mSelectedCardView == cardView);
+        }
+
         return !mDecisionReviewMode && !MissionModalOpen() && mOverlay == null && mSettingsOverlay == null && mPhase == GamePhase.PlayerAction && (!mIntegrated || mCardPlayEnabled) && (mSelectedCardView == null || mSelectedCardView == cardView);
     }
 

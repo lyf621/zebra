@@ -228,6 +228,15 @@ public class MissionPanelUI : MonoBehaviour
         return panelRoot != null && panelRoot.activeSelf;
     }
 
+    /// <summary>
+    /// True when this panel is presenting an event acknowledgement.  The acknowledgement is
+    /// visually hosted by the mission panel, even though the event itself remains pending.
+    /// </summary>
+    public bool HasEventConfirmation()
+    {
+        return eventConfirmationButton != null;
+    }
+
     // 决策查看控制器用此方法暂时隐藏或恢复任务界面，不清除玩家尚未选择的按钮。
     public void SetVisibleForReview(bool visible)
     {
