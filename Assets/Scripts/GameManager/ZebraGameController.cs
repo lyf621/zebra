@@ -63,6 +63,7 @@ public class ZebraGameController : MonoBehaviour
     private RectTransform mOverlayContent;
     private GridLayoutGroup mOverlayGrid;
     private Button mOverlayActionButton;
+    private Text mOverlayMajestyText;   // Market / Delete overlays: the Majesty available to spend
     private readonly Dictionary<CardModel, Button> mOverlayCardButtons = new Dictionary<CardModel, Button>();
     private GameObject mSettingsOverlay;
     private List<CardModel> mOverlayCards;
@@ -1053,6 +1054,7 @@ public class ZebraGameController : MonoBehaviour
         {
             Destroy(mOverlay);
         }
+        mOverlayMajestyText = null;   // belonged to the overlay just destroyed
 
         mOverlay = new GameObject("Card Overlay", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
         mOverlay.transform.SetParent(mCanvasRect, false);
@@ -1072,6 +1074,16 @@ public class ZebraGameController : MonoBehaviour
         AddClassicFrame(panel, 4f);
         RectTransform panelRect = panel.GetComponent<RectTransform>();
         CreateText("Overlay Title", panel.transform, mUseChinese ? mOverlayTitleChinese : mOverlayTitleEnglish, 26, FontStyle.Bold, TextAnchor.MiddleCenter, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -38f), new Vector2(600f, 44f), new Color(0.12f, 0.11f, 0.09f));
+        // Buying and deleting are both paid for in Majesty, so those overlays state how much is
+        // available directly under the title. Follows the current language like every other
+        // overlay label. The read-only All Cards view has nothing to spend, so it is left out.
+        if (mOverlayMode == OverlayMode.Market || mOverlayMode == OverlayMode.Delete)
+        {
+            mOverlayMajestyText = CreateText("Overlay Majesty", panel.transform, string.Empty, 19, FontStyle.Bold, TextAnchor.MiddleCenter,
+                                             new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -72f), new Vector2(600f, 28f), new Color(0.2f, 0.17f, 0.12f));
+            RefreshOverlayMajesty();
+        }
+
         Button closeButton = CreateButton("Close", panel.transform, mUseChinese ? "关闭" : "Close", new Vector2(1f, 1f), new Vector2(-20f, -38f), new Vector2(100f, 38f), new Color(0.32f, 0.3f, 0.27f));
         closeButton.GetComponent<RectTransform>().pivot = new Vector2(1f, 0.5f);
         closeButton.onClick.AddListener(CloseOverlay);
@@ -1247,6 +1259,7 @@ public class ZebraGameController : MonoBehaviour
             Destroy(mOverlay);
         }
         mOverlay = null;
+        mOverlayMajestyText = null;
         mOverlayScrollRect = null;
         mOverlayContent = null;
         mOverlayGrid = null;
@@ -1285,8 +1298,18 @@ public class ZebraGameController : MonoBehaviour
         return scrollbar;
     }
 
+    // 用当前语言显示可用威严；面板打开期间随威严变化刷新。
+    private void RefreshOverlayMajesty()
+    {
+        if (mOverlayMajestyText == null) return;
+        int majesty = mStats != null ? mStats.GetMajesty() : 0;
+        mOverlayMajestyText.text = mUseChinese ? "威严：" + majesty : "Majesty: " + majesty;
+    }
+
     private void RefreshOverlaySelection()
     {
+        RefreshOverlayMajesty();
+
         foreach (KeyValuePair<CardModel, Button> entry in mOverlayCardButtons)
         {
             if (entry.Value == null) continue;

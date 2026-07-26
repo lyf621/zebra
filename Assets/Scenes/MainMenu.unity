@@ -1368,6 +1368,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1659789534}
   - component: {fileID: 1659789535}
+  - component: {fileID: 1659789536}
   m_Layer: 5
   m_Name: MainMenuSettings
   m_TagString: Untagged
@@ -1407,6 +1408,57 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MainMenuSettings
   rulesUrl: 'https://raw.githubusercontent.com/HenryRao525/RuleSetPublic/main/TheRuleSet.pdf '
+--- !u!114 &1659789536
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1659789533}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4370585be9645454c8fd58de3c58e7ce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MainMenuCredits
+  entries:
+  - RoleEnglish: 'Team: Zebra'
+    RoleChinese: "\u5C0F\u7EC4\uFF1A\u201C\u6591\u9A6C\u201D"
+    Names: Lin Yifan, Rao Hengyu
+    NamesChinese: "\u6797\u8F76\u51E1\uFF0C\u9976\u6052\u745C"
+  - RoleEnglish: Gameplay Design
+    RoleChinese: "\u73A9\u6CD5\u8BBE\u8BA1"
+    Names: 'The inspirations for gameplay came from Dune: Imperium. Wiki: https://en.wikipedia.org/wiki/Dune:_Imperium'
+    NamesChinese: "\u6E38\u620F\u73A9\u6CD5\u8BBE\u8BA1\u7075\u611F\u6765\u81EA\u6C99\u4E18\uFF1A\u5E1D\u56FD\u3002Wiki:
+      https://en.wikipedia.org/wiki/Dune:_Imperium"
+  - RoleEnglish: Map Art
+    RoleChinese: "\u5730\u56FE\u7F8E\u672F"
+    Names: 'The map was designed in the creation mode of Kingdoms and Castles. View
+      the game on Steam: https://store.steampowered.com/app/569480/Kingdoms_and_Castles/'
+    NamesChinese: "\u5730\u56FE\u8BBE\u8BA1\u662F\u7528\u738B\u56FD\u4E0E\u57CE\u5821\u7684\u521B\u9020\u6A21\u5F0F\u5B8C\u6210\u7684\u3002\u5728Steam\u4E0A\u6D4F\u89C8\u6E38\u620F\uFF1Ahttps://store.steampowered.com/app/569480/Kingdoms_and_Castles/"
+  - RoleEnglish: Font
+    RoleChinese: "\u5B57\u4F53"
+    Names: LXGW WenKai and Noto Sans SC, licensed under SIL OFL 1.1.
+    NamesChinese: LXGW WenKai and Noto Sans SC, licensed under SIL OFL 1.1.
+  - RoleEnglish: Card & UI Assets
+    RoleChinese: "\u5361\u724C & UI\u8D44\u6E90"
+    Names: "Parchment texture: \u201CPergament.2\u201D by Membeth, CC0,\nhttps://commons.wikimedia.org/wiki/File:Pergament.2.jpg\nAigei,\nhttps://www.aigei.com/set/kapaibiankuang.html\nhttps://www.aigei.com/set/pukepaizhipai_paibei.html"
+    NamesChinese: "Parchment texture: \u201CPergament.2\u201D by Membeth, CC0,\nhttps://commons.wikimedia.org/wiki/File:Pergament.2.jpg\nAigei,\nhttps://www.aigei.com/set/kapaibiankuang.html\nhttps://www.aigei.com/set/pukepaizhipai_paibei.html"
+  - RoleEnglish: Music
+    RoleChinese: "\u97F3\u4E50"
+    Names: 'Background music: In Taberna Revisited - Andreas Waldetoft
+
+      Album:
+      Crusader Kings III Original Soundtrack'
+    NamesChinese: "\u80CC\u666F\u97F3\u4E50\uFF1AIn Taberna Revisited - Andreas Waldetoft\n\u4E13\u8F91\uFF1A\u5341\u5B57\u519B\u4E4B\u738BIII\u6E38\u620F\u539F\u58F0"
+  - RoleEnglish: Programming
+    RoleChinese: "\u7A0B\u5E8F"
+    Names: The use of AI models accelerated our development. Claude and GPT completed
+      a lot of coding work for us.
+    NamesChinese: "\u6211\u4EEC\u4F7F\u7528\u4E86AI\u6A21\u578B\u6765\u52A0\u901F\u5F00\u53D1\u3002Claude\u548CGPT\u66FF\u6211\u4EEC\u5B8C\u6210\u4E86\u5927\u91CF\u4EE3\u7801\u5DE5\u4F5C\u3002"
+  footerEnglish: Thank you for playing.
+  footerChinese: "\u611F\u8C22\u60A8\u7684\u6E38\u73A9\u3002"
+  panelSize: {x: 760, y: 520}
+  leftAlignDescriptions: 1
 --- !u!1 &1879675251
 GameObject:
   m_ObjectHideFlags: 0
@@ -1489,7 +1541,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1879675254}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1659789536}
+        m_TargetAssemblyTypeName: MainMenuCredits, Assembly-CSharp
+        m_MethodName: OpenCredits
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1879675254
 MonoBehaviour:
   m_ObjectHideFlags: 0
