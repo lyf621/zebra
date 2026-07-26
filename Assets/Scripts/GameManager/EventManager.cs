@@ -138,17 +138,7 @@ public class EventManager : MonoBehaviour
     private EventSO PickTurn3(List<EventSO> pool)  { return PickRandom(pool); }
     private EventSO PickTurn4(List<EventSO> pool)  { return PickRandom(pool); }
     private EventSO PickTurn5(List<EventSO> pool)  { return PickByStat(stats != null ? stats.GetPO() : 5, 6, 4, pool); }
-    private EventSO PickTurn6(List<EventSO> pool)
-    {
-        // The authored pool is [Rebellion, Unrest].  Rebellion describes a weak army,
-        // while Unrest describes an oversized idle army, so this round intentionally
-        // reverses the generic high/low pool order.
-        if (pool == null || pool.Count == 0) return null;
-        int military = stats != null ? stats.GetMS() : 5;
-        if (military > 6) return pool.Count > 1 ? pool[1] : pool[0]; // Unrest
-        if (military < 4) return pool[0];                            // Rebellion
-        return PickRandom(pool);
-    }
+    private EventSO PickTurn6(List<EventSO> pool)  { return PickByStat(stats != null ? stats.GetMS() : 5, 6, 4, pool); }
     private EventSO PickTurn7(List<EventSO> pool)  { return PickByStat(stats != null ? stats.GetAL() : 5, 6, 4, pool); }
     private EventSO PickTurn8(List<EventSO> pool)  { return PickByRelation(stats != null ? stats.AristocratRel() : 3, pool); }
     private EventSO PickTurn9(List<EventSO> pool)  { return PickByRelation(stats != null ? stats.ChurchRel() : 3, pool); }
