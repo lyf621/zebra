@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5833458f6ad86394ea697a12cf869edf, type: 3}
+  m_Name: Banquet1
+  m_EditorClassIdentifier: Assembly-CSharp::MissionSO
+  missionTitle: Upper-Class Banquet
+  missionDescription: Luxurious cuisine served in silver plates, finest bard songs
+    flowing in the air... Our noble guests will be impressed by our generousity and
+    delicate taste.
+  missionTitleChinese: "\u4E0A\u6D41\u5BB4\u4F1A"
+  missionDescriptionChinese: "\u7528\u94F6\u8D28\u9910\u76D8\u7AEF\u4E0A\u9910\u684C\u7684\u5962\u534E\u83DC\u80B4\uFF0C\u541F\u6E38\u8BD7\u4EBA\u98D8\u8361\u5728\u7A7A\u6C14\u4E2D\u7684\u6B4C\u58F0\u2026\u2026\u6211\u4EEC\u9AD8\u8D35\u7684\u5BA2\u4EBA\u4EEC\u4F1A\u88AB\u6211\u4EEC\u7684\u6177\u6168\u548C\u7CBE\u81F4\u54C1\u5473\u6DF1\u6DF1\u9707\u64BC\u3002"
+  possibleResolutions:
+  - buttonText: Accept
+    buttonTextChinese: "\u63A5\u53D7"
+    resolutionEffect:
+      gold: -4
+      po: -1
+      ms: 0
+      al: 1
+      kr: 2
+      cr: -1
+      ar: 2
+    isFailure: 0
+  - buttonText: Reject
+    buttonTextChinese: "\u62D2\u7EDD"
+    resolutionEffect:
+      gold: 0
+      po: 0
+      ms: 0
+      al: -1
+      kr: 0
+      cr: 1
+      ar: -1
+    isFailure: 1

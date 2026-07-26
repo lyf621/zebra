@@ -19,6 +19,7 @@ public class TurnController : MonoBehaviour
     private int TurnPhase = 0;
     private int MinistersLeft;
     private bool GameEnded = false;
+    private bool BalanceDriftPending = false;
     private ZebraGameController Cards;
     public ClickOnLocation[] LocationList;
     
@@ -89,12 +90,30 @@ public class TurnController : MonoBehaviour
             return;
         }
 
-        Stats.ReturnToBalance(GameSessionSettings.BalanceLowerBound, GameSessionSettings.BalanceUpperBound);
+        // The balance drift is deliberately NOT applied here. Running it as the turn ends put it
+        // in the same frame as the mission resolution the player had just confirmed, which on
+        // Normal difficulty (band 5..5) cancelled every +-1 resolution exactly — the stats looked
+        // as though the mission effects were never triggered at all. It is queued instead and
+        // applied when the next turn opens; see BeginTurn.
+        BalanceDriftPending = true;
         Stats.ClearTurnStat();
         RestoreMinister();
         TurnCount++;
         if (LocationList != null) foreach (var tile in LocationList) if (tile != null) tile.ResetObject();
         TurnPhase = 0;
+    }
+
+    /// <summary>
+    /// Opens a turn: applies the once-per-turn balance drift queued by the previous EndTurn.
+    /// Called just before the turn's event is drawn, so the drift is a separate, readable step
+    /// rather than an instant undo of the player's last decision. No-op on the first turn.
+    /// </summary>
+    public void BeginTurn()
+    {
+        if (GameEnded || !BalanceDriftPending) return;
+        BalanceDriftPending = false;
+        if (Stats != null)
+            Stats.ReturnToBalance(GameSessionSettings.BalanceLowerBound, GameSessionSettings.BalanceUpperBound);
     }
 
     public void MovesRunOut()

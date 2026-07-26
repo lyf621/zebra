@@ -739,7 +739,7 @@ public class ZebraGameController : MonoBehaviour
         if (mIntegrated)
         {
             TurnPhaseButton phaseButton = FindAnyObjectByType<TurnPhaseButton>();
-            if (phaseButton != null) phaseButton.BeginEventForCurrentTurn();
+            if (phaseButton != null) phaseButton.BeginFirstEventAutomatically();
         }
     }
 
@@ -982,6 +982,11 @@ public class ZebraGameController : MonoBehaviour
         {
             if (mStats != null) mStats.UpdateResource(0, -1, 0);  // MilitaryStrength -1
             SetStatus(card.NameEnglish + " retained: MS -1.", card.NameChinese + "保留效果：军力 -1。");
+        }
+        else if (card.RetainEffect == RetainEffectType.GoldUp)
+        {
+            if (mStats != null) mStats.UpdateGold(2);             // Gold +2
+            SetStatus(card.NameEnglish + " retained: Gold +2.", card.NameChinese + "保留效果：金币 +2。");
         }
         else
         {

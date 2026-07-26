@@ -9,11 +9,14 @@ public enum LocationType
     Any
 }
 
+// Serialized by index in the CardSO assets, so new members must be APPENDED — inserting one
+// would silently reassign the retain effect of every card authored after it.
 public enum RetainEffectType
 {
     None,
     PublicOpinionUp,
-    MilitaryStrengthDown
+    MilitaryStrengthDown,
+    GoldUp
 }
 
 // One-shot policies activated only when the card is played on a matching district.

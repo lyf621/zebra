@@ -19,6 +19,13 @@ public class TurnPhaseButton : MonoBehaviour
     [SerializeField] private ZebraGameController Cards;
     private Button PhaseButton;
 
+    // TutorialScene narrates the turn, so its first event must not appear until the greeting
+    // banner has been read. TutorialDirector opens it by calling BeginEventForCurrentTurn
+    // directly; the automatic openers (the difficulty bootstrap and the initial hand draw) hold
+    // off while this is set. It clears as soon as an event is opened, so later turns — and every
+    // other scene — keep the normal automatic flow.
+    private bool DeferFirstEvent;
+
     private void Start()
     {
         // A game entered from the main menu already has a selected difficulty. When MainMap is
@@ -34,6 +41,7 @@ public class TurnPhaseButton : MonoBehaviour
         if (Missions == null) Missions = FindAnyObjectByType<MissionManager>();
         if (Cards == null) Cards = FindAnyObjectByType<ZebraGameController>();
         PhaseButton = GetComponent<Button>();
+        DeferFirstEvent = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "TutorialScene";
     }
 
     private void Update()
@@ -78,10 +86,25 @@ public class TurnPhaseButton : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Opens the turn's event only if no other system has claimed that responsibility. Called by
+    /// the automatic openers: the difficulty bootstrap and the start of a turn's hand draw.
+    /// </summary>
+    public void BeginFirstEventAutomatically()
+    {
+        if (DeferFirstEvent) return;
+        BeginEventForCurrentTurn();
+    }
+
     public void BeginEventForCurrentTurn()
     {
         if (Turns == null || Turns.IsGameOver() || Turns.CheckTurnPhase() != 0) return;
 
+        DeferFirstEvent = false;   // handed over; subsequent turns open automatically as usual
+
+        // Apply the previous turn's balance drift before this turn's event is drawn, so the
+        // player's mission resolution stays visible on the HUD until a new turn actually starts.
+        Turns.BeginTurn();
         if (Events != null) Events.TriggerRandomEvent();
         Turns.NextTurnPhase();
         if (Cards != null && (Events == null || !Events.IsAwaitingChoice()))
@@ -109,7 +132,7 @@ public class TurnPhaseButton : MonoBehaviour
         // All scene Start methods have run by this point, including ZebraGameController's initial
         // hand setup, so the event panel and the card interface are ready together.
         yield return null;
-        BeginEventForCurrentTurn();
+        BeginFirstEventAutomatically();
     }
 
     private System.Collections.IEnumerator BeginEventNextFrame()

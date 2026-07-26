@@ -10,21 +10,23 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5833458f6ad86394ea697a12cf869edf, type: 3}
-  m_Name: Corruption1
+  m_Name: Banquet2
   m_EditorClassIdentifier: Assembly-CSharp::MissionSO
-  missionTitle: Anti-Corruption Campaign
-  missionDescription: With some extra investment in the justice system and an enlarged
-    law enforcement force, we should be able to contain corruption by ourselves.
-  missionTitleChinese: "\u53CD\u8150\u8D25\u884C\u52A8"
-  missionDescriptionChinese: "\u6709\u4E86\u5BF9\u53F8\u6CD5\u7CFB\u7EDF\u7684\u989D\u5916\u6295\u8D44\u548C\u4E00\u652F\u6269\u5927\u8FC7\u7684\u6267\u6CD5\u529B\u91CF\uFF0C\u6211\u4EEC\u5E94\u8BE5\u53EF\u4EE5\u9760\u81EA\u5DF1\u63A7\u5236\u8150\u8D25\u95EE\u9898\u3002"
+  missionTitle: Farmers' Feast
+  missionDescription: A public dinner, crowded with drunk farmers, floors shaking
+    in noisy folk songs...  For us mortals, this exactly the essence of life, don't
+    you agree?
+  missionTitleChinese: "\u519C\u5BB6\u5BB4\u5E2D "
+  missionDescriptionChinese: "\u4E00\u573A\u516C\u4F17\u5BB4\u4F1A\uFF0C\u6324\u6EE1\u4E86\u9189\u9152\u7684\u519C\u6C11\uFF0C\u5730\u677F\u5728\u5435\u95F9\u7684\u6C11\u6B4C\u58F0\u91CC\u9707\u52A8\u2026\u2026
+    \u5BF9\u6211\u4EEC\u51E1\u4EBA\u6765\u8BF4\uFF0C\u8FD9\u5C31\u662F\u751F\u547D\u7684\u771F\u8C1B\u554A\uFF0C\u4F60\u8BF4\u5462\uFF1F"
   possibleResolutions:
   - buttonText: Accept
     buttonTextChinese: "\u63A5\u53D7"
     resolutionEffect:
-      gold: -1
-      po: 0
-      ms: -1
-      al: 2
+      gold: -2
+      po: 3
+      ms: 0
+      al: -1
       kr: 0
       cr: 0
       ar: 0
@@ -35,7 +37,7 @@ MonoBehaviour:
       gold: 0
       po: -1
       ms: 0
-      al: -1
+      al: 0
       kr: 0
       cr: 0
       ar: 0

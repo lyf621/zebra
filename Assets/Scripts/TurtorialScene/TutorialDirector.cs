@@ -46,7 +46,9 @@ public class TutorialDirector : MonoBehaviour
     [SerializeField] private int courtPoliticsDeckIndex = 0;
 
     [Header("Banner placement (top-center by default)")]
-    [SerializeField] private Vector2 bannerAnchoredPosition = new Vector2(0f, -270f);
+    [SerializeField] private Vector2 bannerAnchoredPosition = new Vector2(0f, -500f);
+    [Tooltip("The closing banner sits lower so it does not cover the ending panel.")]
+    [SerializeField] private Vector2 finishBannerAnchoredPosition = new Vector2(0f, -660f);
     [SerializeField] private Vector2 bannerSize = new Vector2(780f, 84f);
 
     [Header("Replay")]
@@ -73,6 +75,7 @@ public class TutorialDirector : MonoBehaviour
 
     // banner UI
     private Canvas mCanvas;
+    private RectTransform mBannerRect;
     private Text mText;
     private Button mNextButton;
     private Text mNextLabel;
@@ -85,6 +88,7 @@ public class TutorialDirector : MonoBehaviour
     private ClickOnLocation mLocTarget;
 
     // phase button
+    private TurnPhaseButton mPhases;
     private Button mPhaseButton;
     private RectTransform mPhaseButtonRect;
 
@@ -98,18 +102,25 @@ public class TutorialDirector : MonoBehaviour
 
     private void Start()
     {
-        if (playOnlyOnce && PlayerPrefs.GetInt(playerPrefsKey, 0) == 1) { enabled = false; return; }
-
         if (cards == null) cards = FindAnyObjectByType<ZebraGameController>();
         if (turns == null) turns = FindAnyObjectByType<TurnController>();
         if (events == null) events = FindAnyObjectByType<EventManager>();
         if (missions == null) missions = FindAnyObjectByType<MissionManager>();
 
-        TurnPhaseButton tpb = FindAnyObjectByType<TurnPhaseButton>();
-        if (tpb != null)
+        mPhases = FindAnyObjectByType<TurnPhaseButton>();
+        if (mPhases != null)
         {
-            mPhaseButton = tpb.GetComponent<Button>();
-            mPhaseButtonRect = tpb.GetComponent<RectTransform>();
+            mPhaseButton = mPhases.GetComponent<Button>();
+            mPhaseButtonRect = mPhases.GetComponent<RectTransform>();
+        }
+
+        // TurnPhaseButton deliberately skips its automatic first event in this scene, so the
+        // tutorial owns that trigger. When the tutorial is skipped, hand it straight back —
+        // otherwise the scene would sit on an empty map with no event and no way to advance.
+        if (playOnlyOnce && PlayerPrefs.GetInt(playerPrefsKey, 0) == 1)
+        {
+            StartCoroutine(OpenEventWithoutTutorial());
+            return;
         }
 
         // Use the shared game font so tutorial text follows the rest of the interface.
@@ -121,6 +132,24 @@ public class TutorialDirector : MonoBehaviour
         BuildUI();
         BuildSteps();
         GoTo(0);
+    }
+
+    /// <summary>
+    /// Opens this turn's event. In TutorialScene the event is not drawn automatically at turn
+    /// start: it is opened here, when the player presses Next on the greeting banner, so the
+    /// introduction is read before the event panel covers the map.
+    /// </summary>
+    private void OpenTutorialEvent()
+    {
+        if (mPhases != null) mPhases.BeginEventForCurrentTurn();
+    }
+
+    private System.Collections.IEnumerator OpenEventWithoutTutorial()
+    {
+        // Wait a frame so every scene Start has run, matching TurnPhaseButton's own bootstrap.
+        yield return null;
+        OpenTutorialEvent();
+        enabled = false;
     }
 
     private void OnDestroy()
@@ -140,33 +169,17 @@ public class TutorialDirector : MonoBehaviour
     {
         mSteps.Add(new Step
         {
-            en = "Greetings, my lord! Let me show you around the realm in one turn. Press Next to begin.",
-            cn = "向您致意，大人！让我花上一个回合带您熟悉领地。点击“下一步”开始。",
-            showNext = true, holdPhaseButton = true
+            en = "Greetings, my lord! Let me show you around the realm in one turn. Press Next to open this turn's event.",
+            cn = "向您致意，大人！让我花上一个回合带您熟悉领地。点击“下一步”打开本回合的事件。",
+            showNext = true, holdPhaseButton = true,
+            onExit = OpenTutorialEvent
         });
 
         mSteps.Add(new Step
         {
-            en = "Every turn starts by opening an event automatically. Read it before making your choice.",
-            cn = "每个回合都会自动出现一个事件。阅读事件后作出选择。",
-            isComplete = () => events != null && events.IsAwaitingChoice()
-        });
-
-        mSteps.Add(new Step
-        {
-            en = "Read the event, choose an option, then confirm it. Your choice sets this turn's mission.",
-            cn = "阅读事件，选择一个选项并确认。你的选择会决定本回合的任务。",
+            en = "Every turn opens with an event. Read it, choose an option, then confirm it. Your choice sets this turn's mission.",
+            cn = "每个回合都以一个事件开始。阅读事件，选择一个选项并确认。你的选择会决定本回合的任务。",
             isComplete = () => events == null || !events.IsAwaitingChoice()
-        });
-
-        mSteps.Add(new Step
-        {
-            en = "Cards show their name at the top, their effect in the centre, and their target type below. Click a card once to raise it, then click it again to choose where to play it.",
-            cn = "卡牌顶部显示名称，中部说明效果，底部显示目标类型。先点击一次卡牌将它拿起，再点击一次选择要打出的地点。",
-            showNext = true,
-            holdPhaseButton = true,
-            onEnter = () => HighlightUi(HandCardRect(taxLedgerDeckIndex)),
-            onExit = () => HighlightUi()
         });
 
         // Fixed order 1: TaxLedger -> Palace
@@ -283,6 +296,10 @@ public class TutorialDirector : MonoBehaviour
         Step s = mSteps[mIndex];
         s.onEnter?.Invoke();
         RefreshText();
+
+        // The closing banner drops lower than the rest of the tutorial.
+        if (mBannerRect != null)
+            mBannerRect.anchoredPosition = s.isFinish ? finishBannerAnchoredPosition : bannerAnchoredPosition;
 
         mNextButton.gameObject.SetActive(s.showNext);
         if (s.showNext) mNextLabel.text = s.isFinish ? (mChinese ? "完成" : "Finish") : (mChinese ? "下一步" : "Next");
@@ -416,6 +433,7 @@ public class TutorialDirector : MonoBehaviour
 
         Image banner = CreateImage("Banner", mCanvas.transform, new Vector2(0.5f, 1f), bannerAnchoredPosition, bannerSize, new Color(0.06f, 0.05f, 0.04f, 0.92f));
         banner.raycastTarget = true;
+        mBannerRect = banner.rectTransform;
 
         mText = CreateText("Instruction", banner.transform, "", new Vector2(0f, 0f), new Vector2(0.72f, 1f), new Vector2(24f, 8f), new Vector2(-12f, -8f), 22, FontStyle.Bold, TextAnchor.MiddleLeft);
         mText.color = new Color(0.97f, 0.94f, 0.85f);
