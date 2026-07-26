@@ -125,6 +125,13 @@ public class MissionManager : MonoBehaviour
         if (!CanAffordResolution(res)) return;
 
         pendingResolution = res;
+
+        // Apply the outcome now, while the mission panel is still on screen. The confirmation
+        // step below then gives the player a visible beat in which to read the new HUD values.
+        // Applying it on the confirm click instead meant the change landed in the same frame the
+        // turn ended, and was overwritten by the balance drift before it was ever drawn.
+        ApplyResolutionEffect(res);
+
         if (missionPanel != null)
         {
             ZebraGameController cards = FindAnyObjectByType<ZebraGameController>();
@@ -140,22 +147,35 @@ public class MissionManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// The stat changes a resolution will actually produce right now. Fight (a temporary
+    /// reveal-phase resource) absorbs part of any military-strength cost: a negative ms is
+    /// reduced toward zero by the current Fight. Hover previews use this so the HUD projection
+    /// matches what confirming the resolution really does.
+    /// </summary>
+    public StatModifier GetEffectiveResolutionEffect(MissionResolution res)
+    {
+        if (res == null) return default;
+
+        StatModifier effect = res.resolutionEffect;   // struct copy — the asset is never mutated
+        if (stats != null && effect.ms < 0)
+            effect.ms = Mathf.Min(effect.ms + stats.GetFight(), 0);
+        return effect;
+    }
+
+    /// <summary>Writes a resolution's stat changes into the StatManager.</summary>
+    private void ApplyResolutionEffect(MissionResolution res)
+    {
+        if (stats == null || res == null) return;
+        GetEffectiveResolutionEffect(res).ApplyTo(stats);
+    }
+
     private void ConfirmSelectedResolution()
     {
         if (currentActiveMission == null || pendingResolution == null) return;
 
-        MissionResolution res = pendingResolution;
+        // The effect was already applied in OnResolutionSelected; this step only closes the turn.
         pendingResolution = null;
-
-        // Apply the outcome. Fight (a temporary reveal-phase resource) absorbs part of any
-        // military-strength cost: a negative ms is reduced toward zero by the current Fight.
-        if (stats != null)
-        {
-            StatModifier effect = res.resolutionEffect;
-            if (effect.ms < 0)
-                effect.ms = Mathf.Min(effect.ms + stats.GetFight(), 0);
-            effect.ApplyTo(stats);
-        }
         awaitingResolution = false;
 
         TurnPhaseButton phaseButton = FindAnyObjectByType<TurnPhaseButton>();

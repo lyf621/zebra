@@ -731,7 +731,7 @@ public class ZebraGameController : MonoBehaviour
         if (mIntegrated)
         {
             TurnPhaseButton phaseButton = FindAnyObjectByType<TurnPhaseButton>();
-            if (phaseButton != null) phaseButton.BeginEventForCurrentTurn();
+            if (phaseButton != null) phaseButton.BeginFirstEventAutomatically();
         }
     }
 

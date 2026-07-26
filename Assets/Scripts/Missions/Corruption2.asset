@@ -34,7 +34,7 @@ MonoBehaviour:
     buttonTextChinese: "\u62D2\u7EDD"
     resolutionEffect:
       gold: 0
-      po: 0
+      po: -2
       ms: 0
       al: 0
       kr: 0

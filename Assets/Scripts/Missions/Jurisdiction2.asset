@@ -12,10 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5833458f6ad86394ea697a12cf869edf, type: 3}
   m_Name: Jurisdiction2
   m_EditorClassIdentifier: Assembly-CSharp::MissionSO
-  missionTitle: 
-  missionDescription: 
-  missionTitleChinese: 
-  missionDescriptionChinese: 
+  missionTitle: Resist
+  missionDescription: The King's claim to our lands is legally weak. If we exploit
+    this weakness, we can defend our rights in a court debate instead of a battle.
+    The King will not appreciate this, but we shouldn't worry as long as the laws
+    are on our side.
+  missionTitleChinese: "\u62B5\u5236"
+  missionDescriptionChinese: "\u56FD\u738B\u5BF9\u6211\u4EEC\u7684\u571F\u5730\u7684\u5BA3\u79F0\u7F3A\u4E4F\u6CD5\u7406\u4F9D\u636E\u3002\u5982\u679C\u6211\u4EEC\u5229\u7528\u8FD9\u4E00\u5F31\u70B9\uFF0C\u6211\u4EEC\u5C31\u53EF\u4EE5\u5728\u6CD5\u5EAD\u8FA9\u8BBA\u4E2D\u5B88\u4F4F\u6211\u4EEC\u7684\u6743\u5229\uFF0C\u800C\u4E0D\u5FC5\u5728\u6218\u573A\u4E0A\u3002\u56FD\u738B\u4E0D\u4F1A\u6B23\u8D4F\u8FD9\u79CD\u6001\u5EA6\uFF0C\u4F46\u53EA\u8981\u6CD5\u5F8B\u7AD9\u5728\u6211\u4EEC\u8FD9\u8FB9\uFF0C\u6211\u4EEC\u5C31\u4E0D\u5E94\u8BE5\u8FC7\u5206\u62C5\u5FC3\u3002"
   possibleResolutions:
   - buttonText: Accept
     buttonTextChinese: "\u63A5\u53D7"

@@ -13,7 +13,9 @@ public class MainMapUIController : MonoBehaviour
     private StatBar[] mStatBars;
     private Button mShowMissionButton;
     private bool mHasLocationPreview;
-    private ClickOnLocation mPreviewLocation;
+    // The preview owner is untyped so any hover source can drive the HUD projection: map
+    // locations during card play, and mission resolution buttons during the resolution phase.
+    private object mPreviewSource;
     private StatModifier mLocationPreview;
 
     private static readonly Color PreviewIncreaseColor = new Color(0.55f, 0.88f, 0.62f, 1f);
@@ -104,23 +106,39 @@ public class MainMapUIController : MonoBehaviour
         SetStatBar(5, chinese ? "大贵族" : "ARISTOCRATS", mStats.GetAR(), mStats.GetMaxStat(), mHasLocationPreview ? mLocationPreview.ar : 0);
     }
 
-    public void SetLocationPreview(ClickOnLocation location, StatModifier effect)
+    /// <summary>
+    /// Projects a pending stat change onto the HUD: the summary line gains a coloured gold
+    /// delta and the stat bars grow / shrink into their projected value. <paramref name="source"/>
+    /// identifies the hover owner so a stale clear from a different source cannot wipe it.
+    /// </summary>
+    public void SetStatPreview(object source, StatModifier effect)
     {
-        mPreviewLocation = location;
+        mPreviewSource = source;
         mLocationPreview = effect;
         mHasLocationPreview = true;
     }
 
-    public void ClearLocationPreview(ClickOnLocation location)
+    /// <summary>Clears the HUD projection. Pass null to clear regardless of who set it.</summary>
+    public void ClearStatPreview(object source)
     {
-        if (location != null && location != mPreviewLocation)
+        if (source != null && !ReferenceEquals(source, mPreviewSource))
         {
             return;
         }
 
-        mPreviewLocation = null;
+        mPreviewSource = null;
         mLocationPreview = default;
         mHasLocationPreview = false;
+    }
+
+    public void SetLocationPreview(ClickOnLocation location, StatModifier effect)
+    {
+        SetStatPreview(location, effect);
+    }
+
+    public void ClearLocationPreview(ClickOnLocation location)
+    {
+        ClearStatPreview(location);
     }
 
     // 找到队友场景中原有的 Canvas，排除卡牌系统运行时创建的 Game Canvas。

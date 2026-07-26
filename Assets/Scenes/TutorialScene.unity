@@ -3236,7 +3236,8 @@ MonoBehaviour:
   embassyLocation: {fileID: 1254614548}
   taxLedgerDeckIndex: 1
   courtPoliticsDeckIndex: 0
-  bannerAnchoredPosition: {x: 0, y: -270}
+  bannerAnchoredPosition: {x: 0, y: -500}
+  finishBannerAnchoredPosition: {x: 0, y: -660}
   bannerSize: {x: 780, y: 84}
   playOnlyOnce: 0
   playerPrefsKey: ZebraTutorialDone

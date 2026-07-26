@@ -305,7 +305,7 @@ public class MissionPanelUI : MonoBehaviour
             if (trigger == null) trigger = go.AddComponent<EventTrigger>();
             trigger.triggers.Clear();
             AddTrigger(trigger, EventTriggerType.PointerEnter, d => ShowResolutionPreview(hovered, ((PointerEventData)d).position));
-            AddTrigger(trigger, EventTriggerType.PointerExit, d => MissionPreviewTooltip.HideTooltip());
+            AddTrigger(trigger, EventTriggerType.PointerExit, d => HideResolutionPreview());
         }
     }
 
@@ -316,17 +316,33 @@ public class MissionPanelUI : MonoBehaviour
         trigger.triggers.Add(entry);
     }
 
-    // 悬停某处理选项时，用与事件面板一致的浮窗显示其数值变化。
+    // 悬停某处理选项时，用与事件面板一致的浮窗显示其数值变化，
+    // 同时在顶部 HUD 上预览该选项造成的属性变化（与悬停地点时的效果一致）。
     private void ShowResolutionPreview(MissionResolution res, Vector2 screenPos)
     {
         if (res == null) return;
         bool chinese = cards != null && cards.UseChinese;
-        StatModifier e = res.resolutionEffect;
+        // Use the effective effect (Fight already absorbed) so the tooltip and the HUD bars
+        // agree with each other and with what confirming the resolution actually does.
+        StatModifier e = currentManager != null
+            ? currentManager.GetEffectiveResolutionEffect(res)
+            : res.resolutionEffect;
         string body = GameLocalization.FormatStatChanges(e, chinese);
         // 金币不足以支付时，提示无法选择。
         if (currentManager != null && !currentManager.CanAffordResolution(res))
             body += chinese ? "\n金币不足，无法选择" : "\nNot enough gold";
         MissionPreviewTooltip.EnsureExists().Show(res.GetButtonText(chinese), body, screenPos);
+
+        MainMapUIController hud = FindAnyObjectByType<MainMapUIController>();
+        if (hud != null) hud.SetStatPreview(this, e);
+    }
+
+    // 鼠标移开处理选项时收起浮窗并清除 HUD 预览。
+    private void HideResolutionPreview()
+    {
+        MissionPreviewTooltip.HideTooltip();
+        MainMapUIController hud = FindAnyObjectByType<MainMapUIController>();
+        if (hud != null) hud.ClearStatPreview(this);
     }
 
     private string Sign(int v) { return (v > 0 ? "+" : "") + v; }
@@ -345,7 +361,9 @@ public class MissionPanelUI : MonoBehaviour
 
     private void ClearButtons()
     {
-        MissionPreviewTooltip.HideTooltip();   // 清理/重建按钮时收起悬停预览
+        // 清理/重建按钮时收起悬停预览。按钮被销毁后不会再触发 PointerExit，
+        // 因此必须在这里主动清除 HUD 预览，否则预览会一直卡在条形图上。
+        HideResolutionPreview();
         foreach (GameObject go in spawnedButtons)
             if (go != null) Destroy(go);
         spawnedButtons.Clear();
