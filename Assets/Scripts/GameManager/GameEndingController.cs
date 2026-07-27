@@ -42,27 +42,18 @@ public class GameEndingController : MonoBehaviour
         BuildEndingInterface(EvaluateVictory(stats));
     }
 
-    // An immediate loss triggered when a mission requires gold that the player cannot pay.
-    public void ShowBankruptcyEnding()
-    {
-        if (mIsShowing)
-        {
-            return;
-        }
-
-        mIsShowing = true;
-        BuildEndingInterface(VictoryKind.Bankruptcy);
-    }
-
-    // Judge the five victory conditions in priority order and return the first that holds.
-    // Thresholds are 8 or above. Two majors are checked first, then the three minors.
-    // None => defeat.
+    // Judge the outcome in priority order and return the first that holds.
+    // Debt outranks everything: a player who ends the final turn owing gold has gone bankrupt,
+    // however strong their other stats are. Then the two majors, then the three minors.
+    // Thresholds are 8 or above. None => defeat.
     public static VictoryKind EvaluateVictory(StatManager stats)
     {
         if (stats == null)
         {
             return VictoryKind.None;
         }
+
+        if (stats.GetGold() < 0) return VictoryKind.Bankruptcy;
 
         bool po = stats.GetPO() >= 8, ms = stats.GetMS() >= 8, al = stats.GetAL() >= 8;
         bool kr = stats.GetKR() >= 8, cr = stats.GetCR() >= 8, ar = stats.GetAR() >= 8;
@@ -84,20 +75,20 @@ public class GameEndingController : MonoBehaviour
                 title = chinese ? "破产" : "Bankruptcy";
                 category = string.Empty;
                 description = chinese
-                    ? "你花光了国库所有资产，为此负债累累。你为了还债，只能将你的领地拱手让人。"
-                    : "You exhausted the treasury and fell deeply into debt. To repay it, you had to surrender your lands.";
+                    ? "你透支了国库，深陷债务泥潭。你出售了你的土地，你的资产，甚至你那荣耀的贵族头衔…… 最终你偿清了债务，但你也变得一无所有。除了一座河边的小木屋。"
+                    : "You exhausted the treasury and fell deeply into debt. You sold your land, your properties, even your glorious titles... The debt is finally paid, but you have nothing left but a cabin by the river.";
                 return;
             case VictoryKind.RiseToThrone:
                 title = chinese ? "擢升为王" : "Rise to the Throne";
                 category = chinese ? "全面胜利" : "Major Victory";
-                description = chinese ? "国王、教会与贵族一致拥戴你，王冠已归你所有。"
-                                      : "The King, the Church, and the nobility all acclaim you. The crown is yours.";
+                description = chinese ? "国王、教会与贵族齐声称颂你的美德，推举你为王位的继承人。多年以后，你作为王国的新任统治者为已故的国王举办葬礼。"
+                                      : "The King, the Church, and the nobility acclaimed you in a chorus, electing you the heir to the throne. Years the later, you hold the late King's funeral as the new ruler of the Kingdom.";
                 return;
             case VictoryKind.EternalRule:
                 title = chinese ? "永恒统治" : "Eternal Rule";
                 category = chinese ? "全面胜利" : "Major Victory";
-                description = chinese ? "民意、军力与权威尽在掌握，你的统治将永世长存。"
-                                      : "Opinion, arms, and authority stand in perfect balance. Your reign will never end.";
+                description = chinese ? "人民的需求、军队的武力与律法的权威在你的领地里达成完美的平衡。你对公国的统治将会延续数个世纪。"
+                                      : "The people's needs, the army's might and the authority of laws stand in perfect balance. Your reign will last for centuries to come.";
                 return;
             case VictoryKind.Loyalty:
                 title = chinese ? "忠诚" : "Loyalty";
@@ -108,20 +99,20 @@ public class GameEndingController : MonoBehaviour
             case VictoryKind.Devout:
                 title = chinese ? "虔诚" : "Devout";
                 category = chinese ? "普通胜利" : "Minor Victory";
-                description = chinese ? "农夫与教士将你铭记为圣人。"
-                                      : "Farmers and priests remember you as a saint.";
+                description = chinese ? "农夫与教士将你铭记为圣人。多年以后，历史也将这样记载你。"
+                                      : "Farmers and priests remember you as a saint. So will history.";
                 return;
             case VictoryKind.Power:
                 title = chinese ? "力量" : "Power";
                 category = chinese ? "普通胜利" : "Minor Victory";
-                description = chinese ? "贵族世家臣服于你的力量。"
-                                      : "The noble houses submit to your power.";
+                description = chinese ? "贵族世家臣服于你的力量。再没有人胆敢挑战你的地位。"
+                                      : "The noble houses submit to your power. No one will challenge your status, not anymore.";
                 return;
             default:
                 title = chinese ? "失败" : "Defeat";
                 category = string.Empty;
-                description = chinese ? "你的抱负未能实现，王国将没有你而继续。"
-                                      : "Your ambitions fell short. The realm moves on without you.";
+                description = chinese ? "你的抱负未能实现。一切维持原状，你的名字就这样隐没在历史的一个安静的角落里。"
+                                      : "Your ambitions fell short. The status quo remains, and your name vanished into a quiet corner of history.";
                 return;
         }
     }

@@ -161,21 +161,6 @@ public class MissionPanelUI : MonoBehaviour
         eventConfirmationButton.onClick.AddListener(ToggleWindow);
     }
 
-    /// <summary>Shows a terminal bankruptcy action while retaining the normal settlement text.</summary>
-    public void ShowBankruptcyResolution(MissionSO mission, string label, System.Action onBankruptcy)
-    {
-        if (mission == null) return;
-
-        currentMission = mission;
-        currentManager = null;
-        currentResult = null;
-        ClearButtons();
-        ApplyTexts();
-        if (resultText != null) resultText.text = string.Empty;
-        if (panelRoot != null) panelRoot.SetActive(true);
-        AddSingleAction(label, onBankruptcy);
-    }
-
     private Button AddSingleAction(string label, System.Action onClick)
     {
         if (resolutionContainer == null || resolutionButtonPrefab == null) return null;
@@ -294,7 +279,8 @@ public class MissionPanelUI : MonoBehaviour
             if (btn != null)
             {
                 GameUITheme.StyleButton(btn);
-                btn.interactable = manager.CanAffordResolution(res);   // 金币不足则禁用该处理选项
+                // 金币不足的选项同样可以点击，只是会先弹出警告面板（见 MissionManager）。
+                btn.interactable = true;
                 btn.onClick.RemoveAllListeners();
                 btn.onClick.AddListener(() => manager.OnResolutionSelected(capturedIndex));
             }
@@ -328,9 +314,9 @@ public class MissionPanelUI : MonoBehaviour
             ? currentManager.GetEffectiveResolutionEffect(res)
             : res.resolutionEffect;
         string body = GameLocalization.FormatStatChanges(e, chinese);
-        // 金币不足以支付时，提示无法选择。
+        // 金币不足以支付时提前告知：仍可选择，但会负债。
         if (currentManager != null && !currentManager.CanAffordResolution(res))
-            body += chinese ? "\n金币不足，无法选择" : "\nNot enough gold";
+            body += chinese ? "\n金币不足，选择后将负债" : "\nNot enough gold — this will put you in debt";
         MissionPreviewTooltip.EnsureExists().Show(res.GetButtonText(chinese), body, screenPos);
 
         MainMapUIController hud = FindAnyObjectByType<MainMapUIController>();

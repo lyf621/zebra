@@ -563,11 +563,11 @@ public class ZebraGameController : MonoBehaviour
     private CardModel CreateCard(CardSO source)
     {
         return CreateCard(source.NameEnglish, source.NameChinese, source.DescriptionEnglish,
-                          source.DescriptionChinese, source.Location, source.RetainEffect, source.PermanentEffect, source.IsRoyal,
+                          source.DescriptionChinese, source.Location, source.RetainEffect, source.PlayEffect, source.PermanentEffect, source.IsRoyal,
                           source.MajestyCost, source.MajestyGain, source.FightGain);
     }
 
-    private CardModel CreateCard(string nameEnglish, string nameChinese, string descriptionEnglish, string descriptionChinese, LocationType location, RetainEffectType retainEffect, PermanentCardEffectType permanentEffect, bool isRoyal, int majestyCost, int majestyGain, int fightGain)
+    private CardModel CreateCard(string nameEnglish, string nameChinese, string descriptionEnglish, string descriptionChinese, LocationType location, RetainEffectType retainEffect, PlayEffectType playEffect, PermanentCardEffectType permanentEffect, bool isRoyal, int majestyCost, int majestyGain, int fightGain)
     {
         if (IntegrationPlaceholderMode.Enabled)
         {
@@ -577,13 +577,14 @@ public class ZebraGameController : MonoBehaviour
             descriptionChinese = "";
             location = LocationType.Any;
             retainEffect = RetainEffectType.None;
+            playEffect = PlayEffectType.None;
             permanentEffect = PermanentCardEffectType.None;
             isRoyal = false;
             majestyCost = 0;
             majestyGain = 0;
             fightGain = 0;
         }
-        return new CardModel { InstanceId = mNextCardId++, NameEnglish = nameEnglish, NameChinese = nameChinese, DescriptionEnglish = descriptionEnglish, DescriptionChinese = descriptionChinese, Location = location, RetainEffect = retainEffect, PermanentEffect = permanentEffect, IsRoyal = isRoyal, MajestyCost = majestyCost, MajestyGain = majestyGain, FightGain = fightGain };
+        return new CardModel { InstanceId = mNextCardId++, NameEnglish = nameEnglish, NameChinese = nameChinese, DescriptionEnglish = descriptionEnglish, DescriptionChinese = descriptionChinese, Location = location, RetainEffect = retainEffect, PlayEffect = playEffect, PermanentEffect = permanentEffect, IsRoyal = isRoyal, MajestyCost = majestyCost, MajestyGain = majestyGain, FightGain = fightGain };
     }
 
     // Called after a location's own effect fires, so enacted policies add to the same
@@ -882,10 +883,37 @@ public class ZebraGameController : MonoBehaviour
             mDiscardPile.Add(card);
         }
         Destroy(view.gameObject);
+
+        // Play effects fire only once the card has fully left the hand, so a draw cannot land in
+        // the slot the played card is still animating out of. Still inside GamePhase.Animating,
+        // which keeps the player from acting while the new cards fly in.
+        yield return ApplyPlayEffectRoutine(card);
+
         mPhase = GamePhase.PlayerAction;
         SetStatus(consumed ? "Policy enacted and the card was consumed." : "Card played. Continue in Phase 1 or click the Turn Phase Button.",
                   consumed ? "政策已生效，卡牌已消耗。" : "卡牌已打出。可继续行动或点击回合阶段按钮。");
         RefreshInterface();
+    }
+
+    // 打出卡牌时触发的效果（与地点无关，任何地点都会触发）。
+    private IEnumerator ApplyPlayEffectRoutine(CardModel card)
+    {
+        if (card == null || card.PlayEffect == PlayEffectType.None) yield break;
+        if (IntegrationPlaceholderMode.Enabled) yield break;
+
+        if (card.PlayEffect == PlayEffectType.Draw2Cards)
+        {
+            SetStatus(card.NameEnglish + " played: draw 2 cards.", card.NameChinese + "打出效果：抽 2 张牌。");
+            RefreshInterface();
+            for (int i = 0; i < 2; i++)
+            {
+                // Stop early on a full hand or an empty deck; DrawOneCardRoutine reshuffles the
+                // discard pile itself, so only a genuinely exhausted deck ends the loop.
+                if (mHand.Count >= kMaximumHandSize) break;
+                if (mDrawPile.Count == 0 && mDiscardPile.Count == 0) break;
+                yield return DrawOneCardRoutine();
+            }
+        }
     }
 
     private void CancelPendingPlay()
@@ -980,6 +1008,11 @@ public class ZebraGameController : MonoBehaviour
         {
             if (mStats != null) mStats.UpdateGold(2);             // Gold +2
             SetStatus(card.NameEnglish + " retained: Gold +2.", card.NameChinese + "保留效果：金币 +2。");
+        }
+        else if (card.RetainEffect == RetainEffectType.ReputationUp)
+        {
+            if (mStats != null) mStats.UpdateReputation(1, 1, 1); // King / Church / Aristocrats +1
+            SetStatus(card.NameEnglish + " retained: all reputations +1.", card.NameChinese + "保留效果：三方声望各 +1。");
         }
         else
         {
@@ -1223,7 +1256,7 @@ public class ZebraGameController : MonoBehaviour
                 return;
             }
             mStats.UpdateMajesty(-cost);
-            CardModel purchased = CreateCard(mOverlaySelectedCard.NameEnglish, mOverlaySelectedCard.NameChinese, mOverlaySelectedCard.DescriptionEnglish, mOverlaySelectedCard.DescriptionChinese, mOverlaySelectedCard.Location, mOverlaySelectedCard.RetainEffect, mOverlaySelectedCard.PermanentEffect, true, mOverlaySelectedCard.MajestyCost, mOverlaySelectedCard.MajestyGain, mOverlaySelectedCard.FightGain);
+            CardModel purchased = CreateCard(mOverlaySelectedCard.NameEnglish, mOverlaySelectedCard.NameChinese, mOverlaySelectedCard.DescriptionEnglish, mOverlaySelectedCard.DescriptionChinese, mOverlaySelectedCard.Location, mOverlaySelectedCard.RetainEffect, mOverlaySelectedCard.PlayEffect, mOverlaySelectedCard.PermanentEffect, true, mOverlaySelectedCard.MajestyCost, mOverlaySelectedCard.MajestyGain, mOverlaySelectedCard.FightGain);
             mOwnedCards.Add(purchased);
             mDiscardPile.Add(purchased);
             mMarketCards.Remove(mOverlaySelectedCard);

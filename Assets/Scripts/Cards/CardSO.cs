@@ -17,6 +17,7 @@ public class CardSO : ScriptableObject
     [Header("Rules")]
     public LocationType Location = LocationType.Any;                 // which locations this card may be played on
     public RetainEffectType RetainEffect = RetainEffectType.None;    // effect applied if left unplayed (revealed)
+    public PlayEffectType PlayEffect = PlayEffectType.None;          // effect applied when played, on any location
     public PermanentCardEffectType PermanentEffect = PermanentCardEffectType.None; // one-shot policy when played
     public bool IsRoyal;                                             // royal styling / market card
 
