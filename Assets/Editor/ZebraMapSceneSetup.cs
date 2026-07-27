@@ -49,6 +49,37 @@ public static class ZebraMapSceneSetup
         { "royalgrace", LocationType.Diplomacy }
     };
 
+    // ---- District name labels -------------------------------------------------------------
+    // Each district carries its own label as a "Label" child of Location.prefab, so the label
+    // inherits the district's position and, through it, the map's runtime scaling from
+    // MapViewportFitter. Nothing needs to stay in sync by hand.
+    private const string LabelChildName = "Label";
+    private const string LabelResourceFolder = "Art/Locations/";
+    private const string LegacyLabelContainerName = "LocationLabel";
+
+    // The labels previously lived on a root object at world scale 15. Parented under a district
+    // (localScale 1) under the map (~14.73), this reproduces their original on-screen size.
+    private const float LabelWorldScale = 8f;
+
+    // Per-district nudge applied to the polygon centre, in MAP PIXELS — same convention as
+    // LocationPolygons, so +x is right and +y is DOWN. Zero centres the label on its district;
+    // raise or lower a value here if a label sits awkwardly over its building.
+    private static readonly Dictionary<string, Vector2> LabelPixelOffsets = new Dictionary<string, Vector2>
+    {
+        { "mobilization", Vector2.zero },
+        { "generousdonation", new Vector2(0, 55f) },
+        { "bureaucracy", new Vector2(0, 40f) },
+        { "patrol", Vector2.zero },
+        { "farm", Vector2.zero },
+        { "royalgrace", new Vector2(20f, 60f) },
+        { "barrack", new Vector2(0, 50f) },
+        { "arsenal", new Vector2(0, 30f) },
+        { "guild", new Vector2(0, 50f) },
+        { "ceremony", new Vector2(-30f, 20f) },
+        { "market", Vector2.zero },
+        { "alliance", new Vector2(0, 40f) }
+    };
+
     private const float MapPixelWidth = 1358f;
     private const float MapPixelHeight = 818f;
 
@@ -184,6 +215,11 @@ public static class ZebraMapSceneSetup
     private static void LayoutLocations(Sprite mapSprite, Transform mapTransform)
     {
         List<string> unmapped = new List<string>();
+        List<string> missingLabelArt = new List<string>();
+
+        // Recomputed rather than read off the transform: MapViewportFitter raises the map's
+        // scale above this at runtime, and the label scale must be relative to the base.
+        float mapScale = MapWidth / mapSprite.bounds.size.x;
 
         foreach (ClickOnLocation location in UnityEngine.Object.FindObjectsByType<ClickOnLocation>(FindObjectsInactive.Include, FindObjectsSortMode.None))
         {
@@ -220,13 +256,87 @@ public static class ZebraMapSceneSetup
 
             SpriteRenderer artwork = location.GetComponent<SpriteRenderer>();
             if (artwork != null) artwork.enabled = false;
+
+            if (!ApplyLabel(location, key, mapSprite, centerLocal, centerPixel, mapScale))
+            {
+                missingLabelArt.Add(location.name);
+            }
+
             EditorUtility.SetDirty(location.gameObject);
         }
+
+        RetireLegacyLabels();
 
         if (unmapped.Count > 0)
         {
             Debug.LogWarning("Map layout skipped locations: " + string.Join(", ", unmapped));
         }
+
+        if (missingLabelArt.Count > 0)
+        {
+            Debug.LogWarning("No label art in Resources/" + LabelResourceFolder + " for: "
+                             + string.Join(", ", missingLabelArt) + " (their labels are hidden).");
+        }
+    }
+
+    /// <summary>
+    /// Points the district's "Label" child at its name art and places it relative to the
+    /// district. Returns false when no label sprite exists for this district — the tutorial's
+    /// Palace and Embassy share Location.prefab but have no map label, so their renderer is
+    /// simply switched off rather than drawing an empty quad.
+    /// </summary>
+    private static bool ApplyLabel(ClickOnLocation location, string key, Sprite mapSprite,
+                                   Vector2 centerLocal, Vector2 centerPixel, float mapScale)
+    {
+        Transform label = location.transform.Find(LabelChildName);
+        if (label == null)
+        {
+            throw new InvalidOperationException(
+                $"{location.name} has no '{LabelChildName}' child. Add an empty child called "
+                + $"'{LabelChildName}' with a SpriteRenderer to Assets/Resources/Prefabs/Location.prefab.");
+        }
+
+        SpriteRenderer renderer = label.GetComponent<SpriteRenderer>();
+        if (renderer == null) renderer = label.gameObject.AddComponent<SpriteRenderer>();
+
+        Sprite art = Resources.Load<Sprite>(LabelResourceFolder + AssetKey(location.name));
+        renderer.sprite = art;
+        renderer.enabled = art != null;
+        renderer.sortingOrder = 0;   // map -100, highlight overlays -90, labels 0, selection frames 50
+
+        // The offset is applied in pixel space and converted as a delta, so the +y-is-down
+        // convention of LocationPolygons carries over without a sign flip here.
+        LabelPixelOffsets.TryGetValue(key, out Vector2 offsetPixels);
+        Vector2 labelLocal = PixelToMapLocal(centerPixel + offsetPixels, mapSprite.bounds.size);
+        label.localPosition = new Vector3(labelLocal.x - centerLocal.x, labelLocal.y - centerLocal.y, 0f);
+
+        // The district sits at localScale 1 under the map, so dividing by the map's base scale
+        // leaves the label at its original world size — and it now rides the fitter's rescaling.
+        label.localScale = Vector3.one * (LabelWorldScale / mapScale);
+
+        EditorUtility.SetDirty(label.gameObject);
+        return art != null;
+    }
+
+    /// <summary>
+    /// The labels used to be 12 sprites under a root "LocationLabel" object, outside the map
+    /// hierarchy — which is why they never followed MapViewportFitter. They are superseded by
+    /// the per-district Label children, so hide them here. Disabled rather than deleted so the
+    /// change is reversible; the container can be removed from the scene by hand afterwards.
+    /// </summary>
+    private static void RetireLegacyLabels()
+    {
+        GameObject legacy = GameObject.Find(LegacyLabelContainerName);
+        if (legacy == null) return;
+
+        foreach (SpriteRenderer renderer in legacy.GetComponentsInChildren<SpriteRenderer>(true))
+        {
+            renderer.enabled = false;
+            EditorUtility.SetDirty(renderer.gameObject);
+        }
+
+        Debug.Log($"Disabled the legacy '{LegacyLabelContainerName}' sprites — districts now carry "
+                  + "their own labels. The container can be deleted from the scene.");
     }
 
     private static string Normalize(string value)
@@ -234,6 +344,18 @@ public static class ZebraMapSceneSetup
         return new string(value.Where(char.IsLetterOrDigit).ToArray())
             .TrimEnd('0', '1', '2', '3', '4', '5', '6', '7', '8', '9')
             .ToLowerInvariant();
+    }
+
+    /// <summary>
+    /// Normalize without the lowercasing: "RoyalGrace_0" -> "RoyalGrace". The label art in
+    /// Resources/Art/Locations is PascalCase while the highlight art is lowercase, and
+    /// Resources.Load is case-insensitive in the Editor but not on every build target — so the
+    /// asset name has to be reproduced exactly rather than lowercased.
+    /// </summary>
+    private static string AssetKey(string value)
+    {
+        return new string(value.Where(char.IsLetterOrDigit).ToArray())
+            .TrimEnd('0', '1', '2', '3', '4', '5', '6', '7', '8', '9');
     }
 
     private static Vector2[] Points(params float[] values)
