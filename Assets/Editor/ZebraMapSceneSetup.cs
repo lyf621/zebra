@@ -14,24 +14,39 @@ public static class ZebraMapSceneSetup
     private const float MapWidth = 200f;
     private const float MapCenterY = 8f;
 
-    // Pixel outlines traced from the final illustrated map. The actual playable areas
-    // follow their highlighted buildings and fields instead of using an invisible grid.
+    // Pixel outlines traced from the final illustrated map. Keys deliberately follow
+    // the visible labels in MainMap: gameplay identity, tooltip, collider and highlight
+    // must all refer to the building beneath the same label.
     private static readonly Dictionary<string, Vector2[]> LocationPolygons = new Dictionary<string, Vector2[]>
     {
-        { "royalgrace", Points(576, 214, 637, 202, 691, 243, 695, 322, 651, 365, 588, 351, 560, 300) },
-        { "bureaucracy", Points(750, 178, 835, 163, 936, 187, 977, 239, 957, 302, 886, 323, 795, 305, 740, 251) },
+        { "mobilization", Points(0, 250, 64, 216, 163, 191, 257, 222, 272, 283, 223, 350, 118, 365, 25, 330) },
+        { "generousdonation", Points(300, 232, 355, 193, 421, 205, 460, 257, 451, 326, 394, 354, 329, 337, 294, 290) },
+        { "bureaucracy", Points(576, 214, 637, 202, 691, 243, 695, 322, 651, 365, 588, 351, 560, 300) },
+        { "patrol", Points(750, 178, 835, 163, 936, 187, 977, 239, 957, 302, 886, 323, 795, 305, 740, 251) },
         { "farm", Points(1012, 172, 1090, 192, 1190, 229, 1357, 275, 1357, 688, 1293, 671, 1205, 650, 1127, 625, 1066, 576, 1030, 516, 1077, 465, 1033, 420, 1075, 373, 1016, 328) },
-        { "barrack", Points(0, 250, 64, 216, 163, 191, 257, 222, 272, 283, 223, 350, 118, 365, 25, 330) },
-        { "generousdonation", Points(94, 418, 158, 388, 228, 400, 274, 451, 278, 510, 235, 542, 154, 529, 100, 481) },
-        // The stone workshop is the Arsenal; the orange amphitheatre is Ceremony.
-        // These two regions were reversed in the first map experiment.
-        { "arsenal", Points(344, 382, 395, 357, 451, 380, 467, 430, 438, 472, 376, 470, 341, 429) },
-        { "guild", Points(478, 366, 544, 338, 610, 360, 637, 412, 620, 466, 548, 478, 487, 449) },
-        { "ceremony", Points(803, 392, 858, 367, 925, 393, 948, 444, 923, 493, 856, 502, 808, 461) },
-        { "alliance", Points(300, 232, 355, 193, 421, 205, 460, 257, 451, 326, 394, 354, 329, 337, 294, 290) },
-        { "patrol", Points(753, 324, 811, 304, 867, 329, 880, 381, 850, 414, 791, 405, 749, 368) },
+        { "royalgrace", Points(94, 418, 158, 388, 228, 400, 274, 451, 278, 510, 235, 542, 154, 529, 100, 481) },
+        { "barrack", Points(344, 382, 395, 357, 451, 380, 467, 430, 438, 472, 376, 470, 341, 429) },
+        { "arsenal", Points(478, 366, 544, 338, 610, 360, 637, 412, 620, 466, 548, 478, 487, 449) },
+        { "guild", Points(803, 392, 858, 367, 925, 393, 948, 444, 923, 493, 856, 502, 808, 461) },
+        { "ceremony", Points(753, 324, 811, 304, 867, 329, 880, 381, 850, 414, 791, 405, 749, 368) },
         { "market", Points(648, 518, 737, 493, 837, 523, 929, 583, 942, 669, 871, 719, 759, 713, 667, 661, 629, 589) },
-        { "mobilization", Points(350, 562, 437, 520, 541, 519, 617, 566, 635, 640, 582, 689, 457, 711, 366, 667, 336, 610) }
+        { "alliance", Points(350, 562, 437, 520, 541, 519, 617, 566, 635, 640, 582, 689, 457, 711, 366, 667, 336, 610) }
+    };
+
+    private static readonly Dictionary<string, LocationType> ExpectedLocationTypes = new Dictionary<string, LocationType>
+    {
+        { "farm", LocationType.Economy },
+        { "guild", LocationType.Economy },
+        { "market", LocationType.Economy },
+        { "arsenal", LocationType.Military },
+        { "barrack", LocationType.Military },
+        { "mobilization", LocationType.Military },
+        { "bureaucracy", LocationType.Administration },
+        { "ceremony", LocationType.Administration },
+        { "patrol", LocationType.Administration },
+        { "alliance", LocationType.Diplomacy },
+        { "generousdonation", LocationType.Diplomacy },
+        { "royalgrace", LocationType.Diplomacy }
     };
 
     private const float MapPixelWidth = 1358f;
@@ -177,6 +192,15 @@ public static class ZebraMapSceneSetup
             {
                 unmapped.Add(location.name);
                 continue;
+            }
+
+            if (!ExpectedLocationTypes.TryGetValue(key, out LocationType expectedType)
+                || location.GetLocationType() != expectedType
+                || Normalize(location.GetInfoName(false)) != key)
+            {
+                throw new InvalidOperationException(
+                    $"Location identity mismatch for {location.name}: "
+                    + $"type={location.GetLocationType()}, info={location.GetInfoName(false)}");
             }
 
             location.transform.SetParent(mapTransform, false);

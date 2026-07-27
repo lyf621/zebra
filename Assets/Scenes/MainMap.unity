@@ -253,11 +253,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2351591983225004685, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -4.88875
+      value: -3.035
       objectReference: {fileID: 0}
     - target: {fileID: 2351591983225004685, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.55875003
+      value: 1.3475001
       objectReference: {fileID: 0}
     - target: {fileID: 2351591983225004685, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: m_LocalPosition.z
@@ -740,6 +740,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 68ba948febec0284ab61f2297d6f74c2, type: 2}
   - {fileID: 11400000, guid: 2fc515144ba44ad448a328bcbb4f8ad7, type: 2}
   deleteMajestyCost: 3
+  hintPages: []
   mStats: {fileID: 307285969}
   mTurns: {fileID: 639306590}
   mMissions: {fileID: 0}
@@ -1048,11 +1049,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2351591983225004685, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1.3542858
+      value: 1.805
       objectReference: {fileID: 0}
     - target: {fileID: 2351591983225004685, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.48285708
+      value: 1.6550001
       objectReference: {fileID: 0}
     - target: {fileID: 2351591983225004685, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: m_LocalPosition.z
@@ -2030,11 +2031,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2351591983225004685, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1.1842859
+      value: 1.9542859
       objectReference: {fileID: 0}
     - target: {fileID: 2351591983225004685, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.008571473
+      value: -0.27
       objectReference: {fileID: 0}
     - target: {fileID: 2351591983225004685, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: m_LocalPosition.z
@@ -2321,11 +2322,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2351591983225004685, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -2.772857
+      value: -1.1842859
       objectReference: {fileID: 0}
     - target: {fileID: 2351591983225004685, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.08142853
+      value: -0.008571473
       objectReference: {fileID: 0}
     - target: {fileID: 2351591983225004685, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: m_LocalPosition.z
@@ -3343,11 +3344,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2351591983225004685, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1.9542859
+      value: 1.3542858
       objectReference: {fileID: 0}
     - target: {fileID: 2351591983225004685, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.27
+      value: 0.48285708
       objectReference: {fileID: 0}
     - target: {fileID: 2351591983225004685, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: m_LocalPosition.z
@@ -3669,13 +3670,13 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: -0.57714295, y: 0.35142854}
-      - {x: -0.06714296, y: 0.60142857}
-      - {x: 0.49285698, y: 0.37142855}
-      - {x: 0.65285707, y: -0.12857148}
-      - {x: 0.36285686, y: -0.54857147}
-      - {x: -0.25714302, y: -0.5285715}
-      - {x: -0.6071429, y: -0.118571475}
+    - - {x: -0.8257141, y: 0.43857148}
+      - {x: -0.16571414, y: 0.7185715}
+      - {x: 0.49428588, y: 0.4985715}
+      - {x: 0.7642859, y: -0.02142853}
+      - {x: 0.5942859, y: -0.56142855}
+      - {x: -0.12571406, y: -0.68142855}
+      - {x: -0.7357141, y: -0.39142853}
   m_UseDelaunayMesh: 1
 --- !u!1 &944856471 stripped
 GameObject:
@@ -3751,13 +3752,13 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: -0.71428585, y: 0.44}
-      - {x: -0.1642859, y: 0.69000006}
-      - {x: 0.5057142, y: 0.43}
-      - {x: 0.7357142, y: -0.08000001}
-      - {x: 0.4857142, y: -0.57000005}
-      - {x: -0.18428588, y: -0.65999997}
-      - {x: -0.6642859, y: -0.25000003}
+    - - {x: -0.6142858, y: 0.36714295}
+      - {x: -0.034285903, y: 0.56714296}
+      - {x: 0.52571416, y: 0.31714293}
+      - {x: 0.65571415, y: -0.20285708}
+      - {x: 0.3557142, y: -0.53285706}
+      - {x: -0.23428583, y: -0.4428571}
+      - {x: -0.65428585, y: -0.07285705}
   m_UseDelaunayMesh: 1
 --- !u!1 &999939275
 GameObject:
@@ -4041,11 +4042,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2351591983225004685, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -3.035
+      value: -1.9888889
       objectReference: {fileID: 0}
     - target: {fileID: 2351591983225004685, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.3475001
+      value: -2.003333
       objectReference: {fileID: 0}
     - target: {fileID: 2351591983225004685, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: m_LocalPosition.z
@@ -4420,14 +4421,14 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: -0.9612498, y: 0.46875003}
-      - {x: -0.32124996, y: 0.7687501}
-      - {x: 0.37875032, y: 0.64875007}
-      - {x: 0.8387499, y: 0.13875002}
-      - {x: 0.8787503, y: -0.45124996}
-      - {x: 0.44875002, y: -0.77125}
-      - {x: -0.36124992, y: -0.64125}
-      - {x: -0.9012499, y: -0.16125}
+    - - {x: -0.7549999, y: 0.4225}
+      - {x: -0.20499992, y: 0.8125}
+      - {x: 0.45500016, y: 0.6924999}
+      - {x: 0.845, y: 0.17250001}
+      - {x: 0.7550001, y: -0.51750004}
+      - {x: 0.18500018, y: -0.7975001}
+      - {x: -0.4649999, y: -0.62750006}
+      - {x: -0.8149998, y: -0.15750003}
   m_UseDelaunayMesh: 1
 --- !u!1 &1284833766
 GameObject:
@@ -4651,13 +4652,14 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: -0.6142858, y: 0.36714295}
-      - {x: -0.034285903, y: 0.56714296}
-      - {x: 0.52571416, y: 0.31714293}
-      - {x: 0.65571415, y: -0.20285708}
-      - {x: 0.3557142, y: -0.53285706}
-      - {x: -0.23428583, y: -0.4428571}
-      - {x: -0.65428585, y: -0.07285705}
+    - - {x: -1.095, y: 0.6550001}
+      - {x: -0.245, y: 0.80499995}
+      - {x: 0.765, y: 0.56499994}
+      - {x: 1.1750001, y: 0.044999957}
+      - {x: 0.975, y: -0.58500004}
+      - {x: 0.265, y: -0.7950001}
+      - {x: -0.645, y: -0.615}
+      - {x: -1.1949999, y: -0.07500005}
   m_UseDelaunayMesh: 1
 --- !u!1 &1329997962 stripped
 GameObject:
@@ -4733,13 +4735,13 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: -0.8257141, y: 0.43857148}
-      - {x: -0.16571414, y: 0.7185715}
-      - {x: 0.49428588, y: 0.4985715}
-      - {x: 0.7642859, y: -0.02142853}
-      - {x: 0.5942859, y: -0.56142855}
-      - {x: -0.12571406, y: -0.68142855}
-      - {x: -0.7357141, y: -0.39142853}
+    - - {x: -0.71428585, y: 0.44}
+      - {x: -0.1642859, y: 0.69000006}
+      - {x: 0.5057142, y: 0.43}
+      - {x: 0.7357142, y: -0.08000001}
+      - {x: 0.4857142, y: -0.57000005}
+      - {x: -0.18428588, y: -0.65999997}
+      - {x: -0.6642859, y: -0.25000003}
   m_UseDelaunayMesh: 1
 --- !u!1 &1350376258 stripped
 GameObject:
@@ -4815,14 +4817,15 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: -0.7549999, y: 0.4225}
-      - {x: -0.20499992, y: 0.8125}
-      - {x: 0.45500016, y: 0.6924999}
-      - {x: 0.845, y: 0.17250001}
-      - {x: 0.7550001, y: -0.51750004}
-      - {x: 0.18500018, y: -0.7975001}
-      - {x: -0.4649999, y: -0.62750006}
-      - {x: -0.8149998, y: -0.15750003}
+    - - {x: -1.3011111, y: 0.473333}
+      - {x: -0.43111122, y: 0.8933331}
+      - {x: 0.60888886, y: 0.90333307}
+      - {x: 1.3688889, y: 0.43333304}
+      - {x: 1.5488889, y: -0.3066671}
+      - {x: 1.018889, y: -0.7966671}
+      - {x: -0.23111117, y: -1.0166671}
+      - {x: -1.141111, y: -0.5766671}
+      - {x: -1.4411112, y: -0.0066668987}
   m_UseDelaunayMesh: 1
 --- !u!1 &1361578919
 GameObject:
@@ -5283,11 +5286,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2351591983225004685, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.50714296
+      value: -4.88875
       objectReference: {fileID: 0}
     - target: {fileID: 2351591983225004685, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.237143
+      value: -0.55875003
       objectReference: {fileID: 0}
     - target: {fileID: 2351591983225004685, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: m_LocalPosition.z
@@ -5443,13 +5446,14 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: -0.522857, y: 0.712857}
-      - {x: 0.087142974, y: 0.83285713}
-      - {x: 0.62714297, y: 0.42285705}
-      - {x: 0.667143, y: -0.36714303}
-      - {x: 0.22714296, y: -0.797143}
-      - {x: -0.402857, y: -0.657143}
-      - {x: -0.682857, y: -0.147143}
+    - - {x: -0.9612498, y: 0.46875003}
+      - {x: -0.32124996, y: 0.7687501}
+      - {x: 0.37875032, y: 0.64875007}
+      - {x: 0.8387499, y: 0.13875002}
+      - {x: 0.8787503, y: -0.45124996}
+      - {x: 0.44875002, y: -0.77125}
+      - {x: -0.36124992, y: -0.64125}
+      - {x: -0.9012499, y: -0.16125}
   m_UseDelaunayMesh: 1
 --- !u!1 &1611487342
 GameObject:
@@ -5964,11 +5968,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2351591983225004685, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1.9888889
+      value: -5.3875
       objectReference: {fileID: 0}
     - target: {fileID: 2351591983225004685, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -2.003333
+      value: 1.3312501
       objectReference: {fileID: 0}
     - target: {fileID: 2351591983225004685, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: m_LocalPosition.z
@@ -6152,15 +6156,14 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: -1.3011111, y: 0.473333}
-      - {x: -0.43111122, y: 0.8933331}
-      - {x: 0.60888886, y: 0.90333307}
-      - {x: 1.3688889, y: 0.43333304}
-      - {x: 1.5488889, y: -0.3066671}
-      - {x: 1.018889, y: -0.7966671}
-      - {x: -0.23111117, y: -1.0166671}
-      - {x: -1.141111, y: -0.5766671}
-      - {x: -1.4411112, y: -0.0066668987}
+    - - {x: -1.4025002, y: 0.25874996}
+      - {x: -0.7625003, y: 0.59875}
+      - {x: 0.22749996, y: 0.84875}
+      - {x: 1.1675, y: 0.53875005}
+      - {x: 1.3174996, y: -0.07125008}
+      - {x: 0.82749987, y: -0.74125004}
+      - {x: -0.22250032, y: -0.89125}
+      - {x: -1.1525002, y: -0.54125005}
   m_UseDelaunayMesh: 1
 --- !u!1 &1977027924 stripped
 GameObject:
@@ -6232,11 +6235,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2351591983225004685, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1.805
+      value: -0.50714296
       objectReference: {fileID: 0}
     - target: {fileID: 2351591983225004685, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.6550001
+      value: 1.237143
       objectReference: {fileID: 0}
     - target: {fileID: 2351591983225004685, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: m_LocalPosition.z
@@ -6392,14 +6395,13 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: -1.095, y: 0.6550001}
-      - {x: -0.245, y: 0.80499995}
-      - {x: 0.765, y: 0.56499994}
-      - {x: 1.1750001, y: 0.044999957}
-      - {x: 0.975, y: -0.58500004}
-      - {x: 0.265, y: -0.7950001}
-      - {x: -0.645, y: -0.615}
-      - {x: -1.1949999, y: -0.07500005}
+    - - {x: -0.522857, y: 0.712857}
+      - {x: 0.087142974, y: 0.83285713}
+      - {x: 0.62714297, y: 0.42285705}
+      - {x: 0.667143, y: -0.36714303}
+      - {x: 0.22714296, y: -0.797143}
+      - {x: -0.402857, y: -0.657143}
+      - {x: -0.682857, y: -0.147143}
   m_UseDelaunayMesh: 1
 --- !u!1001 &2114962719
 PrefabInstance:
@@ -6443,11 +6445,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2351591983225004685, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -5.3875
+      value: -2.772857
       objectReference: {fileID: 0}
     - target: {fileID: 2351591983225004685, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.3312501
+      value: -0.08142853
       objectReference: {fileID: 0}
     - target: {fileID: 2351591983225004685, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: m_LocalPosition.z
@@ -6603,14 +6605,13 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: -1.4025002, y: 0.25874996}
-      - {x: -0.7625003, y: 0.59875}
-      - {x: 0.22749996, y: 0.84875}
-      - {x: 1.1675, y: 0.53875005}
-      - {x: 1.3174996, y: -0.07125008}
-      - {x: 0.82749987, y: -0.74125004}
-      - {x: -0.22250032, y: -0.89125}
-      - {x: -1.1525002, y: -0.54125005}
+    - - {x: -0.57714295, y: 0.35142854}
+      - {x: -0.06714296, y: 0.60142857}
+      - {x: 0.49285698, y: 0.37142855}
+      - {x: 0.65285707, y: -0.12857148}
+      - {x: 0.36285686, y: -0.54857147}
+      - {x: -0.25714302, y: -0.5285715}
+      - {x: -0.6071429, y: -0.118571475}
   m_UseDelaunayMesh: 1
 --- !u!1 &2118353772
 GameObject:
