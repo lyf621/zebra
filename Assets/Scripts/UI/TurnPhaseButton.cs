@@ -102,9 +102,8 @@ public class TurnPhaseButton : MonoBehaviour
 
         DeferFirstEvent = false;   // handed over; subsequent turns open automatically as usual
 
-        // Apply the previous turn's balance drift before this turn's event is drawn, so the
-        // player's mission resolution stays visible on the HUD until a new turn actually starts.
-        Turns.BeginTurn();
+        // Note: the balance drift is NOT applied here. It runs in TurnController.EndTurn, when
+        // the player confirms the mission resolution — deliberately decoupled from this panel.
         if (Events != null) Events.TriggerRandomEvent();
         Turns.NextTurnPhase();
         if (Cards != null && (Events == null || !Events.IsAwaitingChoice()))
@@ -119,19 +118,45 @@ public class TurnPhaseButton : MonoBehaviour
         Turns.EndTurn();
         if (!Turns.IsGameOver())
         {
-            if (Cards != null) Cards.StartTurnHand();
-            StartCoroutine(BeginEventNextFrame());
+            if (Cards != null)
+            {
+                // The card system opens this turn's event itself, at the tail of
+                // StartRoundRoutine — that is, once the new hand has finished animating in.
+                // Opening it from here as well would race that and win (one frame vs. the whole
+                // draw), dropping the event panel on top of cards still in flight.
+                Cards.StartTurnHand();
+            }
+            else
+            {
+                // No card system: nothing else will open the event, so do it here.
+                StartCoroutine(BeginEventNextFrame());
+            }
         }
     }
 
     private System.Collections.IEnumerator BeginFirstEventAfterDifficultySelection()
     {
-        while (Turns != null && !Turns.IsGameOver() && !GameSessionSettings.HasSelectedDifficulty)
-            yield return null;
+        if (DeferFirstEvent) yield break;   // TutorialScene: the greeting banner owns the trigger
 
-        // All scene Start methods have run by this point, including ZebraGameController's initial
-        // hand setup, so the event panel and the card interface are ready together.
-        yield return null;
+        // MainMap opened directly prompts for a difficulty first, so the event is held back until
+        // that has been answered. The opening hand draws behind the dialog in the meantime, and
+        // the card system's own opener no-ops while the flag is set.
+        if (!GameSessionSettings.HasSelectedDifficulty)
+        {
+            DeferFirstEvent = true;
+            while (Turns != null && !Turns.IsGameOver() && !GameSessionSettings.HasSelectedDifficulty)
+                yield return null;
+            DeferFirstEvent = false;
+        }
+        else if (Cards != null)
+        {
+            // Difficulty already chosen (entered from the main menu) and a card system is
+            // present: turn 1 behaves exactly like every later turn — ZebraGameController opens
+            // the event at the tail of its opening draw, once the hand has animated in.
+            yield break;
+        }
+
+        yield return null;   // all scene Start methods have run by this point
         BeginFirstEventAutomatically();
     }
 

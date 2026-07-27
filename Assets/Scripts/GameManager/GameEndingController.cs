@@ -82,7 +82,7 @@ public class GameEndingController : MonoBehaviour
                 title = chinese ? "擢升为王" : "Rise to the Throne";
                 category = chinese ? "全面胜利" : "Major Victory";
                 description = chinese ? "国王、教会与贵族齐声称颂你的美德，推举你为王位的继承人。多年以后，你作为王国的新任统治者为已故的国王举办葬礼。"
-                                      : "The King, the Church, and the nobility acclaimed you in a chorus, electing you the heir to the throne. Years the later, you hold the late King's funeral as the new ruler of the Kingdom.";
+                                      : "The King, the Church, and the nobility acclaimed you in a chorus, electing you the heir to the throne. Years later, you hold the late King's funeral as the new ruler of the Kingdom.";
                 return;
             case VictoryKind.EternalRule:
                 title = chinese ? "永恒统治" : "Eternal Rule";
