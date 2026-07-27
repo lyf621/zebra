@@ -98,7 +98,7 @@ public class CardView : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
         }
         else
         {
-            locationLabel = Card.Location.ToString().ToUpperInvariant();
+            locationLabel = GameLocalization.GetCardLocationLabelEnglish(Card.Location);
         }
 
         // 在地点类型后附上揭示阶段的收益：威严/战斗力，例如 "Economy +1/+0"。

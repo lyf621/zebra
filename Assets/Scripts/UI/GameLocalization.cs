@@ -2,6 +2,18 @@
 // each keeping a partially translated copy of the same strings.
 public static class GameLocalization
 {
+    /// <summary>
+    /// The English location-type label printed on a card face. Shared by the hand cards
+    /// (CardView) and the overlay cards (All Cards / Buy / Delete), so the two cannot drift.
+    /// Administration is deliberately shortened; every other type is its enum name in caps.
+    /// The Chinese labels are unaffected and stay where they are.
+    /// </summary>
+    public static string GetCardLocationLabelEnglish(LocationType locationType)
+    {
+        if (locationType == LocationType.Administration) return "ADMIN";
+        return locationType.ToString().ToUpperInvariant();
+    }
+
     public static string FormatStatChanges(StatModifier effect, bool chinese, string indent = "")
     {
         if (chinese)

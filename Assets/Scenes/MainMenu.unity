@@ -1215,8 +1215,8 @@ Transform:
   m_GameObject: {fileID: 1402756263}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 22, y: 22, z: 1}
+  m_LocalPosition: {x: 0, y: -2.02, z: 0}
+  m_LocalScale: {x: 23, y: 22, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -1407,7 +1407,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11df84d283aed294c8ec8a2a10d35e68, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MainMenuSettings
-  rulesUrl: 'https://raw.githubusercontent.com/HenryRao525/RuleSetPublic/main/TheRuleSet.pdf '
+  rulesUrl: https://raw.githubusercontent.com/HenryRao525/RuleSetPublic/main/Rule%20Set%20for%20RTTK.pdf
+  hintPages:
+  - {fileID: 5996385453949642652, guid: 6218ccd40034d544a8a2b602742839de, type: 3}
+  - {fileID: 8358507863610424849, guid: 2c6bd32288aac7e4f9027cbf127b6a63, type: 3}
+  - {fileID: 4734734376704648234, guid: 0a4c582b91eeb7c4bb8770130b91812c, type: 3}
+  - {fileID: 1866378139791550217, guid: 8ef0f39bdd166e0489d12d7189b2b3f3, type: 3}
+  - {fileID: -4801192671370158997, guid: 17a9688a69fd4a54699869bd3d5b705a, type: 3}
+  - {fileID: 681799707174317854, guid: 11db900af23b7c048a9cedad01bde9ed, type: 3}
+  - {fileID: 4361669918759292431, guid: 002084efb9038384681a52d515e38f63, type: 3}
+  - {fileID: 6709068177368448548, guid: 3581f285472d65f4491282b89b0b4721, type: 3}
+  - {fileID: 8654516908148293426, guid: 2de08a4718878314cb4f2709f93aa732, type: 3}
 --- !u!114 &1659789536
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1445,8 +1455,10 @@ MonoBehaviour:
     NamesChinese: "Parchment texture: \u201CPergament.2\u201D by Membeth, CC0,\nhttps://commons.wikimedia.org/wiki/File:Pergament.2.jpg\nAigei,\nhttps://www.aigei.com/set/kapaibiankuang.html\nhttps://www.aigei.com/set/pukepaizhipai_paibei.html"
   - RoleEnglish: Location Label Assets
     RoleChinese: "\u5730\u70B9\u6807\u7B7E\u7D20\u6750"
-    Names: "Ornament design inspired by \u201CVintage swirl blank badge\u201D by rawpixel.com on Freepik.\nhttps://www.freepik.com/free-vector/vintage-swirl-blank-badge_3788223.htm"
-    NamesChinese: "\u6807\u7B7E\u88C5\u9970\u8BBE\u8BA1\u53C2\u8003\u4E86 rawpixel.com \u5728 Freepik \u53D1\u5E03\u7684\u201CVintage swirl blank badge\u201D\u3002\nhttps://www.freepik.com/free-vector/vintage-swirl-blank-badge_3788223.htm"
+    Names: "Ornament design inspired by \u201CVintage swirl blank badge\u201D by
+      rawpixel.com on Freepik.\nhttps://www.freepik.com/free-vector/vintage-swirl-blank-badge_3788223.htm"
+    NamesChinese: "\u6807\u7B7E\u88C5\u9970\u8BBE\u8BA1\u53C2\u8003\u4E86 rawpixel.com
+      \u5728 Freepik \u53D1\u5E03\u7684\u201CVintage swirl blank badge\u201D\u3002\nhttps://www.freepik.com/free-vector/vintage-swirl-blank-badge_3788223.htm"
   - RoleEnglish: Music
     RoleChinese: "\u97F3\u4E50"
     Names: 'Background music: In Taberna Revisited - Andreas Waldetoft
@@ -1459,8 +1471,9 @@ MonoBehaviour:
     Names: The use of AI models accelerated our development. Claude and GPT completed
       a lot of coding work for us.
     NamesChinese: "\u6211\u4EEC\u4F7F\u7528\u4E86AI\u6A21\u578B\u6765\u52A0\u901F\u5F00\u53D1\u3002Claude\u548CGPT\u66FF\u6211\u4EEC\u5B8C\u6210\u4E86\u5927\u91CF\u4EE3\u7801\u5DE5\u4F5C\u3002"
-  footerEnglish: Thank you for playing.
-  footerChinese: "\u611F\u8C22\u60A8\u7684\u6E38\u73A9\u3002"
+  footerEnglish: Our professor, Kelvin Sung, guided us with patience throughout the
+    project.
+  footerChinese: "\u6211\u4EEC\u7684\u6559\u6388\uFF0CKelvin Sung\uFF0C\u8010\u5FC3\u5730\u6307\u5BFC\u6211\u4EEC\u5B8C\u6210\u4E86\u8FD9\u4E2A\u9879\u76EE\u3002"
   panelSize: {x: 760, y: 520}
   leftAlignDescriptions: 1
 --- !u!1 &1879675251

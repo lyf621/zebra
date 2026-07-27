@@ -794,7 +794,16 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 68ba948febec0284ab61f2297d6f74c2, type: 2}
   - {fileID: 11400000, guid: 2fc515144ba44ad448a328bcbb4f8ad7, type: 2}
   deleteMajestyCost: 3
-  hintPages: []
+  hintPages:
+  - {fileID: 5996385453949642652, guid: 6218ccd40034d544a8a2b602742839de, type: 3}
+  - {fileID: 8358507863610424849, guid: 2c6bd32288aac7e4f9027cbf127b6a63, type: 3}
+  - {fileID: 4734734376704648234, guid: 0a4c582b91eeb7c4bb8770130b91812c, type: 3}
+  - {fileID: 1866378139791550217, guid: 8ef0f39bdd166e0489d12d7189b2b3f3, type: 3}
+  - {fileID: -4801192671370158997, guid: 17a9688a69fd4a54699869bd3d5b705a, type: 3}
+  - {fileID: 681799707174317854, guid: 11db900af23b7c048a9cedad01bde9ed, type: 3}
+  - {fileID: 4361669918759292431, guid: 002084efb9038384681a52d515e38f63, type: 3}
+  - {fileID: 6709068177368448548, guid: 3581f285472d65f4491282b89b0b4721, type: 3}
+  - {fileID: 8654516908148293426, guid: 2de08a4718878314cb4f2709f93aa732, type: 3}
   mStats: {fileID: 307285969}
   mTurns: {fileID: 639306590}
   mMissions: {fileID: 0}

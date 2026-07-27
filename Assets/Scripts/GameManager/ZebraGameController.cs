@@ -1503,7 +1503,7 @@ public class ZebraGameController : MonoBehaviour
     // 点击"规则"按钮时打开规则网页（PDF/Word）。把下面的链接替换为实际地址即可。
     private void OpenRules()
     {
-        Application.OpenURL("https://raw.githubusercontent.com/HenryRao525/RuleSetPublic/main/TheRuleSet.pdf");
+        Application.OpenURL("https://raw.githubusercontent.com/HenryRao525/RuleSetPublic/main/Rule%20Set%20for%20RTTK.pdf");
     }
 
     // Quit leaves the current run and returns to the main menu rather than terminating the
@@ -1604,7 +1604,7 @@ public class ZebraGameController : MonoBehaviour
             return "";
         }
 
-        string typeLabel = mUseChinese ? GetLocationChinese(card.Location) : card.Location.ToString().ToUpperInvariant();
+        string typeLabel = mUseChinese ? GetLocationChinese(card.Location) : GameLocalization.GetCardLocationLabelEnglish(card.Location);
         // 与手牌一致：地点类型后附上揭示阶段的威严/战斗力收益，例如 "Economy +1/+0"。
         return typeLabel + " " + SignInt(card.MajestyGain) + "/" + SignInt(card.FightGain);
     }
