@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: c33d5ce751d90ad44899559ba75e1fb1
+guid: 9e5f0185ce0c8134eb9c43c2f0ac551e
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 2789645919797346017
-    second: ZebraWorldMap_0
+      213: -5605680567884276931
+    second: mobilization_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -55,7 +55,7 @@ TextureImporter:
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
-  alphaIsTransparency: 0
+  alphaIsTransparency: 1
   spriteTessellationDetail: -1
   textureType: 8
   textureShape: 1
@@ -126,7 +126,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      ZebraWorldMap_0: 2789645919797346017
+      mobilization_0: -5605680567884276931
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

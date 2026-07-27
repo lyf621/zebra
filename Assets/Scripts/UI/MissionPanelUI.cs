@@ -207,6 +207,15 @@ public class MissionPanelUI : MonoBehaviour
         panelRoot.SetActive(!panelRoot.activeSelf);
     }
 
+    /// <summary>
+    /// True when this panel is presenting an event acknowledgement. The acknowledgement is
+    /// visually hosted by the mission panel, even though the event itself remains pending.
+    /// </summary>
+    public bool HasEventConfirmation()
+    {
+        return eventConfirmationButton != null;
+    }
+
     /// <summary>True while the mission panel is visible (used to make it modal).</summary>
     public bool IsOpen()
     {

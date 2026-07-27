@@ -65,8 +65,21 @@ public class DecisionReviewController : MonoBehaviour
     {
         mReviewing = false;
         if (mCards != null) mCards.SetDecisionReviewMode(false);
-        if (mEventPanel != null && mEvents != null && mEvents.IsAwaitingChoice()) mEventPanel.SetVisibleForReview(true);
-        if (mMissionPanel != null && mMissions != null && mMissions.IsAwaitingChoice()) mMissionPanel.SetVisibleForReview(true);
+
+        // An event with a linked mission presents its acknowledgement in MissionPanelUI.  It
+        // remains an awaiting event, so this case must be checked before restoring EventPanelUI.
+        if (mMissionPanel != null && mMissionPanel.HasEventConfirmation())
+        {
+            mMissionPanel.SetVisibleForReview(true);
+        }
+        else if (mEventPanel != null && mEvents != null && mEvents.IsAwaitingChoice())
+        {
+            mEventPanel.SetVisibleForReview(true);
+        }
+        else if (mMissionPanel != null && mMissions != null && mMissions.IsAwaitingChoice())
+        {
+            mMissionPanel.SetVisibleForReview(true);
+        }
     }
 
     // 创建始终位于决策面板上层、但低于设置页的半返回按钮。
@@ -86,11 +99,13 @@ public class DecisionReviewController : MonoBehaviour
         GameObject buttonObject = new GameObject("Decision Review Button", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(Button));
         buttonObject.transform.SetParent(canvasObject.transform, false);
         RectTransform rect = buttonObject.GetComponent<RectTransform>();
-        rect.anchorMin = new Vector2(0.5f, 0f);
-        rect.anchorMax = new Vector2(0.5f, 0f);
-        rect.pivot = new Vector2(0.5f, 0f);
-        rect.anchoredPosition = new Vector2(0f, 22f);
-        rect.sizeDelta = new Vector2(230f, 46f);
+        // Keep the review control clear of the hand and the right-hand action buttons.
+        // The space directly below the top status panel is otherwise unused during decisions.
+        rect.anchorMin = new Vector2(0f, 1f);
+        rect.anchorMax = new Vector2(0f, 1f);
+        rect.pivot = new Vector2(0f, 1f);
+        rect.anchoredPosition = new Vector2(26f, -158f);
+        rect.sizeDelta = new Vector2(205f, 42f);
         mReviewButton = buttonObject.GetComponent<Button>();
         mReviewButton.targetGraphic = buttonObject.GetComponent<Image>();
         mReviewButton.onClick.AddListener(ToggleReview);

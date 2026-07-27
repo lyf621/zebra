@@ -14,31 +14,34 @@ public static class ZebraMapSceneSetup
     private const float MapWidth = 200f;
     private const float MapCenterY = 8f;
 
-    // Pixel rectangles traced from ZebraWorldMap. Their edges meet at the roads, rather
-    // than treating the illustrated districts as a uniform four-by-three grid.
-    private static readonly Dictionary<string, Rect> LocationRects = new Dictionary<string, Rect>
+    // Pixel outlines traced from the final illustrated map. The actual playable areas
+    // follow their highlighted buildings and fields instead of using an invisible grid.
+    private static readonly Dictionary<string, Vector2[]> LocationPolygons = new Dictionary<string, Vector2[]>
     {
-        { "royalgrace", new Rect(0, 0, 435, 331) },
-        { "bureaucracy", new Rect(435, 0, 393, 331) },
-        { "farm", new Rect(828, 0, 417, 331) },
-        { "barrack", new Rect(1245, 0, 427, 331) },
-        { "generousdonation", new Rect(0, 331, 411, 274) },
-        { "ceremony", new Rect(411, 331, 391, 274) },
-        { "guild", new Rect(802, 331, 412, 274) },
-        { "arsenal", new Rect(1214, 331, 458, 274) },
-        { "alliance", new Rect(0, 605, 467, 336) },
-        { "patrol", new Rect(467, 605, 294, 336) },
-        { "market", new Rect(761, 605, 435, 336) },
-        { "mobilization", new Rect(1196, 605, 476, 336) }
+        { "royalgrace", Points(576, 214, 637, 202, 691, 243, 695, 322, 651, 365, 588, 351, 560, 300) },
+        { "bureaucracy", Points(750, 178, 835, 163, 936, 187, 977, 239, 957, 302, 886, 323, 795, 305, 740, 251) },
+        { "farm", Points(1012, 172, 1090, 192, 1190, 229, 1357, 275, 1357, 688, 1293, 671, 1205, 650, 1127, 625, 1066, 576, 1030, 516, 1077, 465, 1033, 420, 1075, 373, 1016, 328) },
+        { "barrack", Points(0, 250, 64, 216, 163, 191, 257, 222, 272, 283, 223, 350, 118, 365, 25, 330) },
+        { "generousdonation", Points(94, 418, 158, 388, 228, 400, 274, 451, 278, 510, 235, 542, 154, 529, 100, 481) },
+        // The stone workshop is the Arsenal; the orange amphitheatre is Ceremony.
+        // These two regions were reversed in the first map experiment.
+        { "arsenal", Points(344, 382, 395, 357, 451, 380, 467, 430, 438, 472, 376, 470, 341, 429) },
+        { "guild", Points(478, 366, 544, 338, 610, 360, 637, 412, 620, 466, 548, 478, 487, 449) },
+        { "ceremony", Points(803, 392, 858, 367, 925, 393, 948, 444, 923, 493, 856, 502, 808, 461) },
+        { "alliance", Points(300, 232, 355, 193, 421, 205, 460, 257, 451, 326, 394, 354, 329, 337, 294, 290) },
+        { "patrol", Points(753, 324, 811, 304, 867, 329, 880, 381, 850, 414, 791, 405, 749, 368) },
+        { "market", Points(648, 518, 737, 493, 837, 523, 929, 583, 942, 669, 871, 719, 759, 713, 667, 661, 629, 589) },
+        { "mobilization", Points(350, 562, 437, 520, 541, 519, 617, 566, 635, 640, 582, 689, 457, 711, 366, 667, 336, 610) }
     };
 
-    private const float MapPixelWidth = 1672f;
-    private const float MapPixelHeight = 941f;
+    private const float MapPixelWidth = 1358f;
+    private const float MapPixelHeight = 818f;
 
     [MenuItem("Zebra/Apply Unified Map Layout")]
     public static void Apply()
     {
         ConfigureMapImport();
+        ConfigureHighlightImports();
         Sprite mapSprite = AssetDatabase.LoadAssetAtPath<Sprite>(MapPath);
         if (mapSprite == null)
         {
@@ -46,8 +49,8 @@ public static class ZebraMapSceneSetup
         }
 
         Scene scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
-        CreateOrUpdateMapBackground(mapSprite);
-        LayoutLocations(mapSprite.bounds.size.x / mapSprite.bounds.size.y);
+        Transform mapTransform = CreateOrUpdateMapBackground(mapSprite);
+        LayoutLocations(mapSprite, mapTransform);
         EditorSceneManager.MarkSceneDirty(scene);
         EditorSceneManager.SaveScene(scene);
         AssetDatabase.SaveAssets();
@@ -81,15 +84,53 @@ public static class ZebraMapSceneSetup
 
         importer.textureType = TextureImporterType.Sprite;
         importer.spriteImportMode = SpriteImportMode.Single;
+        importer.spritesheet = Array.Empty<SpriteMetaData>();
+        TextureImporterSettings mapSettings = new TextureImporterSettings();
+        importer.ReadTextureSettings(mapSettings);
+        mapSettings.spriteMeshType = SpriteMeshType.FullRect;
+        mapSettings.spriteAlignment = (int)SpriteAlignment.Center;
+        mapSettings.spritePivot = new Vector2(0.5f, 0.5f);
+        importer.SetTextureSettings(mapSettings);
         importer.spritePixelsPerUnit = 100;
         importer.mipmapEnabled = false;
         importer.alphaIsTransparency = false;
+        importer.wrapMode = TextureWrapMode.Clamp;
         importer.textureCompression = TextureImporterCompression.Compressed;
         importer.maxTextureSize = 2048;
         importer.SaveAndReimport();
     }
 
-    private static void CreateOrUpdateMapBackground(Sprite mapSprite)
+    private static void ConfigureHighlightImports()
+    {
+        const string highlightFolder = "Assets/Resources/Art/MapHighlights";
+        if (!AssetDatabase.IsValidFolder(highlightFolder)) return;
+
+        foreach (string guid in AssetDatabase.FindAssets("t:Texture2D", new[] { highlightFolder }))
+        {
+            string path = AssetDatabase.GUIDToAssetPath(guid);
+            TextureImporter importer = AssetImporter.GetAtPath(path) as TextureImporter;
+            if (importer == null) continue;
+
+            importer.textureType = TextureImporterType.Sprite;
+            importer.spriteImportMode = SpriteImportMode.Single;
+            importer.spritesheet = Array.Empty<SpriteMetaData>();
+            TextureImporterSettings highlightSettings = new TextureImporterSettings();
+            importer.ReadTextureSettings(highlightSettings);
+            highlightSettings.spriteMeshType = SpriteMeshType.FullRect;
+            highlightSettings.spriteAlignment = (int)SpriteAlignment.Center;
+            highlightSettings.spritePivot = new Vector2(0.5f, 0.5f);
+            importer.SetTextureSettings(highlightSettings);
+            importer.spritePixelsPerUnit = 100;
+            importer.mipmapEnabled = false;
+            importer.alphaIsTransparency = true;
+            importer.wrapMode = TextureWrapMode.Clamp;
+            importer.textureCompression = TextureImporterCompression.Compressed;
+            importer.maxTextureSize = 2048;
+            importer.SaveAndReimport();
+        }
+    }
+
+    private static Transform CreateOrUpdateMapBackground(Sprite mapSprite)
     {
         GameObject background = GameObject.Find("Zebra World Map");
         if (background == null)
@@ -100,11 +141,16 @@ public static class ZebraMapSceneSetup
         SpriteRenderer renderer = background.GetComponent<SpriteRenderer>();
         if (renderer == null) renderer = background.AddComponent<SpriteRenderer>();
         renderer.sprite = mapSprite;
+        renderer.drawMode = SpriteDrawMode.Simple;
+        renderer.size = mapSprite.bounds.size;
         renderer.sortingOrder = -100;
         renderer.color = Color.white;
         background.transform.position = new Vector3(0f, MapCenterY, 0f);
         float scale = MapWidth / mapSprite.bounds.size.x;
         background.transform.localScale = new Vector3(scale, scale, 1f);
+        MapViewportFitter fitter = background.GetComponent<MapViewportFitter>();
+        if (fitter == null) fitter = background.AddComponent<MapViewportFitter>();
+        fitter.SetBaseScale(scale);
 
         // The old scene used a full-screen Square sprite as its background. It sits above
         // the new map in sorting order, so disable it instead of letting it mask the artwork.
@@ -116,38 +162,37 @@ public static class ZebraMapSceneSetup
                 EditorUtility.SetDirty(existing);
             }
         }
+
+        return background.transform;
     }
 
-    private static void LayoutLocations(float mapAspect)
+    private static void LayoutLocations(Sprite mapSprite, Transform mapTransform)
     {
-        float mapHeight = MapWidth / mapAspect;
         List<string> unmapped = new List<string>();
 
         foreach (ClickOnLocation location in UnityEngine.Object.FindObjectsByType<ClickOnLocation>(FindObjectsInactive.Include, FindObjectsSortMode.None))
         {
             string key = Normalize(location.name);
-            if (!LocationRects.TryGetValue(key, out Rect rect))
+            if (!LocationPolygons.TryGetValue(key, out Vector2[] pixelPoints))
             {
                 unmapped.Add(location.name);
                 continue;
             }
 
-            location.transform.SetParent(null, true);
-            location.transform.position = new Vector3(
-                -MapWidth * 0.5f + (rect.x + rect.width * 0.5f) / MapPixelWidth * MapWidth,
-                MapCenterY + mapHeight * 0.5f - (rect.y + rect.height * 0.5f) / MapPixelHeight * mapHeight,
-                0f);
-            location.transform.localScale = new Vector3(
-                rect.width / MapPixelWidth * MapWidth,
-                rect.height / MapPixelHeight * mapHeight,
-                1f);
+            location.transform.SetParent(mapTransform, false);
+            Vector2 centerPixel = pixelPoints.Aggregate(Vector2.zero, (sum, point) => sum + point) / pixelPoints.Length;
+            Vector2 centerLocal = PixelToMapLocal(centerPixel, mapSprite.bounds.size);
+            location.transform.localPosition = new Vector3(centerLocal.x, centerLocal.y, 0f);
+            location.transform.localScale = Vector3.one;
 
-            BoxCollider2D collider = location.GetComponent<BoxCollider2D>();
-            if (collider != null)
-            {
-                collider.size = Vector2.one;
-                collider.offset = Vector2.zero;
-            }
+            PolygonCollider2D collider = location.GetComponent<PolygonCollider2D>();
+            if (collider == null) collider = location.gameObject.AddComponent<PolygonCollider2D>();
+            foreach (BoxCollider2D oldCollider in location.GetComponents<BoxCollider2D>())
+                UnityEngine.Object.DestroyImmediate(oldCollider);
+            collider.points = pixelPoints
+                .Select(point => PixelToMapLocal(point, mapSprite.bounds.size) - centerLocal)
+                .ToArray();
+            collider.enabled = true;
 
             SpriteRenderer artwork = location.GetComponent<SpriteRenderer>();
             if (artwork != null) artwork.enabled = false;
@@ -162,6 +207,24 @@ public static class ZebraMapSceneSetup
 
     private static string Normalize(string value)
     {
-        return new string(value.Where(char.IsLetterOrDigit).ToArray()).ToLowerInvariant();
+        return new string(value.Where(char.IsLetterOrDigit).ToArray())
+            .TrimEnd('0', '1', '2', '3', '4', '5', '6', '7', '8', '9')
+            .ToLowerInvariant();
+    }
+
+    private static Vector2[] Points(params float[] values)
+    {
+        if (values.Length % 2 != 0) throw new ArgumentException("Polygon points must be x/y pairs.");
+        Vector2[] points = new Vector2[values.Length / 2];
+        for (int index = 0; index < values.Length; index += 2)
+            points[index / 2] = new Vector2(values[index], values[index + 1]);
+        return points;
+    }
+
+    private static Vector2 PixelToMapLocal(Vector2 pixel, Vector2 spriteSize)
+    {
+        return new Vector2(
+            -spriteSize.x * 0.5f + pixel.x / MapPixelWidth * spriteSize.x,
+            spriteSize.y * 0.5f - pixel.y / MapPixelHeight * spriteSize.y);
     }
 }

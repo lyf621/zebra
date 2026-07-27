@@ -97,6 +97,11 @@ public class ZebraGameController : MonoBehaviour
     [SerializeField] private CardSO[] marketCards;    // cards that can be bought in Phase 2
     [SerializeField] private int deleteMajestyCost = 1;   // flat Majesty cost to delete a card in Phase 2
 
+    [Header("Hint pages (Settings > Hint)")]
+    [Tooltip("Full-screen guidance pictures, shown in this order. Drag Sprites in and reorder " +
+             "them here; the Hint button is hidden when the list is empty.")]
+    [SerializeField] private Sprite[] hintPages;
+
     [Header("Integration with base project (authoritative game state)")]
     [SerializeField] private StatManager mStats;
     [SerializeField] private TurnController mTurns;
@@ -370,6 +375,14 @@ public class ZebraGameController : MonoBehaviour
     // 只有玩家行动阶段的未锁定手牌可以响应悬停效果。
     public bool CanHoverCard(CardView cardView)
     {
+        // Review mode is read-only: hand cards still rise so their full text can be inspected,
+        // while OnHandCardClicked rejects every click before a card can be selected or played.
+        if (mDecisionReviewMode)
+        {
+            return mOverlay == null && mSettingsOverlay == null &&
+                   (mSelectedCardView == null || mSelectedCardView == cardView);
+        }
+
         return !mDecisionReviewMode && !MissionModalOpen() && mOverlay == null && mSettingsOverlay == null && mPhase == GamePhase.PlayerAction && (!mIntegrated || mCardPlayEnabled) && (mSelectedCardView == null || mSelectedCardView == cardView);
     }
 
@@ -521,14 +534,16 @@ public class ZebraGameController : MonoBehaviour
         mDiscardPileButton = CreatePileButton("Discard Pile", canvasObject.transform, "DISCARD", new Vector2(550f, -128f), out mDiscardCountText, out mDiscardPileNameText);
         mDiscardPileButton.onClick.AddListener(OpenDiscardPileView);
 
-        mBuyButton = CreateButton("Buy", canvasObject.transform, "Buy", new Vector2(1f, 0.5f), new Vector2(-24f, 126f), new Vector2(120f, 42f), new Color(0.56f, 0.43f, 0.13f));
-        mBuyButton.GetComponent<RectTransform>().pivot = new Vector2(1f, 0.5f);
+        // Keep the action stack on the same top-right anchor as the phase and mission
+        // buttons. Mixed top/centre anchors made Mission and Buy crowd each other.
+        mBuyButton = CreateButton("Buy", canvasObject.transform, "Buy", Vector2.one, new Vector2(-24f, -232f), new Vector2(120f, 42f), new Color(0.56f, 0.43f, 0.13f));
+        mBuyButton.GetComponent<RectTransform>().pivot = Vector2.one;
         mBuyButton.onClick.AddListener(OpenMarket);
-        mDeleteButton = CreateButton("Delete", canvasObject.transform, "Delete", new Vector2(1f, 0.5f), new Vector2(-24f, 72f), new Vector2(120f, 42f), new Color(0.39f, 0.2f, 0.18f));
-        mDeleteButton.GetComponent<RectTransform>().pivot = new Vector2(1f, 0.5f);
+        mDeleteButton = CreateButton("Delete", canvasObject.transform, "Delete", Vector2.one, new Vector2(-24f, -286f), new Vector2(120f, 42f), new Color(0.39f, 0.2f, 0.18f));
+        mDeleteButton.GetComponent<RectTransform>().pivot = Vector2.one;
         mDeleteButton.onClick.AddListener(OpenDeleteView);
-        mEndRoundButton = CreateButton("End Round", canvasObject.transform, "End Round", new Vector2(1f, 0.5f), new Vector2(-24f, 18f), new Vector2(120f, 42f), new Color(0.17f, 0.31f, 0.38f));
-        mEndRoundButton.GetComponent<RectTransform>().pivot = new Vector2(1f, 0.5f);
+        mEndRoundButton = CreateButton("End Round", canvasObject.transform, "End Round", Vector2.one, new Vector2(-24f, -340f), new Vector2(120f, 42f), new Color(0.17f, 0.31f, 0.38f));
+        mEndRoundButton.GetComponent<RectTransform>().pivot = Vector2.one;
         mEndRoundButton.onClick.AddListener(EndRound);
         mCancelPlayButton = CreateButton("Cancel Play", canvasObject.transform, "Cancel", new Vector2(0.5f, 0.5f), new Vector2(550f, -258f), new Vector2(120f, 42f), new Color(0.32f, 0.31f, 0.29f));
         mCancelPlayButton.GetComponent<RectTransform>().pivot = new Vector2(1f, 0.5f);
@@ -1455,10 +1470,14 @@ public class ZebraGameController : MonoBehaviour
 
         Image panel = CreatePanel("Settings Panel", mSettingsOverlay.transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(500f, 320f), new Color(0.88f, 0.84f, 0.72f, 1f));
         CreateText("Settings Title", panel.transform, mUseChinese ? "设置" : "Settings", 28, FontStyle.Bold, TextAnchor.MiddleCenter, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -52f), new Vector2(300f, 50f), new Color(0.12f, 0.11f, 0.09f));
-        // Row 1: Quit (left) and Rules (right)
-        Button quitButton = CreateButton("Quit", panel.transform, mUseChinese ? "退出" : "Quit", new Vector2(0.5f, 0.5f), new Vector2(-92f, 56f), new Vector2(160f, 46f), new Color(0.42f, 0.22f, 0.20f));
+        // Row 1: Quit (left), Hint (middle) and Rules (right). Three buttons across a 500-wide
+        // panel, so they are narrower than the two-button rows below.
+        Button quitButton = CreateButton("Quit", panel.transform, mUseChinese ? "退出" : "Quit", new Vector2(0.5f, 0.5f), new Vector2(-158f, 56f), new Vector2(152f, 46f), new Color(0.42f, 0.22f, 0.20f));
         quitButton.onClick.AddListener(QuitApplication);
-        Button rulesButton = CreateButton("Rules", panel.transform, mUseChinese ? "规则" : "Rules", new Vector2(0.5f, 0.5f), new Vector2(92f, 56f), new Vector2(160f, 46f), new Color(0.20f, 0.34f, 0.42f));
+        Button hintButton = CreateButton("Hint", panel.transform, mUseChinese ? "提示" : "Hint", new Vector2(0.5f, 0.5f), new Vector2(0f, 56f), new Vector2(152f, 46f), new Color(0.26f, 0.38f, 0.24f));
+        hintButton.onClick.AddListener(OpenHint);
+        hintButton.interactable = hintPages != null && hintPages.Length > 0;
+        Button rulesButton = CreateButton("Rules", panel.transform, mUseChinese ? "规则" : "Rules", new Vector2(0.5f, 0.5f), new Vector2(158f, 56f), new Vector2(152f, 46f), new Color(0.20f, 0.34f, 0.42f));
         rulesButton.onClick.AddListener(OpenRules);
 
         // Row 2: "Language" title
@@ -1474,6 +1493,12 @@ public class ZebraGameController : MonoBehaviour
         closeButton.onClick.AddListener(CloseSettings);
         mSettingsOverlay.transform.SetAsLastSibling();
         RefreshInterface();
+    }
+
+    // 点击"提示"按钮时打开图片指引。指引面板盖在设置面板之上，关闭后即回到设置面板。
+    private void OpenHint()
+    {
+        HintPanel.EnsureExists().Show(hintPages, mUseChinese);
     }
 
     // 点击"规则"按钮时打开规则网页（PDF/Word）。把下面的链接替换为实际地址即可。

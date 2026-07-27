@@ -18,6 +18,12 @@ public class MainMenuSettings : MonoBehaviour
     [Tooltip("Web page (PDF/Word) opened by the Rules button. Replace with your real link.")]
     [SerializeField] private string rulesUrl = "https://example.com/rules.pdf";
 
+    [Header("Hint pages (Settings > Hint)")]
+    [Tooltip("Full-screen guidance pictures, shown in this order. Drag Sprites in and reorder " +
+             "them here; the Hint button is hidden when the list is empty. This is the MainMenu's " +
+             "own copy — the in-game list lives on ZebraGameController.")]
+    [SerializeField] private Sprite[] hintPages;
+
     private GameObject mPanelRoot;
     private Font mFont;
 
@@ -51,6 +57,12 @@ public class MainMenuSettings : MonoBehaviour
         mPanelRoot = null;
     }
 
+    // The guide draws above this panel and hides it; closing the guide reveals it again.
+    private void OpenHint()
+    {
+        HintPanel.EnsureExists().Show(hintPages, GameSessionSettings.UseChinese);
+    }
+
     private void SetLanguage(bool chinese)
     {
         GameSessionSettings.UseChinese = chinese;
@@ -73,9 +85,12 @@ public class MainMenuSettings : MonoBehaviour
 
         CreateText("Title", panel.transform, chinese ? "设置" : "Settings", 28, FontStyle.Bold, new Vector2(0f, 118f), new Vector2(300f, 50f), new Color(0.12f, 0.11f, 0.09f));
 
-        // Rules
-        CreateButton("Rules", panel.transform, chinese ? "规则" : "Rules", new Vector2(0f, 56f), new Vector2(200f, 46f), new Color(0.20f, 0.34f, 0.42f))
+        // Rules (left) and Hint (right), matching the width of the language row below.
+        CreateButton("Rules", panel.transform, chinese ? "规则" : "Rules", new Vector2(-92f, 56f), new Vector2(160f, 46f), new Color(0.20f, 0.34f, 0.42f))
             .onClick.AddListener(() => Application.OpenURL(rulesUrl));
+        Button hintButton = CreateButton("Hint", panel.transform, chinese ? "提示" : "Hint", new Vector2(92f, 56f), new Vector2(160f, 46f), new Color(0.26f, 0.38f, 0.24f));
+        hintButton.onClick.AddListener(OpenHint);
+        hintButton.interactable = hintPages != null && hintPages.Length > 0;
 
         // Language
         CreateText("Language", panel.transform, chinese ? "语言" : "Language", 20, FontStyle.Bold, new Vector2(0f, 8f), new Vector2(260f, 40f), new Color(0.12f, 0.11f, 0.09f));

@@ -28,6 +28,7 @@ public class ClickOnLocation : MonoBehaviour, IPointerClickHandler, IPointerEnte
     private Collider2D collider2D;
     private SpriteRenderer spriteRenderer;
     private LineRenderer highlightFrame;
+    private SpriteRenderer extractedHighlightOverlay;
     private bool hasBeenClicked = false;
 
     private void Start()
@@ -41,6 +42,7 @@ public class ClickOnLocation : MonoBehaviour, IPointerClickHandler, IPointerEnte
             spriteRenderer.enabled = false;
         }
         CreateHighlightFrame();
+        CreateExtractedHighlightOverlay();
         if (Cards == null) Cards = FindAnyObjectByType<ZebraGameController>();
 
         if (collider2D == null)
@@ -193,10 +195,10 @@ public class ClickOnLocation : MonoBehaviour, IPointerClickHandler, IPointerEnte
         // Location transforms scale to the individual map districts. Draw the frame in
         // world space so its thickness remains consistent across all twelve regions.
         highlightFrame.useWorldSpace = true;
-        highlightFrame.loop = false;
-        highlightFrame.positionCount = 5;
-        highlightFrame.startWidth = 0.42f;
-        highlightFrame.endWidth = 0.42f;
+        highlightFrame.loop = true;
+        highlightFrame.positionCount = 4;
+        highlightFrame.startWidth = 0.52f;
+        highlightFrame.endWidth = 0.52f;
         highlightFrame.numCornerVertices = 4;
         highlightFrame.numCapVertices = 2;
         highlightFrame.sortingOrder = 50;
@@ -205,29 +207,92 @@ public class ClickOnLocation : MonoBehaviour, IPointerClickHandler, IPointerEnte
         highlightFrame.enabled = false;
     }
 
+    private void CreateExtractedHighlightOverlay()
+    {
+        string key = GetHighlightResourceKey();
+        Sprite sprite = Resources.Load<Sprite>("Art/MapHighlights/" + key);
+        Transform map = transform.parent != null && transform.parent.name == "Zebra World Map"
+            ? transform.parent
+            : GameObject.Find("Zebra World Map")?.transform;
+        if (sprite == null || map == null) return;
+
+        string overlayName = "Gold Highlight " + key;
+        Transform existing = map.Find(overlayName);
+        if (existing != null)
+        {
+            extractedHighlightOverlay = existing.GetComponent<SpriteRenderer>();
+            if (extractedHighlightOverlay != null)
+            {
+                extractedHighlightOverlay.sprite = sprite;
+                extractedHighlightOverlay.enabled = false;
+                return;
+            }
+        }
+
+        GameObject overlay = new GameObject(overlayName);
+        overlay.transform.SetParent(map, false);
+        overlay.transform.localPosition = Vector3.zero;
+        overlay.transform.localRotation = Quaternion.identity;
+        overlay.transform.localScale = Vector3.one;
+        extractedHighlightOverlay = overlay.AddComponent<SpriteRenderer>();
+        extractedHighlightOverlay.sprite = sprite;
+        extractedHighlightOverlay.sortingOrder = -90;
+        extractedHighlightOverlay.color = Color.white;
+        extractedHighlightOverlay.enabled = false;
+    }
+
+    private string GetHighlightResourceKey()
+    {
+        System.Text.StringBuilder key = new System.Text.StringBuilder();
+        foreach (char character in gameObject.name)
+        {
+            if (char.IsLetter(character)) key.Append(char.ToLowerInvariant(character));
+        }
+        return key.ToString();
+    }
+
     private void UpdateFrameShape()
     {
         if (highlightFrame == null) return;
+        if (collider2D is PolygonCollider2D polygon && polygon.points.Length >= 3)
+        {
+            Vector3[] points = new Vector3[polygon.points.Length];
+            for (int index = 0; index < polygon.points.Length; index++)
+                points[index] = transform.TransformPoint(polygon.points[index]);
+            highlightFrame.loop = true;
+            highlightFrame.positionCount = points.Length;
+            highlightFrame.SetPositions(points);
+            return;
+        }
+
         Vector2 size = collider2D is BoxCollider2D box ? box.size : Vector2.one;
         float halfWidth = size.x * 0.5f;
         float halfHeight = size.y * 0.5f;
+        highlightFrame.loop = true;
+        highlightFrame.positionCount = 4;
         highlightFrame.SetPositions(new[]
         {
             transform.TransformPoint(-halfWidth, -halfHeight, 0f),
             transform.TransformPoint(-halfWidth, halfHeight, 0f),
             transform.TransformPoint(halfWidth, halfHeight, 0f),
-            transform.TransformPoint(halfWidth, -halfHeight, 0f),
-            transform.TransformPoint(-halfWidth, -halfHeight, 0f)
+            transform.TransformPoint(halfWidth, -halfHeight, 0f)
         });
     }
 
     private void SetFrameVisible(bool visible, Color color)
     {
+        if (extractedHighlightOverlay != null)
+        {
+            extractedHighlightOverlay.enabled = visible;
+        }
+
         if (highlightFrame == null) return;
         UpdateFrameShape();
         highlightFrame.startColor = color;
         highlightFrame.endColor = color;
-        highlightFrame.enabled = visible;
+        // The extracted overlay precisely follows the white in-map line art;
+        // retain the collider frame only as a fallback for a missing sprite.
+        highlightFrame.enabled = visible && extractedHighlightOverlay == null;
     }
 
     public LocationType GetLocationType() { return locationType; }
