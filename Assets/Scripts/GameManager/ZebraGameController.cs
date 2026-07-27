@@ -143,13 +143,12 @@ public class ZebraGameController : MonoBehaviour
 
     private void Update()
     {
+        // Escape toggles the settings panel. It used to terminate the process outright, which a
+        // stray keypress could trigger — and on WebGL that left a dead canvas with no way back.
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-#if UNITY_EDITOR
-            UnityEditor.EditorApplication.isPlaying = false;
-#else
-            Application.Quit();
-#endif
+            if (mSettingsOverlay != null) CloseSettings();
+            else OpenSettings();
         }
 
         UpdateLocationPreview();
@@ -1472,8 +1471,8 @@ public class ZebraGameController : MonoBehaviour
         CreateText("Settings Title", panel.transform, mUseChinese ? "设置" : "Settings", 28, FontStyle.Bold, TextAnchor.MiddleCenter, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -52f), new Vector2(300f, 50f), new Color(0.12f, 0.11f, 0.09f));
         // Row 1: Quit (left), Hint (middle) and Rules (right). Three buttons across a 500-wide
         // panel, so they are narrower than the two-button rows below.
-        Button quitButton = CreateButton("Quit", panel.transform, mUseChinese ? "退出" : "Quit", new Vector2(0.5f, 0.5f), new Vector2(-158f, 56f), new Vector2(152f, 46f), new Color(0.42f, 0.22f, 0.20f));
-        quitButton.onClick.AddListener(QuitApplication);
+        Button quitButton = CreateButton("Quit", panel.transform, mUseChinese ? "主菜单" : "Menu", new Vector2(0.5f, 0.5f), new Vector2(-158f, 56f), new Vector2(152f, 46f), new Color(0.42f, 0.22f, 0.20f));
+        quitButton.onClick.AddListener(QuitToMainMenu);
         Button hintButton = CreateButton("Hint", panel.transform, mUseChinese ? "提示" : "Hint", new Vector2(0.5f, 0.5f), new Vector2(0f, 56f), new Vector2(152f, 46f), new Color(0.26f, 0.38f, 0.24f));
         hintButton.onClick.AddListener(OpenHint);
         hintButton.interactable = hintPages != null && hintPages.Length > 0;
@@ -1507,14 +1506,15 @@ public class ZebraGameController : MonoBehaviour
         Application.OpenURL("https://raw.githubusercontent.com/HenryRao525/RuleSetPublic/main/TheRuleSet.pdf");
     }
 
-    // Quit must terminate a standalone player instead of silently returning to the menu.
-    private void QuitApplication()
+    // Quit leaves the current run and returns to the main menu rather than terminating the
+    // process. Application.Quit cannot close a browser tab, so on the WebGL build it only shut
+    // the runtime down and left a dead canvas with no way back short of reloading the page.
+    // Same destination as the ending panel's Return button.
+    private void QuitToMainMenu()
     {
-#if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
-#else
-        Application.Quit();
-#endif
+        LoadScene loader = FindAnyObjectByType<LoadScene>();
+        if (loader == null) loader = new GameObject("LoadScene").AddComponent<LoadScene>();
+        loader.LoadMainMenu();   // also clears the difficulty selection for the next run
     }
 
     private void SetLanguage(bool useChinese)
