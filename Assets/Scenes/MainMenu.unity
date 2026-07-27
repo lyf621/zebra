@@ -1443,6 +1443,10 @@ MonoBehaviour:
     RoleChinese: "\u5361\u724C & UI\u8D44\u6E90"
     Names: "Parchment texture: \u201CPergament.2\u201D by Membeth, CC0,\nhttps://commons.wikimedia.org/wiki/File:Pergament.2.jpg\nAigei,\nhttps://www.aigei.com/set/kapaibiankuang.html\nhttps://www.aigei.com/set/pukepaizhipai_paibei.html"
     NamesChinese: "Parchment texture: \u201CPergament.2\u201D by Membeth, CC0,\nhttps://commons.wikimedia.org/wiki/File:Pergament.2.jpg\nAigei,\nhttps://www.aigei.com/set/kapaibiankuang.html\nhttps://www.aigei.com/set/pukepaizhipai_paibei.html"
+  - RoleEnglish: Location Label Assets
+    RoleChinese: "\u5730\u70B9\u6807\u7B7E\u7D20\u6750"
+    Names: "Ornament design inspired by \u201CVintage swirl blank badge\u201D by rawpixel.com on Freepik.\nhttps://www.freepik.com/free-vector/vintage-swirl-blank-badge_3788223.htm"
+    NamesChinese: "\u6807\u7B7E\u88C5\u9970\u8BBE\u8BA1\u53C2\u8003\u4E86 rawpixel.com \u5728 Freepik \u53D1\u5E03\u7684\u201CVintage swirl blank badge\u201D\u3002\nhttps://www.freepik.com/free-vector/vintage-swirl-blank-badge_3788223.htm"
   - RoleEnglish: Music
     RoleChinese: "\u97F3\u4E50"
     Names: 'Background music: In Taberna Revisited - Andreas Waldetoft

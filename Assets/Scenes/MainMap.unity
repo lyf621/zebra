@@ -313,12 +313,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5365630023856485625, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: m_Size.y
-      value: 0.42
+      value: 0.48
       objectReference: {fileID: 0}
     - target: {fileID: 5365630023856485625, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 1046422521444190504, guid: 2616f05604dcb004b9165b156cfc0771, type: 3}
+      objectReference: {fileID: 21300000, guid: 3876831bf70a54b41bd1abe3b8740b00, type: 3}
     - target: {fileID: 5365630023856485625, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: m_WasSpriteAssigned
       value: 1
@@ -381,12 +381,34 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1788652982652577947, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1254614553}
+    - targetCorrespondingSourceObject: {fileID: 4947960606477008862, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 121919513}
   m_SourcePrefab: {fileID: 100100000, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
 --- !u!4 &121919511 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2351591983225004685, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
   m_PrefabInstance: {fileID: 121919510}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &121919512 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4947960606477008862, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+  m_PrefabInstance: {fileID: 121919510}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &121919513
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 121919512}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6784e3c20bee8644787345278b99bcbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LocationLabelLocalizer
+  mEnglishSprite: {fileID: 21300000, guid: 3876831bf70a54b41bd1abe3b8740b00, type: 3}
+  mChineseSprite: {fileID: 21300000, guid: 4e6eb03b797002d4c8572316aad38897, type: 3}
 --- !u!1 &143672431
 GameObject:
   m_ObjectHideFlags: 0
@@ -889,12 +911,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5365630023856485625, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: m_Size.y
-      value: 0.45
+      value: 0.48
       objectReference: {fileID: 0}
     - target: {fileID: 5365630023856485625, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: -6886366809225412869, guid: 95504cc38c17a884ea67e595c7716e9a, type: 3}
+      objectReference: {fileID: 21300000, guid: fba564c9018cea94996efe9ccc4def16, type: 3}
     - target: {fileID: 5365630023856485625, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: m_WasSpriteAssigned
       value: 1
@@ -969,12 +991,34 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1788652982652577947, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1508647323}
+    - targetCorrespondingSourceObject: {fileID: 4947960606477008862, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 251835487}
   m_SourcePrefab: {fileID: 100100000, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
 --- !u!4 &251835485 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2351591983225004685, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
   m_PrefabInstance: {fileID: 251835484}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &251835486 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4947960606477008862, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+  m_PrefabInstance: {fileID: 251835484}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &251835487
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 251835486}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6784e3c20bee8644787345278b99bcbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LocationLabelLocalizer
+  mEnglishSprite: {fileID: 21300000, guid: fba564c9018cea94996efe9ccc4def16, type: 3}
+  mChineseSprite: {fileID: 21300000, guid: 38ce73b683031fe43b8d37d9e01e656b, type: 3}
 --- !u!1 &260204376
 GameObject:
   m_ObjectHideFlags: 0
@@ -1049,7 +1093,7 @@ SpriteRenderer:
   m_Size: {x: 2.22, y: 0.47}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_SpriteSortPoint: 0
   m_BlendShapeWeights: []
 --- !u!4 &260204378
@@ -1165,12 +1209,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5365630023856485625, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: m_Size.y
-      value: 0.45
+      value: 0.48
       objectReference: {fileID: 0}
     - target: {fileID: 5365630023856485625, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: -3451382628841963714, guid: 5a66ec0ab470c5142a6637e22b101154, type: 3}
+      objectReference: {fileID: 21300000, guid: 84b8473c75e1f4847bb6c10769ddf2ed, type: 3}
     - target: {fileID: 5365630023856485625, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: m_WasSpriteAssigned
       value: 1
@@ -1245,12 +1289,34 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1788652982652577947, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1305730049}
+    - targetCorrespondingSourceObject: {fileID: 4947960606477008862, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 292295187}
   m_SourcePrefab: {fileID: 100100000, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
 --- !u!4 &292295185 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2351591983225004685, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
   m_PrefabInstance: {fileID: 292295184}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &292295186 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4947960606477008862, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+  m_PrefabInstance: {fileID: 292295184}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &292295187
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 292295186}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6784e3c20bee8644787345278b99bcbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LocationLabelLocalizer
+  mEnglishSprite: {fileID: 21300000, guid: 84b8473c75e1f4847bb6c10769ddf2ed, type: 3}
+  mChineseSprite: {fileID: 21300000, guid: 2e27d1f768372db498c170577b9f5991, type: 3}
 --- !u!1 &296697266
 GameObject:
   m_ObjectHideFlags: 0
@@ -1517,7 +1583,7 @@ SpriteRenderer:
   m_Size: {x: 2.22, y: 0.42}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_SpriteSortPoint: 0
   m_BlendShapeWeights: []
 --- !u!4 &310408497
@@ -1614,7 +1680,7 @@ SpriteRenderer:
   m_Size: {x: 2.22, y: 0.45}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_SpriteSortPoint: 0
   m_BlendShapeWeights: []
 --- !u!4 &362848892
@@ -1905,7 +1971,7 @@ SpriteRenderer:
   m_Size: {x: 2.22, y: 0.42}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_SpriteSortPoint: 0
   m_BlendShapeWeights: []
 --- !u!4 &491809909
@@ -2179,12 +2245,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5365630023856485625, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: m_Size.y
-      value: 0.45
+      value: 0.48
       objectReference: {fileID: 0}
     - target: {fileID: 5365630023856485625, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: -2482858281873382306, guid: 30773b33ace98534eb0c4f2678a7470c, type: 3}
+      objectReference: {fileID: 21300000, guid: ace840244723d1848b778f24b6bedfc9, type: 3}
     - target: {fileID: 5365630023856485625, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: m_WasSpriteAssigned
       value: 1
@@ -2261,12 +2327,34 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1788652982652577947, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1329997970}
+    - targetCorrespondingSourceObject: {fileID: 4947960606477008862, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 521618189}
   m_SourcePrefab: {fileID: 100100000, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
 --- !u!4 &521618187 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2351591983225004685, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
   m_PrefabInstance: {fileID: 521618186}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &521618188 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4947960606477008862, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+  m_PrefabInstance: {fileID: 521618186}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &521618189
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 521618188}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6784e3c20bee8644787345278b99bcbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LocationLabelLocalizer
+  mEnglishSprite: {fileID: 21300000, guid: ace840244723d1848b778f24b6bedfc9, type: 3}
+  mChineseSprite: {fileID: 21300000, guid: a8358636b68291846a5f3189158d3497, type: 3}
 --- !u!1 &555156086
 GameObject:
   m_ObjectHideFlags: 0
@@ -2502,12 +2590,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5365630023856485625, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: m_Size.y
-      value: 0.42
+      value: 0.48
       objectReference: {fileID: 0}
     - target: {fileID: 5365630023856485625, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 1366366153325310568, guid: 52660016adcf7fb4482ac01b4310a6b0, type: 3}
+      objectReference: {fileID: 21300000, guid: d7a8c484c6880a640a648cf6c6b68803, type: 3}
     - target: {fileID: 5365630023856485625, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: m_WasSpriteAssigned
       value: 1
@@ -2582,12 +2670,34 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1788652982652577947, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       insertIndex: -1
       addedObject: {fileID: 943485010}
+    - targetCorrespondingSourceObject: {fileID: 4947960606477008862, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 559849366}
   m_SourcePrefab: {fileID: 100100000, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
 --- !u!4 &559849364 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2351591983225004685, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
   m_PrefabInstance: {fileID: 559849363}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &559849365 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4947960606477008862, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+  m_PrefabInstance: {fileID: 559849363}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &559849366
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 559849365}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6784e3c20bee8644787345278b99bcbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LocationLabelLocalizer
+  mEnglishSprite: {fileID: 21300000, guid: d7a8c484c6880a640a648cf6c6b68803, type: 3}
+  mChineseSprite: {fileID: 21300000, guid: f2f7ee7191632544496c6f73af3bd09b, type: 3}
 --- !u!1 &564270865
 GameObject:
   m_ObjectHideFlags: 0
@@ -2803,7 +2913,7 @@ SpriteRenderer:
   m_Size: {x: 2.22, y: 0.43}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_SpriteSortPoint: 0
   m_BlendShapeWeights: []
 --- !u!4 &626785749
@@ -3560,12 +3670,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5365630023856485625, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: m_Size.y
-      value: 0.45
+      value: 0.48
       objectReference: {fileID: 0}
     - target: {fileID: 5365630023856485625, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 6326560051512529282, guid: 7bc301bbceaca524fa08e98e3fe1d5a1, type: 3}
+      objectReference: {fileID: 21300000, guid: fc369999f27135444808eb4f05e54f2b, type: 3}
     - target: {fileID: 5365630023856485625, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: m_WasSpriteAssigned
       value: 1
@@ -3640,12 +3750,34 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1788652982652577947, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       insertIndex: -1
       addedObject: {fileID: 944856479}
+    - targetCorrespondingSourceObject: {fileID: 4947960606477008862, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 885876858}
   m_SourcePrefab: {fileID: 100100000, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
 --- !u!4 &885876856 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2351591983225004685, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
   m_PrefabInstance: {fileID: 885876855}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &885876857 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4947960606477008862, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+  m_PrefabInstance: {fileID: 885876855}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &885876858
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 885876857}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6784e3c20bee8644787345278b99bcbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LocationLabelLocalizer
+  mEnglishSprite: {fileID: 21300000, guid: fc369999f27135444808eb4f05e54f2b, type: 3}
+  mChineseSprite: {fileID: 21300000, guid: d744636d324f93245800bc090fbc48de, type: 3}
 --- !u!1 &897884687
 GameObject:
   m_ObjectHideFlags: 0
@@ -3720,7 +3852,7 @@ SpriteRenderer:
   m_Size: {x: 2.22, y: 0.42}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_SpriteSortPoint: 0
   m_BlendShapeWeights: []
 --- !u!4 &897884689
@@ -4022,7 +4154,7 @@ SpriteRenderer:
   m_Size: {x: 2.22, y: 0.45}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_SpriteSortPoint: 0
   m_BlendShapeWeights: []
 --- !u!4 &999939277
@@ -4290,12 +4422,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5365630023856485625, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: m_Size.y
-      value: 0.43
+      value: 0.48
       objectReference: {fileID: 0}
     - target: {fileID: 5365630023856485625, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: -1320837089702997491, guid: 239ee53e933f18b449d6da57a70b0378, type: 3}
+      objectReference: {fileID: 21300000, guid: 18faec4b8bf98d4438eab561c36e9fad, type: 3}
     - target: {fileID: 5365630023856485625, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: m_WasSpriteAssigned
       value: 1
@@ -4371,12 +4503,34 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1788652982652577947, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1350376265}
+    - targetCorrespondingSourceObject: {fileID: 4947960606477008862, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1152872306}
   m_SourcePrefab: {fileID: 100100000, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
 --- !u!4 &1152872304 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2351591983225004685, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
   m_PrefabInstance: {fileID: 1152872303}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1152872305 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4947960606477008862, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+  m_PrefabInstance: {fileID: 1152872303}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1152872306
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1152872305}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6784e3c20bee8644787345278b99bcbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LocationLabelLocalizer
+  mEnglishSprite: {fileID: 21300000, guid: 18faec4b8bf98d4438eab561c36e9fad, type: 3}
+  mChineseSprite: {fileID: 21300000, guid: 21b99fbce38d3104fbcc927a186f7623, type: 3}
 --- !u!1 &1159136781
 GameObject:
   m_ObjectHideFlags: 0
@@ -4451,7 +4605,7 @@ SpriteRenderer:
   m_Size: {x: 2.22, y: 0.45}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_SpriteSortPoint: 0
   m_BlendShapeWeights: []
 --- !u!4 &1159136783
@@ -5122,7 +5276,7 @@ SpriteRenderer:
   m_Size: {x: 2.22, y: 0.42}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_SpriteSortPoint: 0
   m_BlendShapeWeights: []
 --- !u!4 &1361578921
@@ -5214,7 +5368,7 @@ SpriteRenderer:
   m_Size: {x: 2.22, y: 0.45}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_SpriteSortPoint: 0
   m_BlendShapeWeights: []
 --- !u!4 &1504907974
@@ -5571,12 +5725,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5365630023856485625, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: m_Size.y
-      value: 0.45
+      value: 0.48
       objectReference: {fileID: 0}
     - target: {fileID: 5365630023856485625, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 8569715729783636595, guid: 9ae33de3477a25547827599c82da4948, type: 3}
+      objectReference: {fileID: 21300000, guid: f2865293bee47bf4d83a2efb0f5f4fff, type: 3}
     - target: {fileID: 5365630023856485625, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: m_WasSpriteAssigned
       value: 1
@@ -5651,6 +5805,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1788652982652577947, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1585610391}
+    - targetCorrespondingSourceObject: {fileID: 4947960606477008862, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1585610393}
   m_SourcePrefab: {fileID: 100100000, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
 --- !u!4 &1585610390 stripped
 Transform:
@@ -5712,6 +5869,25 @@ PolygonCollider2D:
       - {x: -0.36124992, y: -0.64125}
       - {x: -0.9012499, y: -0.16125}
   m_UseDelaunayMesh: 1
+--- !u!1 &1585610392 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4947960606477008862, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+  m_PrefabInstance: {fileID: 1585610389}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1585610393
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1585610392}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6784e3c20bee8644787345278b99bcbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LocationLabelLocalizer
+  mEnglishSprite: {fileID: 21300000, guid: f2865293bee47bf4d83a2efb0f5f4fff, type: 3}
+  mChineseSprite: {fileID: 21300000, guid: ab8b0f724d99acc44a72dd588a456f3b, type: 3}
 --- !u!1 &1611487342
 GameObject:
   m_ObjectHideFlags: 0
@@ -6165,7 +6341,7 @@ SpriteRenderer:
   m_Size: {x: 2.23, y: 0.42}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_SpriteSortPoint: 0
   m_BlendShapeWeights: []
 --- !u!4 &1830464755
@@ -6281,12 +6457,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5365630023856485625, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: m_Size.y
-      value: 0.42
+      value: 0.48
       objectReference: {fileID: 0}
     - target: {fileID: 5365630023856485625, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 2616391980542201412, guid: ac3694eda4e67374bbc4575915ff575b, type: 3}
+      objectReference: {fileID: 21300000, guid: 8e628402d865f724f91d03378c28d5d2, type: 3}
     - target: {fileID: 5365630023856485625, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: m_WasSpriteAssigned
       value: 1
@@ -6361,12 +6537,34 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1788652982652577947, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1976335890}
+    - targetCorrespondingSourceObject: {fileID: 4947960606477008862, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1860164424}
   m_SourcePrefab: {fileID: 100100000, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
 --- !u!4 &1860164422 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2351591983225004685, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
   m_PrefabInstance: {fileID: 1860164421}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1860164423 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4947960606477008862, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+  m_PrefabInstance: {fileID: 1860164421}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1860164424
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1860164423}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6784e3c20bee8644787345278b99bcbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LocationLabelLocalizer
+  mEnglishSprite: {fileID: 21300000, guid: 8e628402d865f724f91d03378c28d5d2, type: 3}
+  mChineseSprite: {fileID: 21300000, guid: d28dabfe659e147449b3f625191bc4a7, type: 3}
 --- !u!1 &1976335882 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1788652982652577947, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
@@ -6580,12 +6778,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5365630023856485625, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: m_Size.y
-      value: 0.42
+      value: 0.48
       objectReference: {fileID: 0}
     - target: {fileID: 5365630023856485625, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: -9078973854647197732, guid: e988b027ccc223945a36f496714ed8a1, type: 3}
+      objectReference: {fileID: 21300000, guid: 79298f12331151e4c9d326bc80d143cf, type: 3}
     - target: {fileID: 5365630023856485625, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: m_WasSpriteAssigned
       value: 1
@@ -6660,6 +6858,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1788652982652577947, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2037827356}
+    - targetCorrespondingSourceObject: {fileID: 4947960606477008862, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2037827358}
   m_SourcePrefab: {fileID: 100100000, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
 --- !u!4 &2037827355 stripped
 Transform:
@@ -6720,6 +6921,25 @@ PolygonCollider2D:
       - {x: -0.402857, y: -0.657143}
       - {x: -0.682857, y: -0.147143}
   m_UseDelaunayMesh: 1
+--- !u!1 &2037827357 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4947960606477008862, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+  m_PrefabInstance: {fileID: 2037827354}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2037827358
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2037827357}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6784e3c20bee8644787345278b99bcbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LocationLabelLocalizer
+  mEnglishSprite: {fileID: 21300000, guid: 79298f12331151e4c9d326bc80d143cf, type: 3}
+  mChineseSprite: {fileID: 21300000, guid: 504faa73f60e86f4785daa49184806d3, type: 3}
 --- !u!1001 &2114962719
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6818,16 +7038,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5365630023856485625, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: m_Size.x
-      value: 2.23
+      value: 2.22
       objectReference: {fileID: 0}
     - target: {fileID: 5365630023856485625, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: m_Size.y
-      value: 0.42
+      value: 0.48
       objectReference: {fileID: 0}
     - target: {fileID: 5365630023856485625, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 2805800487373231675, guid: 0922cf19f02facf4c803504d3c96c092, type: 3}
+      objectReference: {fileID: 21300000, guid: c4c93899a4612cb44a4ba3fcc2503ae6, type: 3}
     - target: {fileID: 5365630023856485625, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: m_WasSpriteAssigned
       value: 1
@@ -6902,6 +7122,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1788652982652577947, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2114962721}
+    - targetCorrespondingSourceObject: {fileID: 4947960606477008862, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2114962723}
   m_SourcePrefab: {fileID: 100100000, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
 --- !u!4 &2114962720 stripped
 Transform:
@@ -6962,6 +7185,25 @@ PolygonCollider2D:
       - {x: -0.25714302, y: -0.5285715}
       - {x: -0.6071429, y: -0.118571475}
   m_UseDelaunayMesh: 1
+--- !u!1 &2114962722 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4947960606477008862, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+  m_PrefabInstance: {fileID: 2114962719}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2114962723
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2114962722}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6784e3c20bee8644787345278b99bcbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LocationLabelLocalizer
+  mEnglishSprite: {fileID: 21300000, guid: c4c93899a4612cb44a4ba3fcc2503ae6, type: 3}
+  mChineseSprite: {fileID: 21300000, guid: a4fe6b3f626566c43bfec6deaea49efb, type: 3}
 --- !u!1 &2118353772
 GameObject:
   m_ObjectHideFlags: 0
@@ -7036,7 +7278,7 @@ SpriteRenderer:
   m_Size: {x: 2.22, y: 0.45}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_SpriteSortPoint: 0
   m_BlendShapeWeights: []
 --- !u!4 &2118353774
@@ -7231,12 +7473,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5365630023856485625, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: m_Size.y
-      value: 0.47
+      value: 0.48
       objectReference: {fileID: 0}
     - target: {fileID: 5365630023856485625, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: -4057977143843180069, guid: dd6fd4587b11d584a998124178f00720, type: 3}
+      objectReference: {fileID: 21300000, guid: b640b82c70c5d3d428b8454093ce384c, type: 3}
     - target: {fileID: 5365630023856485625, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: m_WasSpriteAssigned
       value: 1
@@ -7311,6 +7553,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1788652982652577947, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1473142349046240464}
+    - targetCorrespondingSourceObject: {fileID: 4947960606477008862, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1473142349046240466}
   m_SourcePrefab: {fileID: 100100000, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
 --- !u!4 &1473142349046240463 stripped
 Transform:
@@ -7378,6 +7623,25 @@ PolygonCollider2D:
       - {x: -0.6271424, y: 0.68428564}
       - {x: -1.2171426, y: 1.1342856}
   m_UseDelaunayMesh: 1
+--- !u!1 &1473142349046240465 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4947960606477008862, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
+  m_PrefabInstance: {fileID: 1473142349046240462}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1473142349046240466
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1473142349046240465}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6784e3c20bee8644787345278b99bcbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LocationLabelLocalizer
+  mEnglishSprite: {fileID: 21300000, guid: b640b82c70c5d3d428b8454093ce384c, type: 3}
+  mChineseSprite: {fileID: 21300000, guid: 573d6371aea3a054c8e03c6fb1ac7a1c, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

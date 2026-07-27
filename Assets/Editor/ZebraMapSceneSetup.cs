@@ -54,7 +54,11 @@ public static class ZebraMapSceneSetup
     // inherits the district's position and, through it, the map's runtime scaling from
     // MapViewportFitter. Nothing needs to stay in sync by hand.
     private const string LabelChildName = "Label";
-    private const string LabelResourceFolder = "Art/Locations/";
+    private const string LabelResourceFolder = "Art/LocationLabels/";
+    private const string EnglishLabelResourceFolder = LabelResourceFolder + "English/";
+    private const string ChineseLabelResourceFolder = LabelResourceFolder + "Chinese/";
+    private const string LabelAssetFolder = "Assets/Resources/Art/LocationLabels";
+    private const float LabelPixelsPerUnit = 300f;
     private const string LegacyLabelContainerName = "LocationLabel";
 
     // The labels previously lived on a root object at world scale 15. Parented under a district
@@ -88,6 +92,7 @@ public static class ZebraMapSceneSetup
     {
         ConfigureMapImport();
         ConfigureHighlightImports();
+        ConfigureLabelImports();
         Sprite mapSprite = AssetDatabase.LoadAssetAtPath<Sprite>(MapPath);
         if (mapSprite == null)
         {
@@ -172,6 +177,35 @@ public static class ZebraMapSceneSetup
             importer.wrapMode = TextureWrapMode.Clamp;
             importer.textureCompression = TextureImporterCompression.Compressed;
             importer.maxTextureSize = 2048;
+            importer.SaveAndReimport();
+        }
+    }
+
+    private static void ConfigureLabelImports()
+    {
+        if (!AssetDatabase.IsValidFolder(LabelAssetFolder)) return;
+
+        foreach (string guid in AssetDatabase.FindAssets("t:Texture2D", new[] { LabelAssetFolder }))
+        {
+            string path = AssetDatabase.GUIDToAssetPath(guid);
+            TextureImporter importer = AssetImporter.GetAtPath(path) as TextureImporter;
+            if (importer == null) continue;
+
+            importer.textureType = TextureImporterType.Sprite;
+            importer.spriteImportMode = SpriteImportMode.Single;
+            importer.spritesheet = Array.Empty<SpriteMetaData>();
+            TextureImporterSettings settings = new TextureImporterSettings();
+            importer.ReadTextureSettings(settings);
+            settings.spriteMeshType = SpriteMeshType.FullRect;
+            settings.spriteAlignment = (int)SpriteAlignment.Center;
+            settings.spritePivot = new Vector2(0.5f, 0.5f);
+            importer.SetTextureSettings(settings);
+            importer.spritePixelsPerUnit = LabelPixelsPerUnit;
+            importer.mipmapEnabled = false;
+            importer.alphaIsTransparency = true;
+            importer.wrapMode = TextureWrapMode.Clamp;
+            importer.textureCompression = TextureImporterCompression.Uncompressed;
+            importer.maxTextureSize = 1024;
             importer.SaveAndReimport();
         }
     }
@@ -299,10 +333,16 @@ public static class ZebraMapSceneSetup
         SpriteRenderer renderer = label.GetComponent<SpriteRenderer>();
         if (renderer == null) renderer = label.gameObject.AddComponent<SpriteRenderer>();
 
-        Sprite art = Resources.Load<Sprite>(LabelResourceFolder + AssetKey(location.name));
-        renderer.sprite = art;
-        renderer.enabled = art != null;
+        string assetKey = AssetKey(location.name);
+        Sprite englishArt = Resources.Load<Sprite>(EnglishLabelResourceFolder + assetKey);
+        Sprite chineseArt = Resources.Load<Sprite>(ChineseLabelResourceFolder + assetKey);
+        renderer.sprite = englishArt;
+        renderer.enabled = englishArt != null || chineseArt != null;
         renderer.sortingOrder = 0;   // map -100, highlight overlays -90, labels 0, selection frames 50
+
+        LocationLabelLocalizer localizer = label.GetComponent<LocationLabelLocalizer>();
+        if (localizer == null) localizer = label.gameObject.AddComponent<LocationLabelLocalizer>();
+        localizer.Configure(englishArt, chineseArt);
 
         // The offset is applied in pixel space and converted as a delta, so the +y-is-down
         // convention of LocationPolygons carries over without a sign flip here.
@@ -315,7 +355,7 @@ public static class ZebraMapSceneSetup
         label.localScale = Vector3.one * (LabelWorldScale / mapScale);
 
         EditorUtility.SetDirty(label.gameObject);
-        return art != null;
+        return englishArt != null && chineseArt != null;
     }
 
     /// <summary>
