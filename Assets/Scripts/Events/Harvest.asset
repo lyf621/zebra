@@ -29,7 +29,7 @@ MonoBehaviour:
       kr: 0
       cr: 0
       ar: 0
-    linkedMission: {fileID: 0}
+    linkedMission: {fileID: 11400000, guid: 866b757efa27670479b976c88f014aab, type: 2}
   - buttonText: Work Harder!
     buttonTextChinese: "\u52AA\u529B\u5DE5\u4F5C\uFF01"
     immediateEffect:
@@ -40,4 +40,4 @@ MonoBehaviour:
       kr: 0
       cr: 0
       ar: 0
-    linkedMission: {fileID: 0}
+    linkedMission: {fileID: 11400000, guid: 9266c31a9d1b052448530420d58e18c6, type: 2}

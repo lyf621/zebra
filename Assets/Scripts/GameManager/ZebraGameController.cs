@@ -528,14 +528,16 @@ public class ZebraGameController : MonoBehaviour
         mDiscardPileButton = CreatePileButton("Discard Pile", canvasObject.transform, "DISCARD", new Vector2(550f, -128f), out mDiscardCountText, out mDiscardPileNameText);
         mDiscardPileButton.onClick.AddListener(OpenDiscardPileView);
 
-        mBuyButton = CreateButton("Buy", canvasObject.transform, "Buy", new Vector2(1f, 0.5f), new Vector2(-24f, 126f), new Vector2(120f, 42f), new Color(0.56f, 0.43f, 0.13f));
-        mBuyButton.GetComponent<RectTransform>().pivot = new Vector2(1f, 0.5f);
+        // Keep the action stack on the same top-right anchor as the phase and mission
+        // buttons. Mixed top/centre anchors made Mission and Buy crowd each other.
+        mBuyButton = CreateButton("Buy", canvasObject.transform, "Buy", Vector2.one, new Vector2(-24f, -232f), new Vector2(120f, 42f), new Color(0.56f, 0.43f, 0.13f));
+        mBuyButton.GetComponent<RectTransform>().pivot = Vector2.one;
         mBuyButton.onClick.AddListener(OpenMarket);
-        mDeleteButton = CreateButton("Delete", canvasObject.transform, "Delete", new Vector2(1f, 0.5f), new Vector2(-24f, 72f), new Vector2(120f, 42f), new Color(0.39f, 0.2f, 0.18f));
-        mDeleteButton.GetComponent<RectTransform>().pivot = new Vector2(1f, 0.5f);
+        mDeleteButton = CreateButton("Delete", canvasObject.transform, "Delete", Vector2.one, new Vector2(-24f, -286f), new Vector2(120f, 42f), new Color(0.39f, 0.2f, 0.18f));
+        mDeleteButton.GetComponent<RectTransform>().pivot = Vector2.one;
         mDeleteButton.onClick.AddListener(OpenDeleteView);
-        mEndRoundButton = CreateButton("End Round", canvasObject.transform, "End Round", new Vector2(1f, 0.5f), new Vector2(-24f, 18f), new Vector2(120f, 42f), new Color(0.17f, 0.31f, 0.38f));
-        mEndRoundButton.GetComponent<RectTransform>().pivot = new Vector2(1f, 0.5f);
+        mEndRoundButton = CreateButton("End Round", canvasObject.transform, "End Round", Vector2.one, new Vector2(-24f, -340f), new Vector2(120f, 42f), new Color(0.17f, 0.31f, 0.38f));
+        mEndRoundButton.GetComponent<RectTransform>().pivot = Vector2.one;
         mEndRoundButton.onClick.AddListener(EndRound);
         mCancelPlayButton = CreateButton("Cancel Play", canvasObject.transform, "Cancel", new Vector2(0.5f, 0.5f), new Vector2(550f, -258f), new Vector2(120f, 42f), new Color(0.32f, 0.31f, 0.29f));
         mCancelPlayButton.GetComponent<RectTransform>().pivot = new Vector2(1f, 0.5f);

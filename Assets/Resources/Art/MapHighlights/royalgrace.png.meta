@@ -1,10 +1,13 @@
 fileFormatVersion: 2
-guid: c33d5ce751d90ad44899559ba75e1fb1
+guid: 0c835ccd825dc9344b1d6e5a59adfa24
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 2789645919797346017
-    second: ZebraWorldMap_0
+      213: 2757300904951681715
+    second: royalgrace_0
+  - first:
+      213: 468777176485532619
+    second: royalgrace_1
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -55,7 +58,7 @@ TextureImporter:
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
-  alphaIsTransparency: 0
+  alphaIsTransparency: 1
   spriteTessellationDetail: -1
   textureType: 8
   textureShape: 1
@@ -126,7 +129,8 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      ZebraWorldMap_0: 2789645919797346017
+      royalgrace_0: 2757300904951681715
+      royalgrace_1: 468777176485532619
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
