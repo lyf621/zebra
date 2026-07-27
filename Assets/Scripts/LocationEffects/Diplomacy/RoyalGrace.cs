@@ -27,5 +27,5 @@ public class RoyalGrace : MonoBehaviour, EntryCostCheck, ILocationEffectPreview
         GetPreviewEffect().ApplyTo(Stats);
     }
 
-    public StatModifier GetPreviewEffect() => new StatModifier { gold = 1, al = -1, kr = 2 };
+    public StatModifier GetPreviewEffect() => new StatModifier { al = -1, kr = 3, ar = -1 };
 }

@@ -39,10 +39,12 @@ public class StatManager : MonoBehaviour
         AR.text = "TheAristocrats: " + TheAristocrats;*/
     }
 
+    // Gold is deliberately NOT floored at zero. A player may confirm a mission resolution they
+    // cannot pay for (after an explicit warning), which puts the treasury into debt and triggers
+    // the bankruptcy ending. Every other stat still clamps to 0..MaxStat.
     public void UpdateGold(int gold)
     {
         GoldCoin += gold;
-        if(GoldCoin < 0) GoldCoin = 0;
     }
     public void UpdateResource(int po, int ms, int al)
     {

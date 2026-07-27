@@ -19,7 +19,7 @@ public class GenerousDonation : MonoBehaviour, EntryCostCheck, ILocationEffectPr
         
     }
 
-    public bool CanEnter() => Stats != null && Stats.GetGold() >= 3;
+    public bool CanEnter() => Stats != null && Stats.GetGold() >= 5;
 
     public void VisitTest()
     {
@@ -27,5 +27,5 @@ public class GenerousDonation : MonoBehaviour, EntryCostCheck, ILocationEffectPr
         GetPreviewEffect().ApplyTo(Stats);
     }
 
-    public StatModifier GetPreviewEffect() => new StatModifier { gold = -3, po = 1, cr = 2 };
+    public StatModifier GetPreviewEffect() => new StatModifier { gold = -5, po = 1, cr = 3 };
 }

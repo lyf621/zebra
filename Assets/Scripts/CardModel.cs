@@ -16,7 +16,17 @@ public enum RetainEffectType
     None,
     PublicOpinionUp,
     MilitaryStrengthDown,
-    GoldUp
+    GoldUp,
+    ReputationUp
+}
+
+// Effects that fire the moment a card is played on a location, regardless of which one.
+// Distinct from PermanentCardEffectType, which stations a lasting policy at that district.
+// Serialized by index in the CardSO assets, so new members must be APPENDED.
+public enum PlayEffectType
+{
+    None,
+    Draw2Cards
 }
 
 // One-shot policies activated only when the card is played on a matching district.
@@ -41,6 +51,7 @@ public class CardModel
     public string DescriptionChinese;
     public LocationType Location;
     public RetainEffectType RetainEffect;
+    public PlayEffectType PlayEffect;
     public PermanentCardEffectType PermanentEffect;
     public bool IsRoyal;
 

@@ -20,7 +20,8 @@ public class MissionManager : MonoBehaviour
     // True while the mission panel is on screen — used to lock all other operations (modal).
     public bool IsPanelOpen() { return missionPanel != null && missionPanel.IsOpen(); }
 
-    // 金币检查（仅针对金币）：若处理方式扣金币（gold<0）且玩家金币不足以支付全额，则不能选择。
+    // 金币检查（仅针对金币）：处理方式扣金币且玩家金币不足以支付全额时返回 false。
+    // 此时选项仍可点击，但会先弹出警告面板，确认后才会执行并使金币变为负数。
     public bool CanAffordResolution(MissionResolution res)
     {
         if (res == null || stats == null) return true;
@@ -49,27 +50,9 @@ public class MissionManager : MonoBehaviour
         if (currentActiveMission == null) return;   // nothing to resolve -> button may pass through
         pendingResolution = null;
 
-        // A mission with no affordable resolution would otherwise leave the player permanently
-        // locked on a panel of disabled buttons.  This is the bankruptcy loss condition.
-        if (!HasAffordableResolution())
-        {
-            awaitingResolution = true;
-            ZebraGameController cards = FindAnyObjectByType<ZebraGameController>();
-            bool chinese = cards != null && cards.UseChinese;
-            if (missionPanel != null)
-            {
-                missionPanel.ShowBankruptcyResolution(
-                    currentActiveMission,
-                    chinese ? "接受和拒绝均无法承担，你破产了" : "Neither choice is affordable. Bankruptcy.",
-                    ConfirmBankruptcy);
-            }
-            else
-            {
-                ConfirmBankruptcy();
-            }
-            return;
-        }
-
+        // Every resolution is selectable, affordable or not. An unaffordable one raises a
+        // warning first (see OnResolutionSelected) and, once confirmed, drives the treasury into
+        // debt — which is what now triggers the bankruptcy ending.
         awaitingResolution = true;
         if (missionPanel != null) missionPanel.ShowResolutions(currentActiveMission, this);
     }
@@ -88,41 +71,31 @@ public class MissionManager : MonoBehaviour
         missionPanel.SetVisibleForReview(false);
     }
 
-    private void ConfirmBankruptcy()
-    {
-        awaitingResolution = false;
-        GameEndingController.EnsureExists().ShowBankruptcyEnding();
-    }
-
-    private bool HasAffordableResolution()
-    {
-        if (currentActiveMission == null || currentActiveMission.possibleResolutions == null)
-        {
-            return false;
-        }
-
-        foreach (MissionResolution resolution in currentActiveMission.possibleResolutions)
-        {
-            if (CanAffordResolution(resolution))
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     /// <summary>Called by MissionPanelUI when the player clicks a resolution button.</summary>
     public void OnResolutionSelected(int resolutionIndex)
     {
         if (currentActiveMission == null) return;
         if (pendingResolution != null) return;
+        if (GoldWarningPanel.EnsureExists().IsOpen()) return;   // answer the warning first
         if (resolutionIndex < 0 || resolutionIndex >= currentActiveMission.possibleResolutions.Count) return;
 
         MissionResolution res = currentActiveMission.possibleResolutions[resolutionIndex];
 
-        // 金币不足以支付该处理方式的金币消耗时，不允许选择（仅针对金币，其它资源不检查）。
-        if (!CanAffordResolution(res)) return;
+        // 金币不足时不再禁止选择：先弹出警告，确认后照常执行（金币会变为负数），
+        // 取消则什么都不做，处理选项按钮仍在，玩家可以重新选择。
+        if (!CanAffordResolution(res))
+        {
+            GoldWarningPanel.EnsureExists().Show(UseChinese(), () => CommitResolution(res), null);
+            return;
+        }
+
+        CommitResolution(res);
+    }
+
+    /// <summary>Locks in a resolution: applies its effect, then asks for the final turn-advance.</summary>
+    private void CommitResolution(MissionResolution res)
+    {
+        if (currentActiveMission == null || res == null) return;
 
         pendingResolution = res;
 
@@ -132,19 +105,26 @@ public class MissionManager : MonoBehaviour
         // turn ended, and was overwritten by the balance drift before it was ever drawn.
         ApplyResolutionEffect(res);
 
+        // Debt does not end the game here. The player carries the negative treasury forward and
+        // may still earn their way out of it; bankruptcy is judged once, at the end of the final
+        // turn, in GameEndingController.EvaluateVictory.
         if (missionPanel != null)
         {
-            ZebraGameController cards = FindAnyObjectByType<ZebraGameController>();
-            bool chinese = cards != null && cards.UseChinese;
             missionPanel.ShowSelectedResolutionConfirmation(
                 res,
-                chinese ? "确认并进入下一回合" : "Confirm and Begin Next Turn",
+                UseChinese() ? "确认并进入下一回合" : "Confirm and Begin Next Turn",
                 ConfirmSelectedResolution);
         }
         else
         {
             ConfirmSelectedResolution();
         }
+    }
+
+    private bool UseChinese()
+    {
+        ZebraGameController cards = FindAnyObjectByType<ZebraGameController>();
+        return cards != null && cards.UseChinese;
     }
 
     /// <summary>

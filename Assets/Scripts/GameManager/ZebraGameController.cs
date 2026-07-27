@@ -63,6 +63,7 @@ public class ZebraGameController : MonoBehaviour
     private RectTransform mOverlayContent;
     private GridLayoutGroup mOverlayGrid;
     private Button mOverlayActionButton;
+    private Text mOverlayMajestyText;   // Market / Delete overlays: the Majesty available to spend
     private readonly Dictionary<CardModel, Button> mOverlayCardButtons = new Dictionary<CardModel, Button>();
     private GameObject mSettingsOverlay;
     private List<CardModel> mOverlayCards;
@@ -95,6 +96,11 @@ public class ZebraGameController : MonoBehaviour
     [SerializeField] private CardSO[] startingDeck;   // the player's initial owned cards
     [SerializeField] private CardSO[] marketCards;    // cards that can be bought in Phase 2
     [SerializeField] private int deleteMajestyCost = 1;   // flat Majesty cost to delete a card in Phase 2
+
+    [Header("Hint pages (Settings > Hint)")]
+    [Tooltip("Full-screen guidance pictures, shown in this order. Drag Sprites in and reorder " +
+             "them here; the Hint button is hidden when the list is empty.")]
+    [SerializeField] private Sprite[] hintPages;
 
     [Header("Integration with base project (authoritative game state)")]
     [SerializeField] private StatManager mStats;
@@ -572,11 +578,11 @@ public class ZebraGameController : MonoBehaviour
     private CardModel CreateCard(CardSO source)
     {
         return CreateCard(source.NameEnglish, source.NameChinese, source.DescriptionEnglish,
-                          source.DescriptionChinese, source.Location, source.RetainEffect, source.PermanentEffect, source.IsRoyal,
+                          source.DescriptionChinese, source.Location, source.RetainEffect, source.PlayEffect, source.PermanentEffect, source.IsRoyal,
                           source.MajestyCost, source.MajestyGain, source.FightGain);
     }
 
-    private CardModel CreateCard(string nameEnglish, string nameChinese, string descriptionEnglish, string descriptionChinese, LocationType location, RetainEffectType retainEffect, PermanentCardEffectType permanentEffect, bool isRoyal, int majestyCost, int majestyGain, int fightGain)
+    private CardModel CreateCard(string nameEnglish, string nameChinese, string descriptionEnglish, string descriptionChinese, LocationType location, RetainEffectType retainEffect, PlayEffectType playEffect, PermanentCardEffectType permanentEffect, bool isRoyal, int majestyCost, int majestyGain, int fightGain)
     {
         if (IntegrationPlaceholderMode.Enabled)
         {
@@ -586,13 +592,14 @@ public class ZebraGameController : MonoBehaviour
             descriptionChinese = "";
             location = LocationType.Any;
             retainEffect = RetainEffectType.None;
+            playEffect = PlayEffectType.None;
             permanentEffect = PermanentCardEffectType.None;
             isRoyal = false;
             majestyCost = 0;
             majestyGain = 0;
             fightGain = 0;
         }
-        return new CardModel { InstanceId = mNextCardId++, NameEnglish = nameEnglish, NameChinese = nameChinese, DescriptionEnglish = descriptionEnglish, DescriptionChinese = descriptionChinese, Location = location, RetainEffect = retainEffect, PermanentEffect = permanentEffect, IsRoyal = isRoyal, MajestyCost = majestyCost, MajestyGain = majestyGain, FightGain = fightGain };
+        return new CardModel { InstanceId = mNextCardId++, NameEnglish = nameEnglish, NameChinese = nameChinese, DescriptionEnglish = descriptionEnglish, DescriptionChinese = descriptionChinese, Location = location, RetainEffect = retainEffect, PlayEffect = playEffect, PermanentEffect = permanentEffect, IsRoyal = isRoyal, MajestyCost = majestyCost, MajestyGain = majestyGain, FightGain = fightGain };
     }
 
     // Called after a location's own effect fires, so enacted policies add to the same
@@ -891,10 +898,37 @@ public class ZebraGameController : MonoBehaviour
             mDiscardPile.Add(card);
         }
         Destroy(view.gameObject);
+
+        // Play effects fire only once the card has fully left the hand, so a draw cannot land in
+        // the slot the played card is still animating out of. Still inside GamePhase.Animating,
+        // which keeps the player from acting while the new cards fly in.
+        yield return ApplyPlayEffectRoutine(card);
+
         mPhase = GamePhase.PlayerAction;
         SetStatus(consumed ? "Policy enacted and the card was consumed." : "Card played. Continue in Phase 1 or click the Turn Phase Button.",
                   consumed ? "政策已生效，卡牌已消耗。" : "卡牌已打出。可继续行动或点击回合阶段按钮。");
         RefreshInterface();
+    }
+
+    // 打出卡牌时触发的效果（与地点无关，任何地点都会触发）。
+    private IEnumerator ApplyPlayEffectRoutine(CardModel card)
+    {
+        if (card == null || card.PlayEffect == PlayEffectType.None) yield break;
+        if (IntegrationPlaceholderMode.Enabled) yield break;
+
+        if (card.PlayEffect == PlayEffectType.Draw2Cards)
+        {
+            SetStatus(card.NameEnglish + " played: draw 2 cards.", card.NameChinese + "打出效果：抽 2 张牌。");
+            RefreshInterface();
+            for (int i = 0; i < 2; i++)
+            {
+                // Stop early on a full hand or an empty deck; DrawOneCardRoutine reshuffles the
+                // discard pile itself, so only a genuinely exhausted deck ends the loop.
+                if (mHand.Count >= kMaximumHandSize) break;
+                if (mDrawPile.Count == 0 && mDiscardPile.Count == 0) break;
+                yield return DrawOneCardRoutine();
+            }
+        }
     }
 
     private void CancelPendingPlay()
@@ -990,6 +1024,11 @@ public class ZebraGameController : MonoBehaviour
             if (mStats != null) mStats.UpdateGold(2);             // Gold +2
             SetStatus(card.NameEnglish + " retained: Gold +2.", card.NameChinese + "保留效果：金币 +2。");
         }
+        else if (card.RetainEffect == RetainEffectType.ReputationUp)
+        {
+            if (mStats != null) mStats.UpdateReputation(1, 1, 1); // King / Church / Aristocrats +1
+            SetStatus(card.NameEnglish + " retained: all reputations +1.", card.NameChinese + "保留效果：三方声望各 +1。");
+        }
         else
         {
             SetStatus(card.NameEnglish + " has no retain effect.", card.NameChinese + "没有保留效果。");
@@ -1063,6 +1102,7 @@ public class ZebraGameController : MonoBehaviour
         {
             Destroy(mOverlay);
         }
+        mOverlayMajestyText = null;   // belonged to the overlay just destroyed
 
         mOverlay = new GameObject("Card Overlay", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
         mOverlay.transform.SetParent(mCanvasRect, false);
@@ -1082,6 +1122,16 @@ public class ZebraGameController : MonoBehaviour
         AddClassicFrame(panel, 4f);
         RectTransform panelRect = panel.GetComponent<RectTransform>();
         CreateText("Overlay Title", panel.transform, mUseChinese ? mOverlayTitleChinese : mOverlayTitleEnglish, 26, FontStyle.Bold, TextAnchor.MiddleCenter, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -38f), new Vector2(600f, 44f), new Color(0.12f, 0.11f, 0.09f));
+        // Buying and deleting are both paid for in Majesty, so those overlays state how much is
+        // available directly under the title. Follows the current language like every other
+        // overlay label. The read-only All Cards view has nothing to spend, so it is left out.
+        if (mOverlayMode == OverlayMode.Market || mOverlayMode == OverlayMode.Delete)
+        {
+            mOverlayMajestyText = CreateText("Overlay Majesty", panel.transform, string.Empty, 19, FontStyle.Bold, TextAnchor.MiddleCenter,
+                                             new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -72f), new Vector2(600f, 28f), new Color(0.2f, 0.17f, 0.12f));
+            RefreshOverlayMajesty();
+        }
+
         Button closeButton = CreateButton("Close", panel.transform, mUseChinese ? "关闭" : "Close", new Vector2(1f, 1f), new Vector2(-20f, -38f), new Vector2(100f, 38f), new Color(0.32f, 0.3f, 0.27f));
         closeButton.GetComponent<RectTransform>().pivot = new Vector2(1f, 0.5f);
         closeButton.onClick.AddListener(CloseOverlay);
@@ -1221,7 +1271,7 @@ public class ZebraGameController : MonoBehaviour
                 return;
             }
             mStats.UpdateMajesty(-cost);
-            CardModel purchased = CreateCard(mOverlaySelectedCard.NameEnglish, mOverlaySelectedCard.NameChinese, mOverlaySelectedCard.DescriptionEnglish, mOverlaySelectedCard.DescriptionChinese, mOverlaySelectedCard.Location, mOverlaySelectedCard.RetainEffect, mOverlaySelectedCard.PermanentEffect, true, mOverlaySelectedCard.MajestyCost, mOverlaySelectedCard.MajestyGain, mOverlaySelectedCard.FightGain);
+            CardModel purchased = CreateCard(mOverlaySelectedCard.NameEnglish, mOverlaySelectedCard.NameChinese, mOverlaySelectedCard.DescriptionEnglish, mOverlaySelectedCard.DescriptionChinese, mOverlaySelectedCard.Location, mOverlaySelectedCard.RetainEffect, mOverlaySelectedCard.PlayEffect, mOverlaySelectedCard.PermanentEffect, true, mOverlaySelectedCard.MajestyCost, mOverlaySelectedCard.MajestyGain, mOverlaySelectedCard.FightGain);
             mOwnedCards.Add(purchased);
             mDiscardPile.Add(purchased);
             mMarketCards.Remove(mOverlaySelectedCard);
@@ -1257,6 +1307,7 @@ public class ZebraGameController : MonoBehaviour
             Destroy(mOverlay);
         }
         mOverlay = null;
+        mOverlayMajestyText = null;
         mOverlayScrollRect = null;
         mOverlayContent = null;
         mOverlayGrid = null;
@@ -1295,8 +1346,18 @@ public class ZebraGameController : MonoBehaviour
         return scrollbar;
     }
 
+    // 用当前语言显示可用威严；面板打开期间随威严变化刷新。
+    private void RefreshOverlayMajesty()
+    {
+        if (mOverlayMajestyText == null) return;
+        int majesty = mStats != null ? mStats.GetMajesty() : 0;
+        mOverlayMajestyText.text = mUseChinese ? "威严：" + majesty : "Majesty: " + majesty;
+    }
+
     private void RefreshOverlaySelection()
     {
+        RefreshOverlayMajesty();
+
         foreach (KeyValuePair<CardModel, Button> entry in mOverlayCardButtons)
         {
             if (entry.Value == null) continue;
@@ -1409,10 +1470,14 @@ public class ZebraGameController : MonoBehaviour
 
         Image panel = CreatePanel("Settings Panel", mSettingsOverlay.transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(500f, 320f), new Color(0.88f, 0.84f, 0.72f, 1f));
         CreateText("Settings Title", panel.transform, mUseChinese ? "设置" : "Settings", 28, FontStyle.Bold, TextAnchor.MiddleCenter, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -52f), new Vector2(300f, 50f), new Color(0.12f, 0.11f, 0.09f));
-        // Row 1: Quit (left) and Rules (right)
-        Button quitButton = CreateButton("Quit", panel.transform, mUseChinese ? "退出" : "Quit", new Vector2(0.5f, 0.5f), new Vector2(-92f, 56f), new Vector2(160f, 46f), new Color(0.42f, 0.22f, 0.20f));
+        // Row 1: Quit (left), Hint (middle) and Rules (right). Three buttons across a 500-wide
+        // panel, so they are narrower than the two-button rows below.
+        Button quitButton = CreateButton("Quit", panel.transform, mUseChinese ? "退出" : "Quit", new Vector2(0.5f, 0.5f), new Vector2(-158f, 56f), new Vector2(152f, 46f), new Color(0.42f, 0.22f, 0.20f));
         quitButton.onClick.AddListener(QuitApplication);
-        Button rulesButton = CreateButton("Rules", panel.transform, mUseChinese ? "规则" : "Rules", new Vector2(0.5f, 0.5f), new Vector2(92f, 56f), new Vector2(160f, 46f), new Color(0.20f, 0.34f, 0.42f));
+        Button hintButton = CreateButton("Hint", panel.transform, mUseChinese ? "提示" : "Hint", new Vector2(0.5f, 0.5f), new Vector2(0f, 56f), new Vector2(152f, 46f), new Color(0.26f, 0.38f, 0.24f));
+        hintButton.onClick.AddListener(OpenHint);
+        hintButton.interactable = hintPages != null && hintPages.Length > 0;
+        Button rulesButton = CreateButton("Rules", panel.transform, mUseChinese ? "规则" : "Rules", new Vector2(0.5f, 0.5f), new Vector2(158f, 56f), new Vector2(152f, 46f), new Color(0.20f, 0.34f, 0.42f));
         rulesButton.onClick.AddListener(OpenRules);
 
         // Row 2: "Language" title
@@ -1428,6 +1493,12 @@ public class ZebraGameController : MonoBehaviour
         closeButton.onClick.AddListener(CloseSettings);
         mSettingsOverlay.transform.SetAsLastSibling();
         RefreshInterface();
+    }
+
+    // 点击"提示"按钮时打开图片指引。指引面板盖在设置面板之上，关闭后即回到设置面板。
+    private void OpenHint()
+    {
+        HintPanel.EnsureExists().Show(hintPages, mUseChinese);
     }
 
     // 点击"规则"按钮时打开规则网页（PDF/Word）。把下面的链接替换为实际地址即可。

@@ -161,21 +161,6 @@ public class MissionPanelUI : MonoBehaviour
         eventConfirmationButton.onClick.AddListener(ToggleWindow);
     }
 
-    /// <summary>Shows a terminal bankruptcy action while retaining the normal settlement text.</summary>
-    public void ShowBankruptcyResolution(MissionSO mission, string label, System.Action onBankruptcy)
-    {
-        if (mission == null) return;
-
-        currentMission = mission;
-        currentManager = null;
-        currentResult = null;
-        ClearButtons();
-        ApplyTexts();
-        if (resultText != null) resultText.text = string.Empty;
-        if (panelRoot != null) panelRoot.SetActive(true);
-        AddSingleAction(label, onBankruptcy);
-    }
-
     private Button AddSingleAction(string label, System.Action onClick)
     {
         if (resolutionContainer == null || resolutionButtonPrefab == null) return null;
@@ -222,12 +207,6 @@ public class MissionPanelUI : MonoBehaviour
         panelRoot.SetActive(!panelRoot.activeSelf);
     }
 
-    /// <summary>True while the mission panel is visible (used to make it modal).</summary>
-    public bool IsOpen()
-    {
-        return panelRoot != null && panelRoot.activeSelf;
-    }
-
     /// <summary>
     /// True when this panel is presenting an event acknowledgement. The acknowledgement is
     /// visually hosted by the mission panel, even though the event itself remains pending.
@@ -235,6 +214,12 @@ public class MissionPanelUI : MonoBehaviour
     public bool HasEventConfirmation()
     {
         return eventConfirmationButton != null;
+    }
+
+    /// <summary>True while the mission panel is visible (used to make it modal).</summary>
+    public bool IsOpen()
+    {
+        return panelRoot != null && panelRoot.activeSelf;
     }
 
     // 决策查看控制器用此方法暂时隐藏或恢复任务界面，不清除玩家尚未选择的按钮。
@@ -303,7 +288,8 @@ public class MissionPanelUI : MonoBehaviour
             if (btn != null)
             {
                 GameUITheme.StyleButton(btn);
-                btn.interactable = manager.CanAffordResolution(res);   // 金币不足则禁用该处理选项
+                // 金币不足的选项同样可以点击，只是会先弹出警告面板（见 MissionManager）。
+                btn.interactable = true;
                 btn.onClick.RemoveAllListeners();
                 btn.onClick.AddListener(() => manager.OnResolutionSelected(capturedIndex));
             }
@@ -337,9 +323,9 @@ public class MissionPanelUI : MonoBehaviour
             ? currentManager.GetEffectiveResolutionEffect(res)
             : res.resolutionEffect;
         string body = GameLocalization.FormatStatChanges(e, chinese);
-        // 金币不足以支付时，提示无法选择。
+        // 金币不足以支付时提前告知：仍可选择，但会负债。
         if (currentManager != null && !currentManager.CanAffordResolution(res))
-            body += chinese ? "\n金币不足，无法选择" : "\nNot enough gold";
+            body += chinese ? "\n金币不足，选择后将负债" : "\nNot enough gold — this will put you in debt";
         MissionPreviewTooltip.EnsureExists().Show(res.GetButtonText(chinese), body, screenPos);
 
         MainMapUIController hud = FindAnyObjectByType<MainMapUIController>();

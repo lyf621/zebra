@@ -19,7 +19,6 @@ public class TurnController : MonoBehaviour
     private int TurnPhase = 0;
     private int MinistersLeft;
     private bool GameEnded = false;
-    private bool BalanceDriftPending = false;
     private ZebraGameController Cards;
     public ClickOnLocation[] LocationList;
     
@@ -90,30 +89,16 @@ public class TurnController : MonoBehaviour
             return;
         }
 
-        // The balance drift is deliberately NOT applied here. Running it as the turn ends put it
-        // in the same frame as the mission resolution the player had just confirmed, which on
-        // Normal difficulty (band 5..5) cancelled every +-1 resolution exactly — the stats looked
-        // as though the mission effects were never triggered at all. It is queued instead and
-        // applied when the next turn opens; see BeginTurn.
-        BalanceDriftPending = true;
+        // The balance drift lands here, the moment the player confirms the mission resolution and
+        // the turn closes. This is safe because the resolution's own effect was applied earlier,
+        // when the resolution was *selected* — so the player has already read the new values on
+        // the HUD before pressing Confirm, and the drift reads as a separate, deliberate step.
+        Stats.ReturnToBalance(GameSessionSettings.BalanceLowerBound, GameSessionSettings.BalanceUpperBound);
         Stats.ClearTurnStat();
         RestoreMinister();
         TurnCount++;
         if (LocationList != null) foreach (var tile in LocationList) if (tile != null) tile.ResetObject();
         TurnPhase = 0;
-    }
-
-    /// <summary>
-    /// Opens a turn: applies the once-per-turn balance drift queued by the previous EndTurn.
-    /// Called just before the turn's event is drawn, so the drift is a separate, readable step
-    /// rather than an instant undo of the player's last decision. No-op on the first turn.
-    /// </summary>
-    public void BeginTurn()
-    {
-        if (GameEnded || !BalanceDriftPending) return;
-        BalanceDriftPending = false;
-        if (Stats != null)
-            Stats.ReturnToBalance(GameSessionSettings.BalanceLowerBound, GameSessionSettings.BalanceUpperBound);
     }
 
     public void MovesRunOut()

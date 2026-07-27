@@ -315,7 +315,7 @@ PrefabInstance:
       propertyPath: infoDescription
       value: 'Diplomacy/The Church
 
-        Gold-3; PO+1, CR+2'
+        Gold-5; PO+1, CR+3'
       objectReference: {fileID: 0}
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: infoNameChinese
@@ -323,7 +323,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: infoDescriptionChinese
-      value: "\u5916\u4EA4/\u6559\u4F1A\nGold-3; \u6C11\u610F+1, \u6559\u4F1A+2"
+      value: "\u5916\u4EA4/\u6559\u4F1A\nGold-5; \u6C11\u610F+1, \u6559\u4F1A+3"
       objectReference: {fileID: 0}
     - target: {fileID: 8349132304500145871, guid: 4bdb0f4b80ddce546850dd030ad254d4, type: 3}
       propertyPath: onFirstClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -734,6 +734,11 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 55885016b410c934ea12cfee5df33429, type: 2}
   - {fileID: 11400000, guid: 68ba948febec0284ab61f2297d6f74c2, type: 2}
   - {fileID: 11400000, guid: 1bb22b6d7fecce74cbc8cad3467cb5a8, type: 2}
+  - {fileID: 11400000, guid: 6db84f80e01236d4f84114c275c0831e, type: 2}
+  - {fileID: 11400000, guid: ae99d167772be214caed5d35e55fa883, type: 2}
+  - {fileID: 11400000, guid: 1bb22b6d7fecce74cbc8cad3467cb5a8, type: 2}
+  - {fileID: 11400000, guid: 68ba948febec0284ab61f2297d6f74c2, type: 2}
+  - {fileID: 11400000, guid: 2fc515144ba44ad448a328bcbb4f8ad7, type: 2}
   deleteMajestyCost: 3
   mStats: {fileID: 307285969}
   mTurns: {fileID: 639306590}
